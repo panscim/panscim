@@ -9,7 +9,7 @@ const Home = () => {
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Video Background */}
         <div className="absolute inset-0 z-0">
-          <div className="w-full h-full bg-gradient-to-r from-deep-sea-blue via-blue-600 to-cyan-500 opacity-90">
+          <div className="w-full h-full brand-gradient-dark opacity-95">
             {/* Animated Wave Effect */}
             <div className="absolute inset-0">
               <svg className="absolute bottom-0 left-0 w-full h-32" viewBox="0 0 1200 120" preserveAspectRatio="none">
