@@ -227,7 +227,7 @@ const PublicProfile = () => {
           {/* Past Prizes */}
           {prizes.past_prizes && prizes.past_prizes.length > 0 && (
             <div className="mb-6">
-              <h4 className="font-semibold text-deep-sea-blue mb-4">🏅 Premi precedenti</h4>
+              <h4 className="font-semibold text-deep-sea-blue mb-4">🏅 {t('past_prizes')}</h4>
               <div className="space-y-3">
                 {prizes.past_prizes.map((prize, index) => (
                   <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
