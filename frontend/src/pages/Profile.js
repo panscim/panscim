@@ -435,8 +435,8 @@ Vivi la Puglia autentica con noi!`;
         <div className="bg-white rounded-[20px] p-6 mediterranean-shadow mb-8">
           <div className="flex flex-wrap border-b border-gray-200">
             {[
-              { id: 'profile', label: 'Il mio Profilo', icon: User },
-              { id: 'card', label: '🎟️ La mia Card', icon: CreditCard }
+              { id: 'profile', label: t('my_profile'), icon: User },
+              { id: 'card', label: t('card'), icon: CreditCard }
             ].map((tab) => (
               <button
                 key={tab.id}
