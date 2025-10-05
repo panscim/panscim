@@ -285,6 +285,38 @@ const AdminPanel = () => {
     await updateMission(missionId, { is_active: !currentStatus });
   };
 
+  const fetchPendingSubmissions = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/admin/missions/submissions/pending`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setPendingSubmissions(response.data);
+    } catch (error) {
+      console.error('Error fetching pending submissions:', error);
+    }
+  };
+
+  const verifySubmission = async (submissionId, status) => {
+    setMissionLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/admin/missions/submissions/${submissionId}/verify?status=${status}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      const message = status === 'approved' ? '✅ Missione approvata!' : '❌ Missione rifiutata';
+      alert(message);
+      setSubmissionDetails(null);
+      fetchPendingSubmissions(); // Refresh submissions
+      fetchMissionStats(); // Refresh stats
+    } catch (error) {
+      alert('Errore verifica: ' + (error.response?.data?.detail || 'Errore sconosciuto'));
+    } finally {
+      setMissionLoading(false);
+    }
+  };
+
   const getActionIcon = (actionTypeId) => {
     const icons = {
       'like_post': '👍',
