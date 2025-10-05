@@ -1044,7 +1044,7 @@ async def submit_mission(
             
             # Resize to reasonable size
             max_size = (800, 600)
-            image.thumbnail(max_size, Image.Lanczos)
+            image.thumbnail(max_size, Image.LANCZOS)
             
             # Convert to RGB if necessary
             if image.mode in ('RGBA', 'LA', 'P'):
