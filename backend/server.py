@@ -149,6 +149,10 @@ class User(BaseModel):
     # Digital Club Card fields
     join_date: Optional[datetime] = None
     preferred_language: str = "it"  # it or en
+    # Enhanced card fields
+    user_rank: Optional[int] = None
+    winners_history: List[dict] = Field(default_factory=list)
+    last_prize_use_date: Optional[datetime] = None
 
 class UserCreate(BaseModel):
     name: str
