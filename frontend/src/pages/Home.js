@@ -22,16 +22,29 @@ const Home = () => {
         {/* Content */}
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
           <div className="mb-8">
+            {/* Logo e Branding */}
+            <div className="flex items-center justify-center mb-6">
+              <img 
+                src="https://customer-assets.emergentagent.com/job_idea-showcase-6/artifacts/l5fhones_Progetto%20senza%20titolo%20%285%29.svg" 
+                alt="Desideri di Puglia Logo" 
+                className="w-24 h-24 mr-4"
+              />
+              <div className="text-left">
+                <h3 className="text-2xl font-cormorant font-bold text-brand-accent">Desideri di Puglia</h3>
+                <h4 className="text-lg font-poppins text-white">Club</h4>
+              </div>
+            </div>
+            
             <div className="inline-flex items-center justify-center w-20 h-20 bg-brand-accent rounded-full mb-6 animate-float">
-              <span className="text-4xl">🌿</span>
+              <span className="text-4xl">🏆</span>
             </div>
             <h1 className="text-5xl md:text-7xl font-cormorant font-bold text-white mb-6">
               Vivi la Puglia.
             </h1>
-            <h2 className="text-2xl md:text-4xl font-poppins font-light text-brand-light mb-8">
+            <h2 className="text-2xl md:text-4xl font-poppins font-light text-white mb-8">
               Guadagna momenti. Vinci esperienze reali.
             </h2>
-            <p className="text-lg md:text-xl text-brand-light/90 max-w-2xl mx-auto mb-8">
+            <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto mb-8">
               Entra nel Desideri di Puglia Club e trasforma ogni momento vissuto in Puglia in punti per vincere premi autentici.
             </p>
           </div>
