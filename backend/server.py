@@ -1200,7 +1200,7 @@ async def create_mission(
     return {"message": "Missione creata con successo!", "mission_id": mission.id}
 
 @api_router.get("/admin/missions")
-async def get_admin_missions(credentials: HTTPAuthorizationCredentials = security):
+async def get_admin_missions(credentials: HTTPAuthorizationCredentials = Depends(security)):
     current_user = await get_current_user(credentials)
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin access required")
