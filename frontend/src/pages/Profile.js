@@ -62,9 +62,12 @@ const Profile = () => {
     return levels[level] || levels['Explorer'];
   };
 
-  const handleAvatarUpload = async (event) => {
+  const handleAvatarFileSelect = (event) => {
     const file = event.target.files[0];
     if (!file) return;
+
+    // Reset input
+    event.target.value = '';
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
@@ -78,27 +81,43 @@ const Profile = () => {
       return;
     }
 
-    setIsUploadingAvatar(true);
     setError('');
+    setSelectedImageFile(file);
+    setShowCropper(true);
+  };
 
+  const handleCropComplete = async (croppedImageData) => {
+    setIsUploadingAvatar(true);
+    setShowCropper(false);
+    
     try {
+      // Convert base64 to blob
+      const response = await fetch(croppedImageData);
+      const blob = await response.blob();
+      
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', blob, 'avatar.jpg');
 
-      const response = await axios.post('/auth/upload-avatar', formData, {
+      const uploadResponse = await axios.post('/auth/upload-avatar', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
 
-      updateUser({ avatar_url: response.data.avatar_url });
+      updateUser({ avatar_url: uploadResponse.data.avatar_url });
       setSuccess('Avatar aggiornato con successo! 🌿');
       setTimeout(() => setSuccess(''), 3000);
     } catch (error) {
       setError(error.response?.data?.detail || 'Errore nel caricamento dell\'avatar');
     } finally {
       setIsUploadingAvatar(false);
+      setSelectedImageFile(null);
     }
+  };
+
+  const handleCropCancel = () => {
+    setShowCropper(false);
+    setSelectedImageFile(null);
   };
 
   const handleProfileUpdate = async () => {
