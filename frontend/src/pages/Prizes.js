@@ -102,8 +102,10 @@ const Prizes = () => {
                   <div className={`text-sm ${
                     isInTop3 ? 'text-green-600' : 'text-blue-600'
                   }`}>
-                    {isInTop3 ? (
-                      'Hai garantito un premio questo mese!'
+                    {isInTop3 && isMonthConcluded ? (
+                      'Hai vinto un premio questo mese!'
+                    ) : isInTop3 ? (
+                      'Sei in posizione di vincita per questo mese!'
                     ) : pointsToTop3 > 0 ? (
                       `Ti servono +${pointsToTop3} punti per entrare in Top 3`
                     ) : (
