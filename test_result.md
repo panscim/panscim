@@ -442,12 +442,12 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Admin Prize Editor System"
-    - "Digital Club Card Generation" 
-    - "Multilingual Backend Support"
-    - "Admin Prize Editor UI"
-    - "Digital Club Card Component"
-    - "Multilingual Frontend Toggle"
+    - "Enhanced Club Card Design"
+    - "Interactive QR Public Profile"
+    - "Premium Digital Club Card UI"
+    - "Complete Multilingual Translation"
+    - "Enhanced Admin Prize Editor"
+    - "Wallet Integration System"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
