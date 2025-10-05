@@ -518,6 +518,12 @@ Vivi la Puglia autentica con noi!`;
             <DigitalClubCard user={user} />
           </div>
         )}
+
+        {activeTab === 'card' && (
+          <div className="bg-white rounded-[20px] p-6 mediterranean-shadow">
+            <DigitalClubCard />
+          </div>
+        )}
         
         {/* Image Cropper Modal */}
         {showCropper && selectedImageFile && (
