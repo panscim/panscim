@@ -512,10 +512,9 @@ Vivi la Puglia autentica con noi!`;
           </>
         )}
 
-        {/* Card Tab Content */}
         {activeTab === 'card' && (
           <div className="bg-white rounded-[20px] p-6 mediterranean-shadow">
-            <DigitalClubCard user={user} />
+            <DigitalClubCard />
           </div>
         )}
 
