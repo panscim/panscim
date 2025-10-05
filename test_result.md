@@ -256,8 +256,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Mission Management Frontend UI"
-    - "User Mission Dashboard Integration"
+    - "Manual Frontend Testing - Enhanced Mission Management System"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
