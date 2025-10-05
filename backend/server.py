@@ -1355,7 +1355,7 @@ async def get_active_quiz(credentials: HTTPAuthorizationCredentials = Depends(se
 async def submit_quiz(
     quiz_id: str,
     answers: List[int],
-    credentials: HTTPAuthorizationCredentials = security
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     current_user = await get_current_user(credentials)
     
