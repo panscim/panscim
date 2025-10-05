@@ -36,6 +36,13 @@ const Dashboard = () => {
     description: '',
     submissionUrl: ''
   });
+  const [missionSubmissionForm, setMissionSubmissionForm] = useState({
+    show: false,
+    mission: null,
+    description: '',
+    submissionUrl: '',
+    photo: null
+  });
 
   useEffect(() => {
     fetchDashboardData();
