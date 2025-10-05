@@ -65,6 +65,8 @@ const AdminPanel = () => {
   });
   const [editingMission, setEditingMission] = useState(null);
   const [missionLoading, setMissionLoading] = useState(false);
+  const [pendingSubmissions, setPendingSubmissions] = useState([]);
+  const [submissionDetails, setSubmissionDetails] = useState(null);
 
   useEffect(() => {
     fetchAdminData();
