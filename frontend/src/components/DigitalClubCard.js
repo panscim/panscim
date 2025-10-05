@@ -320,6 +320,13 @@ const DigitalClubCard = () => {
           </div>
         </div>
       </div>
+
+      {/* Public Profile Popup */}
+      <PublicProfilePopup
+        isOpen={showProfilePopup}
+        onClose={() => setShowProfilePopup(false)}
+        userId={currentUserId}
+      />
     </div>
   );
 };
