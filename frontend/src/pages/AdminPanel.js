@@ -521,6 +521,263 @@ const AdminPanel = () => {
           </div>
         )}
 
+        {activeTab === 'missions' && (
+          <div className="space-y-6">
+            {/* Mission Statistics */}
+            {missionStats && (
+              <div className="bg-white rounded-[20px] p-6 mediterranean-shadow">
+                <h3 className="text-lg font-semibold text-deep-sea-blue mb-4 flex items-center">
+                  <BarChart3 className="mr-2" size={20} />
+                  Statistiche Missioni - {missionStats.month_year}
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                  <div className="bg-blue-50 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-blue-600">{missionStats.overview.total_missions}</div>
+                    <div className="text-sm text-blue-600">Missioni Totali</div>
+                  </div>
+                  <div className="bg-green-50 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-green-600">{missionStats.overview.active_missions}</div>
+                    <div className="text-sm text-green-600">Missioni Attive</div>
+                  </div>
+                  <div className="bg-yellow-50 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-yellow-600">{missionStats.overview.total_completions}</div>
+                    <div className="text-sm text-yellow-600">Completamenti</div>
+                  </div>
+                  <div className="bg-purple-50 rounded-lg p-4 text-center">
+                    <div className="text-2xl font-bold text-purple-600">{missionStats.overview.total_points_awarded}</div>
+                    <div className="text-sm text-purple-600">Punti Assegnati</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Create New Mission */}
+            <div className="bg-white rounded-[20px] p-6 mediterranean-shadow">
+              <h3 className="text-lg font-semibold text-deep-sea-blue mb-4 flex items-center">
+                <Plus className="mr-2" size={20} />
+                Crea Nuova Missione
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Titolo *</label>
+                  <input
+                    type="text"
+                    value={missionForm.title}
+                    onChange={(e) => setMissionForm(prev => ({ ...prev, title: e.target.value }))}
+                    placeholder="Nome della missione"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-deep-sea-blue focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Punti *</label>
+                  <input
+                    type="number"
+                    value={missionForm.points}
+                    onChange={(e) => setMissionForm(prev => ({ ...prev, points: parseInt(e.target.value) || 0 }))}
+                    placeholder="Punti da assegnare"
+                    min="1"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-deep-sea-blue focus:border-transparent"
+                  />
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Descrizione *</label>
+                <textarea
+                  value={missionForm.description}
+                  onChange={(e) => setMissionForm(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Descrivi cosa deve fare l'utente per completare la missione..."
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-deep-sea-blue focus:border-transparent"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Frequenza</label>
+                  <select
+                    value={missionForm.frequency}
+                    onChange={(e) => setMissionForm(prev => ({ ...prev, frequency: e.target.value }))}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-deep-sea-blue focus:border-transparent"
+                  >
+                    <option value="one-time">Una volta sola</option>
+                    <option value="daily">Giornaliera</option>
+                    <option value="weekly">Settimanale</option>
+                  </select>
+                </div>
+                {missionForm.frequency === 'daily' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Limite Giornaliero</label>
+                    <input
+                      type="number"
+                      value={missionForm.daily_limit}
+                      onChange={(e) => setMissionForm(prev => ({ ...prev, daily_limit: parseInt(e.target.value) || 0 }))}
+                      placeholder="0 = nessun limite"
+                      min="0"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-deep-sea-blue focus:border-transparent"
+                    />
+                  </div>
+                )}
+                {missionForm.frequency === 'weekly' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Limite Settimanale</label>
+                    <input
+                      type="number"
+                      value={missionForm.weekly_limit}
+                      onChange={(e) => setMissionForm(prev => ({ ...prev, weekly_limit: parseInt(e.target.value) || 0 }))}
+                      placeholder="0 = nessun limite"
+                      min="0"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-deep-sea-blue focus:border-transparent"
+                    />
+                  </div>
+                )}
+                <div className="flex items-center">
+                  <label className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={missionForm.is_active}
+                      onChange={(e) => setMissionForm(prev => ({ ...prev, is_active: e.target.checked }))}
+                      className="rounded text-deep-sea-blue"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Attiva subito</span>
+                  </label>
+                </div>
+              </div>
+
+              <button
+                onClick={createMission}
+                disabled={missionLoading}
+                className="w-full bg-deep-sea-blue text-white py-3 px-4 rounded-lg font-medium hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+              >
+                <Target size={18} />
+                <span>{missionLoading ? 'Creazione in corso...' : 'Crea Missione'}</span>
+              </button>
+            </div>
+
+            {/* Missions List */}
+            <div className="bg-white rounded-[20px] p-6 mediterranean-shadow">
+              <h3 className="text-lg font-semibold text-deep-sea-blue mb-4 flex items-center">
+                <Target className="mr-2" size={20} />
+                Gestione Missioni ({missions.length})
+              </h3>
+              
+              {missions.length === 0 ? (
+                <div className="text-center py-8">
+                  <Target className="mx-auto text-gray-400 mb-4" size={48} />
+                  <p className="text-gray-500">Nessuna missione creata ancora</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {missions.map((mission) => (
+                    <div key={mission.id} className={`border rounded-lg p-4 ${!mission.is_active ? 'bg-gray-50 opacity-75' : 'bg-white'}`}>
+                      {editingMission === mission.id ? (
+                        // Edit mode
+                        <div className="space-y-4">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input
+                              type="text"
+                              defaultValue={mission.title}
+                              placeholder="Titolo missione"
+                              className="px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-deep-sea-blue focus:border-transparent"
+                              id={`edit-title-${mission.id}`}
+                            />
+                            <input
+                              type="number"
+                              defaultValue={mission.points}
+                              placeholder="Punti"
+                              min="1"
+                              className="px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-deep-sea-blue focus:border-transparent"
+                              id={`edit-points-${mission.id}`}
+                            />
+                          </div>
+                          <textarea
+                            defaultValue={mission.description}
+                            placeholder="Descrizione"
+                            rows={2}
+                            className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-deep-sea-blue focus:border-transparent"
+                            id={`edit-description-${mission.id}`}
+                          />
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => {
+                                const title = document.getElementById(`edit-title-${mission.id}`).value;
+                                const description = document.getElementById(`edit-description-${mission.id}`).value;
+                                const points = parseInt(document.getElementById(`edit-points-${mission.id}`).value);
+                                updateMission(mission.id, { title, description, points });
+                              }}
+                              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 flex items-center space-x-1"
+                            >
+                              <CheckCircle size={16} />
+                              <span>Salva</span>
+                            </button>
+                            <button
+                              onClick={() => setEditingMission(null)}
+                              className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 flex items-center space-x-1"
+                            >
+                              <XCircle size={16} />
+                              <span>Annulla</span>
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        // View mode
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-3 mb-2">
+                              <h4 className="font-semibold text-gray-900">{mission.title}</h4>
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                mission.frequency === 'one-time' ? 'bg-blue-100 text-blue-800' :
+                                mission.frequency === 'daily' ? 'bg-green-100 text-green-800' :
+                                'bg-purple-100 text-purple-800'
+                              }`}>
+                                {mission.frequency === 'one-time' ? 'Una volta' :
+                                 mission.frequency === 'daily' ? 'Giornaliera' : 'Settimanale'}
+                              </span>
+                              <span className="text-sm font-medium text-yellow-600">
+                                {mission.points} punti
+                              </span>
+                              {!mission.is_active && (
+                                <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">
+                                  Disattivata
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-gray-600 text-sm mb-2">{mission.description}</p>
+                            <div className="flex items-center space-x-4 text-xs text-gray-500">
+                              <span>📊 {mission.completion_count} completamenti</span>
+                              {mission.created_at && (
+                                <span>📅 {new Date(mission.created_at).toLocaleDateString('it-IT')}</span>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2 ml-4">
+                            <button
+                              onClick={() => setEditingMission(mission.id)}
+                              className="p-2 text-blue-600 hover:bg-blue-100 rounded"
+                              title="Modifica missione"
+                            >
+                              <Edit3 size={16} />
+                            </button>
+                            <button
+                              onClick={() => toggleMissionStatus(mission.id, mission.is_active)}
+                              className={`p-2 rounded ${mission.is_active ? 'text-red-600 hover:bg-red-100' : 'text-green-600 hover:bg-green-100'}`}
+                              title={mission.is_active ? 'Disattiva missione' : 'Attiva missione'}
+                            >
+                              {mission.is_active ? <ToggleRight size={16} /> : <ToggleLeft size={16} />}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {activeTab === 'settings' && (
           <div className="space-y-6">
             <div className="bg-white rounded-[20px] p-6 mediterranean-shadow">
