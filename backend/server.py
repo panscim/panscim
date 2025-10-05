@@ -1382,6 +1382,55 @@ async def upload_prize_image(
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Errore nel caricamento dell'immagine: {str(e)}")
 
+# === CLUB CARD ENDPOINTS ===
+
+@api_router.get("/club-card")
+async def get_club_card(
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    """Get user's digital club card data"""
+    current_user = await get_current_user(credentials)
+    
+    # Initialize club card if not exists
+    await initialize_club_card(current_user.id)
+    
+    # Refresh user data
+    user_doc = await db.users.find_one({"id": current_user.id})
+    if not user_doc:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    user = User(**user_doc)
+    
+    return {
+        "name": user.name,
+        "username": user.username,
+        "club_card_code": user.club_card_code,
+        "club_card_qr_url": user.club_card_qr_url,
+        "join_date": user.join_date.isoformat() if user.join_date else None,
+        "level": get_user_level(user.total_points),
+        "total_points": user.total_points,
+        "avatar_url": user.avatar_url
+    }
+
+@api_router.get("/club-card/qr/{user_id}")
+async def get_user_profile_by_qr(user_id: str):
+    """Public endpoint for QR code access"""
+    user_doc = await db.users.find_one({"id": user_id})
+    if not user_doc:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    user = User(**user_doc)
+    
+    return {
+        "name": user.name,
+        "username": user.username,
+        "level": get_user_level(user.total_points),
+        "total_points": user.total_points,
+        "join_date": user.join_date.isoformat() if user.join_date else None,
+        "avatar_url": user.avatar_url,
+        "club_member": True
+    }
+
 # === NOTIFICATIONS ENDPOINTS ===
 
 @api_router.get("/notifications")
