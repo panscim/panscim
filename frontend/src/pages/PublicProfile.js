@@ -11,6 +11,7 @@ import {
   Clock,
   MapPin
 } from 'lucide-react';
+import { t } from '../utils/translations';
 
 const PublicProfile = () => {
   const { user_id } = useParams();
