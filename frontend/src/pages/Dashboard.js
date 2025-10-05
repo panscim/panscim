@@ -670,6 +670,152 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+
+      {/* Mission Submission Modal */}
+      {missionSubmissionForm.show && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-[20px] p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-semibold text-deep-sea-blue mb-4 flex items-center">
+              <Target className="mr-2" size={20} />
+              Completa Missione: {missionSubmissionForm.mission?.title}
+            </h3>
+            
+            {/* Mission Requirements Info */}
+            {missionSubmissionForm.mission && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                <div className="text-sm text-blue-800">
+                  <div className="font-medium mb-1">Requisiti per questa missione:</div>
+                  <ul className="space-y-1">
+                    {missionSubmissionForm.mission.requires_description && (
+                      <li className="flex items-center space-x-1">
+                        <FileText size={12} />
+                        <span>Descrizione richiesta</span>
+                      </li>
+                    )}
+                    {missionSubmissionForm.mission.requires_photo && (
+                      <li className="flex items-center space-x-1">
+                        <Camera size={12} />
+                        <span>Foto richiesta ({
+                          missionSubmissionForm.mission.photo_source === 'gallery' ? 'Solo Galleria' :
+                          missionSubmissionForm.mission.photo_source === 'camera' ? 'Solo Camera Live' :
+                          'Galleria o Camera'
+                        })</span>
+                      </li>
+                    )}
+                    {missionSubmissionForm.mission.requires_link && (
+                      <li className="flex items-center space-x-1">
+                        <Link size={12} />
+                        <span>Link richiesto</span>
+                      </li>
+                    )}
+                    {missionSubmissionForm.mission.requires_approval && (
+                      <li className="flex items-center space-x-1">
+                        <Clock size={12} />
+                        <span>Richiede approvazione admin</span>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-4">
+              {/* Description */}
+              {missionSubmissionForm.mission?.requires_description && (
+                <div>
+                  <label className="block text-sm font-medium text-deep-sea-blue mb-2">
+                    Descrizione dell'azione *
+                  </label>
+                  <textarea
+                    value={missionSubmissionForm.description}
+                    onChange={(e) => setMissionSubmissionForm({...missionSubmissionForm, description: e.target.value})}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-[20px] focus:ring-2 focus:ring-matte-gold focus:border-transparent"
+                    placeholder="Descrivi cosa hai fatto per completare questa missione..."
+                    rows={3}
+                    required
+                  />
+                </div>
+              )}
+
+              {/* Photo Upload */}
+              {missionSubmissionForm.mission?.requires_photo && (
+                <div>
+                  <label className="block text-sm font-medium text-deep-sea-blue mb-2">
+                    Foto {missionSubmissionForm.mission.photo_source === 'camera' ? '(Solo Camera Live)' : 
+                         missionSubmissionForm.mission.photo_source === 'gallery' ? '(Solo Galleria)' : ''} *
+                  </label>
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      capture={missionSubmissionForm.mission.photo_source === 'camera' ? 'environment' : undefined}
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          setMissionSubmissionForm({...missionSubmissionForm, photo: file});
+                        }
+                      }}
+                      className="hidden"
+                      id="mission-photo-upload"
+                    />
+                    <label
+                      htmlFor="mission-photo-upload"
+                      className="cursor-pointer flex flex-col items-center space-y-2"
+                    >
+                      <Upload className="text-gray-400" size={24} />
+                      <span className="text-sm text-gray-600">
+                        {missionSubmissionForm.photo ? missionSubmissionForm.photo.name : 'Tocca per caricare foto'}
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* Link */}
+              {missionSubmissionForm.mission?.requires_link && (
+                <div>
+                  <label className="block text-sm font-medium text-deep-sea-blue mb-2">
+                    Link/URL *
+                  </label>
+                  <input
+                    type="url"
+                    value={missionSubmissionForm.submissionUrl}
+                    onChange={(e) => setMissionSubmissionForm({...missionSubmissionForm, submissionUrl: e.target.value})}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-[20px] focus:ring-2 focus:ring-matte-gold focus:border-transparent"
+                    placeholder="Link al post, foto, recensione..."
+                    required
+                  />
+                </div>
+              )}
+
+              {/* Points Info */}
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                <p className="text-green-800 text-sm">
+                  🎯 <strong>Ricompensa:</strong> +{missionSubmissionForm.mission?.points} punti
+                  {missionSubmissionForm.mission?.requires_approval ? 
+                    ' (dopo approvazione admin)' : ' (automatici)'}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex space-x-3 mt-6">
+              <button
+                onClick={() => setMissionSubmissionForm({...missionSubmissionForm, show: false})}
+                className="flex-1 px-4 py-3 border border-gray-300 rounded-[20px] text-gray-700 font-medium hover:bg-gray-50"
+              >
+                Annulla
+              </button>
+              <button
+                onClick={submitMission}
+                className="flex-1 btn-primary flex items-center justify-center space-x-2"
+              >
+                <Target size={16} />
+                <span>Invia Missione</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
