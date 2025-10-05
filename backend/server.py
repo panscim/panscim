@@ -1251,7 +1251,7 @@ async def create_weekly_quiz(
     title: str,
     description: str,
     questions: List[Dict],
-    credentials: HTTPAuthorizationCredentials = security
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     current_user = await get_current_user(credentials)
     if not current_user.is_admin:
