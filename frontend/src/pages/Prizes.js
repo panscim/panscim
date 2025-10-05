@@ -33,6 +33,10 @@ const Prizes = () => {
   const isInTop3 = userPosition > 0 && userPosition <= 3;
   const pointsToTop3 = leaderboard[2] ? Math.max(0, leaderboard[2].points - user.current_points + 1) : 0;
 
+  // Check if current month is concluded (after 28th of the month)
+  const currentDate = new Date();
+  const isMonthConcluded = currentDate.getDate() > 28;
+
   const getPrizeIcon = (position) => {
     const icons = {
       1: { emoji: '🥇', bg: 'bg-yellow-100', border: 'border-yellow-300', text: 'text-yellow-700' },
