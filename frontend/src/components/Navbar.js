@@ -40,11 +40,13 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/dashboard" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-matte-gold rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-sm">🌿</span>
-            </div>
-            <span className="font-cormorant text-xl font-semibold text-deep-sea-blue">
-              Desideri di Puglia
+            <img 
+              src="https://customer-assets.emergentagent.com/job_idea-showcase-6/artifacts/l5fhones_Progetto%20senza%20titolo%20%285%29.svg" 
+              alt="Desideri di Puglia Logo" 
+              className="w-8 h-8"
+            />
+            <span className="font-cormorant text-xl font-semibold text-brand-dark">
+              Desideri di Puglia Club
             </span>
           </Link>
 
