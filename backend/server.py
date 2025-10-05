@@ -944,9 +944,12 @@ async def get_missions(
     
     return enhanced_missions
 
-@api_router.post("/missions/{mission_id}/complete")
-async def complete_mission(
+@api_router.post("/missions/{mission_id}/submit")
+async def submit_mission(
     mission_id: str,
+    description: str = Form(...),
+    submission_url: Optional[str] = Form(None),
+    photo: Optional[UploadFile] = File(None),
     credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     current_user = await get_current_user(credentials)
@@ -959,78 +962,148 @@ async def complete_mission(
     frequency = mission.get("frequency", "one-time")
     month_year = get_current_month_year()
     
-    # Check if user can complete this mission based on frequency and limits
+    # Check if user can submit this mission based on frequency and limits
     today = datetime.now().date()
     
     if frequency == "one-time":
-        # Check if already completed
-        existing_completion = await db.user_missions.find_one({
+        # Check if already submitted/completed
+        existing_submission = await db.mission_submissions.find_one({
             "user_id": current_user.id,
             "mission_id": mission_id
         })
-        if existing_completion:
-            raise HTTPException(status_code=400, detail="Mission already completed")
+        if existing_submission:
+            raise HTTPException(status_code=400, detail="Mission already submitted")
     
     elif frequency == "daily":
         daily_limit = mission.get("daily_limit", 0)
         if daily_limit > 0:
-            completions_today = await db.user_missions.count_documents({
+            submissions_today = await db.mission_submissions.count_documents({
                 "user_id": current_user.id,
                 "mission_id": mission_id,
-                "completed_at": {
+                "submitted_at": {
                     "$gte": datetime.combine(today, datetime.min.time()),
                     "$lt": datetime.combine(today + timedelta(days=1), datetime.min.time())
                 }
             })
-            if completions_today >= daily_limit:
+            if submissions_today >= daily_limit:
                 raise HTTPException(status_code=400, detail="Daily limit reached for this mission")
     
     elif frequency == "weekly":
         weekly_limit = mission.get("weekly_limit", 0)
         if weekly_limit > 0:
             week_start = today - timedelta(days=today.weekday())
-            completions_this_week = await db.user_missions.count_documents({
+            submissions_this_week = await db.mission_submissions.count_documents({
                 "user_id": current_user.id,
                 "mission_id": mission_id,
-                "completed_at": {
+                "submitted_at": {
                     "$gte": datetime.combine(week_start, datetime.min.time()),
                     "$lt": datetime.combine(week_start + timedelta(days=7), datetime.min.time())
                 }
             })
-            if completions_this_week >= weekly_limit:
+            if submissions_this_week >= weekly_limit:
                 raise HTTPException(status_code=400, detail="Weekly limit reached for this mission")
     
-    # Create mission completion record
-    user_mission = UserMission(
+    # Validate required fields based on mission settings
+    if mission.get("requires_description", True) and not description.strip():
+        raise HTTPException(status_code=400, detail="Description is required for this mission")
+    
+    if mission.get("requires_photo", False) and not photo:
+        raise HTTPException(status_code=400, detail="Photo is required for this mission")
+    
+    if mission.get("requires_link", False) and not submission_url:
+        raise HTTPException(status_code=400, detail="Link is required for this mission")
+    
+    # Handle photo upload if provided
+    photo_url = None
+    if photo:
+        try:
+            # Resize and save photo (reusing existing logic)
+            image_data = await photo.read()
+            image = Image.open(BytesIO(image_data))
+            
+            # Resize to reasonable size
+            max_size = (800, 600)
+            image.thumbnail(max_size, Image.Lanczos)
+            
+            # Convert to RGB if necessary
+            if image.mode in ('RGBA', 'LA', 'P'):
+                background = Image.new('RGB', image.size, (255, 255, 255))
+                if image.mode == 'P':
+                    image = image.convert('RGBA')
+                background.paste(image, mask=image.split()[-1] if image.mode == 'RGBA' else None)
+                image = background
+            
+            # Save as base64
+            output = BytesIO()
+            image.save(output, format='JPEG', quality=85)
+            photo_url = base64.b64encode(output.getvalue()).decode()
+            
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Invalid photo format: {str(e)}")
+    
+    # Create mission submission
+    submission = MissionSubmission(
         user_id=current_user.id,
         mission_id=mission_id,
         mission_title=mission["title"],
+        description=description,
+        photo_url=photo_url,
+        submission_url=submission_url,
         points_earned=mission["points"],
-        month_year=month_year
+        month_year=month_year,
+        verification_status="pending" if mission.get("requires_approval", True) else "approved"
     )
     
-    await db.user_missions.insert_one(user_mission.dict())
+    await db.mission_submissions.insert_one(submission.dict())
     
-    # Update user's total points
-    await db.users.update_one(
-        {"id": current_user.id},
-        {"$inc": {"total_points": mission["points"], "current_points": mission["points"]}}
-    )
-    
-    # Create notification
-    notification = Notification(
-        user_id=current_user.id,
-        title="🎯 Missione Completata!",
-        message=f"Missione completata: '{mission['title']}' (+{mission['points']} punti)",
-        type="success"
-    )
-    await db.notifications.insert_one(notification.dict())
-    
-    return {
-        "message": f"Missione completata! +{mission['points']} punti 🌿",
-        "points_earned": mission["points"],
-        "mission_title": mission["title"]
-    }
+    # If no approval required, automatically complete the mission
+    if not mission.get("requires_approval", True):
+        user_mission = UserMission(
+            user_id=current_user.id,
+            mission_id=mission_id,
+            mission_title=mission["title"],
+            points_earned=mission["points"],
+            month_year=month_year,
+            submission_id=submission.id
+        )
+        
+        await db.user_missions.insert_one(user_mission.dict())
+        
+        # Update user's total points
+        await db.users.update_one(
+            {"id": current_user.id},
+            {"$inc": {"total_points": mission["points"], "current_points": mission["points"]}}
+        )
+        
+        # Create notification
+        notification = Notification(
+            user_id=current_user.id,
+            title="🎯 Missione Completata!",
+            message=f"Missione completata: '{mission['title']}' (+{mission['points']} punti)",
+            type="success"
+        )
+        await db.notifications.insert_one(notification.dict())
+        
+        return {
+            "message": f"Missione completata automaticamente! +{mission['points']} punti 🌿",
+            "points_earned": mission["points"],
+            "requires_approval": False
+        }
+    else:
+        # Create notification for pending approval
+        notification = Notification(
+            user_id=current_user.id,
+            title="📝 Missione Inviata",
+            message=f"Missione '{mission['title']}' inviata per verifica. Riceverai i punti dopo l'approvazione.",
+            type="info"
+        )
+        await db.notifications.insert_one(notification.dict())
+        
+        return {
+            "message": f"Missione inviata per verifica! 📝",
+            "requires_approval": True,
+            "points_earned": mission["points"]
+        }
 
 # === PRIZES ENDPOINTS ===
 
