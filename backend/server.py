@@ -1464,6 +1464,11 @@ class MissionUpdateRequest(BaseModel):
     daily_limit: Optional[int] = None
     weekly_limit: Optional[int] = None
     is_active: Optional[bool] = None
+    requires_description: Optional[bool] = None
+    requires_photo: Optional[bool] = None
+    photo_source: Optional[str] = None
+    requires_link: Optional[bool] = None
+    requires_approval: Optional[bool] = None
 
 @api_router.put("/admin/missions/{mission_id}")
 async def update_mission(
