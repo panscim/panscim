@@ -1300,7 +1300,7 @@ async def get_admin_quizzes(credentials: HTTPAuthorizationCredentials = Depends(
 @api_router.put("/admin/quiz/{quiz_id}/close")
 async def close_quiz(
     quiz_id: str,
-    credentials: HTTPAuthorizationCredentials = security
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     current_user = await get_current_user(credentials)
     if not current_user.is_admin:
