@@ -114,6 +114,7 @@ const translations = {
   en: {
     // Navigation  
     home: 'Home',
+    dashboard: 'Dashboard',
     leaderboard: 'Leaderboard',
     prizes: 'Prizes',
     missions: 'Missions',
@@ -131,6 +132,11 @@ const translations = {
     delete: 'Delete',
     edit: 'Edit',
     create: 'Create',
+    view: 'View',
+    download: 'Download',
+    upload: 'Upload',
+    send: 'Send',
+    close: 'Close',
     
     // Auth
     login: 'Login',
@@ -141,43 +147,79 @@ const translations = {
     name: 'Name',
     username: 'Username',
     
-    // Missions
+    // Missions & Actions
     mission_completed: 'Mission accomplished 🌿',
-    complete_mission: 'Complete Mission', 
+    complete_mission: 'Complete Mission',
+    submit_mission: 'Submit Mission', 
     mission_description: 'Mission description',
     daily_missions: 'Daily Missions',
     weekly_missions: 'Weekly Missions',
+    special_missions: 'Special Missions',
+    social_actions: 'Social Actions',
+    pending_approval: 'Pending approval',
+    limit_reached: 'Limit reached',
+    completed: 'Completed',
+    available: 'Available',
     
     // Prizes
     monthly_rewards: 'Monthly Rewards',
+    current_prizes: 'Current Prizes',
     first_place: '1st Place',
     second_place: '2nd Place',
     third_place: '3rd Place',
+    no_prizes_yet: 'No prizes available yet',
     
-    // Profile
+    // Profile & Dashboard
     my_profile: 'My Profile',
     my_club_card: 'My Club Card', 
     total_points: 'Total Points',
     current_points: 'Points this month',
     current_position: 'Current Position',
+    notifications: 'Notifications',
+    action_history: 'Action History',
     
     // Club Card
-    club_card_ready: 'Your Desideri di Puglia Card is ready.',
+    club_card_ready: 'Your new Desideri di Puglia Card is ready — elegant and interactive like you 🌿',
     download_card: 'Download Card',
-    scan_qr: 'Scan your QR to share your profile or show your Club membership.',
+    add_to_wallet: 'Add to Wallet',
+    scan_qr: 'Scan to view your profile 🌿',
+    official_member_card: 'Official Member Card',
+    member_since: 'Member since',
+    club_statistics: 'Your statistics',
     
     // Admin
     pending_actions: 'Pending Actions',
     statistics: 'Statistics', 
     users: 'Users',
     email_admin: 'Email Admin',
+    missions_admin: 'Missions',
+    prizes_admin: 'Prizes',
     settings: 'Settings',
+    approve: 'Approve',
+    reject: 'Reject',
+    restore_defaults: 'Restore Defaults',
     
-    // Messages
-    language_updated: '🌿 Language updated: English',
-    prize_updated: '🌿 Prize updated successfully!',
+    // Messages & Notifications
+    language_updated: '🌿 Language updated in real time: English',
+    prize_updated: '🌿 Prize updated successfully and visible to users 🌿',
     mission_created: '🎯 Mission created successfully!',
-    email_sent: '📩 Email sent successfully!'
+    email_sent: '📩 Email sent successfully!',
+    success: 'Success',
+    error: 'Error',
+    
+    // Public Profile
+    public_profile: 'Public Profile',
+    profile_not_found: 'Profile Not Found',
+    loading_profile: 'Loading Club profile...',
+    current_rank: 'Current Rank',
+    missions_completed: 'Missions Completed',
+    prizes_and_awards: 'Prizes and Awards',
+    current_month_prize: 'Current Month Prize',
+    past_prizes: 'Past Prizes',
+    no_prizes_message: 'No prizes yet — keep playing!',
+    
+    // Wallet
+    wallet_coming_soon: 'Add to Wallet — Coming Soon'
   }
 };
 
