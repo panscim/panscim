@@ -624,7 +624,7 @@ async def get_prizes(month_year: Optional[str] = None):
 @api_router.get("/notifications")
 async def get_notifications(
     limit: int = 20,
-    credentials: HTTPAuthorizationCredentials = security
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     current_user = await get_current_user(credentials)
     
