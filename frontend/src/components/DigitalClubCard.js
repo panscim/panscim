@@ -173,7 +173,7 @@ const DigitalClubCard = () => {
                   </div>
                 )}
                 <p className="text-xs text-gray-600 mt-2 text-center leading-tight">
-                  Scansiona per visualizzare<br />il tuo profilo 🌿
+                  {t('scan_qr').replace('🌿', '<br />il tuo profilo 🌿')}
                 </p>
               </div>
             </div>
