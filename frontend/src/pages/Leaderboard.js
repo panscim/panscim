@@ -319,7 +319,7 @@ const Leaderboard = () => {
               <div className="bg-blue-50 border border-blue-200 rounded-[20px] p-6">
                 <h3 className="text-lg font-semibold text-blue-800 mb-3 flex items-center">
                   <Star className="mr-2" size={20} />
-                  {t('your_position')}
+                  La Tua Posizione
                 </h3>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
