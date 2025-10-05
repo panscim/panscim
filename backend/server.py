@@ -235,32 +235,7 @@ class MissionRequest(BaseModel):
     requires_link: bool = False
     requires_approval: bool = True
 
-class MissionUpdateRequest(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
-    points: Optional[int] = None
-    frequency: Optional[str] = None
-    daily_limit: Optional[int] = None
-    weekly_limit: Optional[int] = None
-    is_active: Optional[bool] = None
-    requires_description: Optional[bool] = None
-    requires_photo: Optional[bool] = None
-    photo_source: Optional[str] = None
-    requires_link: Optional[bool] = None
-    requires_approval: Optional[bool] = None
-
-class PrizeUpdateRequest(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
-    image_url: Optional[str] = None
-
-class Translation(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    key: str  # Translation key (e.g., "mission_completed")
-    italian: str
-    english: str
-    category: str = "general"  # general, admin, missions, etc.
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+# Models moved to top of file
 
 class EmailLog(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -2003,32 +1978,7 @@ async def get_admin_missions(credentials: HTTPAuthorizationCredentials = Depends
     
     return clean_missions
 
-class MissionUpdateRequest(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
-    points: Optional[int] = None
-    frequency: Optional[str] = None
-    daily_limit: Optional[int] = None
-    weekly_limit: Optional[int] = None
-    is_active: Optional[bool] = None
-    requires_description: Optional[bool] = None
-    requires_photo: Optional[bool] = None
-    photo_source: Optional[str] = None
-    requires_link: Optional[bool] = None
-    requires_approval: Optional[bool] = None
-
-class PrizeUpdateRequest(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
-    image_url: Optional[str] = None
-
-class Translation(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    key: str  # Translation key (e.g., "mission_completed")
-    italian: str
-    english: str
-    category: str = "general"  # general, admin, missions, etc.
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+# Models moved to top of file
 
 @api_router.put("/admin/missions/{mission_id}")
 async def update_mission(
