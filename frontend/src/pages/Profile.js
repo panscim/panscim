@@ -478,6 +478,15 @@ Vivi la Puglia autentica con noi!`;
             </p>
           </div>
         </div>
+        
+        {/* Image Cropper Modal */}
+        {showCropper && selectedImageFile && (
+          <ImageCropper
+            imageFile={selectedImageFile}
+            onCropComplete={handleCropComplete}
+            onCancel={handleCropCancel}
+          />
+        )}
       </div>
     </div>
   );
