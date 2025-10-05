@@ -247,7 +247,7 @@ const DigitalClubCard = () => {
                 ? new Date(cardData.join_date).getFullYear()
                 : 'N/A'}
             </div>
-            <div className="text-xs text-gray-600">Membro dal</div>
+            <div className="text-xs text-gray-600">{t('member_since')}</div>
           </div>
         </div>
       </div>
