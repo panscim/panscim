@@ -64,8 +64,14 @@ const translations = {
     total_points: 'Punti totali',
     current_points: 'Punti questo mese',
     current_position: 'Posizione attuale',
+    current_rank: 'Posizione attuale',
     notifications: 'Notifiche',
     action_history: 'Cronologia Azioni',
+    history: 'Cronologia',
+    activity: 'Attività',
+    card: 'Card',
+    achievements: 'Traguardi',
+    next_level: 'Prossimo livello',
     
     // Club Card
     club_card_ready: 'La tua nuova Card Desideri di Puglia è pronta — elegante e interattiva come te 🌿',
