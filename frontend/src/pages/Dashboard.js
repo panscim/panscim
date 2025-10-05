@@ -12,7 +12,10 @@ import {
   Camera,
   CheckCircle,
   Clock,
-  XCircle
+  XCircle,
+  Upload,
+  Link,
+  FileText
 } from 'lucide-react';
 
 const Dashboard = () => {
