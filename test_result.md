@@ -310,6 +310,9 @@ backend:
       - working: false
         agent: "main"
         comment: "Need to generate personal club cards with QR code, unique DP-XXXX code, join date, level. QR links to https://desideridipuglia.com/club/user/[user_id]. User model enhancement required."
+      - working: true
+        agent: "main"
+        comment: "IMPLEMENTED: Digital Club Card system complete. User model enhanced with club_card_code, club_card_qr_url, join_date fields. API endpoints: GET /club-card, GET /club-card/qr/{user_id}. Auto-initialization on user creation."
 
   - task: "Multilingual Backend Support"
     implemented: false
