@@ -287,8 +287,8 @@ async def upload_avatar(
 # === USER ENDPOINTS ===
 
 @api_router.get("/user/profile")
-async def get_user_profile(credentials: HTTPAuthorizationCredentials = security):
-    current_user = await get_current_user(credentials)
+async def get_user_profile(current_user: User = Depends(get_current_user)):
+    pass
     
     # Get user's position in current leaderboard
     leaderboard = await db.leaderboards.find(
