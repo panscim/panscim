@@ -161,6 +161,11 @@ class Prize(BaseModel):
     delivered: bool = False
     delivered_at: Optional[datetime] = None
 
+class EmailRequest(BaseModel):
+    recipients: List[str]
+    subject: str
+    body: str
+
 class EmailLog(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     sender: str = "desideridipuglia@gmail.com"
