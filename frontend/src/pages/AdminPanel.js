@@ -741,10 +741,139 @@ const AdminPanel = () => {
               Gestione Utenti
             </h3>
             
-            <div className="text-center py-12">
-              <Users className="mx-auto text-gray-400 mb-4" size={64} />
-              <h4 className="text-lg font-semibold text-gray-600 mb-2">Gestione Utenti</h4>
-              <p className="text-gray-500">Funzionalità di gestione utenti in fase di sviluppo</p>
+            {/* Search and Filter */}
+            <div className="mb-6">
+              <div className="flex flex-col sm:flex-row gap-4 items-center">
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    placeholder="Cerca utente per nome, email o username..."
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-matte-gold focus:border-transparent"
+                    value={userSearchFilter}
+                    onChange={(e) => setUserSearchFilter(e.target.value)}
+                  />
+                </div>
+                <select
+                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-matte-gold focus:border-transparent"
+                  value={userLevelFilter}
+                  onChange={(e) => setUserLevelFilter(e.target.value)}
+                >
+                  <option value="">Tutti i livelli</option>
+                  <option value="Novizio">Novizio</option>
+                  <option value="Explorer">Explorer</option>
+                  <option value="Adventurer">Adventurer</option>
+                  <option value="Master">Master</option>
+                  <option value="Legend">Legend</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Users Table */}
+            <div className="bg-gray-50 rounded-lg overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="min-w-full">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utente</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Livello</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Punti</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registrato</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Azioni</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {getFilteredUsers().map((user, index) => (
+                      <tr key={user.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <div className="w-10 h-10 rounded-full bg-matte-gold flex items-center justify-center text-white font-semibold">
+                              {user.name?.charAt(0) || '?'}
+                            </div>
+                            <div className="ml-4">
+                              <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                              <div className="text-sm text-gray-500">{user.email}</div>
+                              <div className="text-xs text-gray-400">@{user.username}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                            getUserLevelInfo(user.total_points).color.includes('matte-gold') ? 'bg-yellow-100 text-yellow-800' :
+                            getUserLevelInfo(user.total_points).color.includes('deep-sea-blue') ? 'bg-blue-100 text-blue-800' :
+                            getUserLevelInfo(user.total_points).color.includes('terracotta') ? 'bg-red-100 text-red-800' :
+                            'bg-purple-100 text-purple-800'
+                          }`}>
+                            {getUserLevelInfo(user.total_points).icon} {getUserLevelInfo(user.total_points).level}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">
+                            <div className="font-semibold">{user.total_points} totali</div>
+                            <div className="text-gray-500">{user.current_points} questo mese</div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {user.join_date ? new Date(user.join_date).toLocaleDateString('it-IT') : 'N/A'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => handleViewUserDetails(user)}
+                              className="text-indigo-600 hover:text-indigo-900 flex items-center"
+                              title="Visualizza dettagli"
+                            >
+                              <Eye size={16} />
+                            </button>
+                            <button
+                              onClick={() => handleResetUserPoints(user)}
+                              className="text-yellow-600 hover:text-yellow-900 flex items-center"
+                              title="Reset punti mensili"
+                            >
+                              <RotateCcw size={16} />
+                            </button>
+                            {user.role !== 'admin' && (
+                              <button
+                                onClick={() => handleToggleUserStatus(user)}
+                                className={`${user.active ? 'text-red-600 hover:text-red-900' : 'text-green-600 hover:text-green-900'} flex items-center`}
+                                title={user.active ? 'Disattiva utente' : 'Attiva utente'}
+                              >
+                                {user.active ? <XCircle size={16} /> : <CheckCircle size={16} />}
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {getFilteredUsers().length === 0 && (
+                <div className="text-center py-8">
+                  <Users className="mx-auto text-gray-400 mb-3" size={48} />
+                  <p className="text-gray-500">Nessun utente trovato</p>
+                </div>
+              )}
+            </div>
+
+            {/* Users Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+              <div className="bg-blue-50 rounded-lg p-4 text-center">
+                <div className="text-2xl font-bold text-blue-600">{data.users?.length || 0}</div>
+                <div className="text-sm text-blue-700">Utenti totali</div>
+              </div>
+              <div className="bg-green-50 rounded-lg p-4 text-center">
+                <div className="text-2xl font-bold text-green-600">
+                  {data.users?.filter(u => u.current_points > 0).length || 0}
+                </div>
+                <div className="text-sm text-green-700">Utenti attivi questo mese</div>
+              </div>
+              <div className="bg-purple-50 rounded-lg p-4 text-center">
+                <div className="text-2xl font-bold text-purple-600">
+                  {data.users?.filter(u => new Date(u.join_date) > new Date(Date.now() - 30*24*60*60*1000)).length || 0}
+                </div>
+                <div className="text-sm text-purple-700">Nuovi utenti (30 giorni)</div>
+              </div>
             </div>
           </div>
         )}
