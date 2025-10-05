@@ -1448,21 +1448,122 @@ async def get_club_card(
 
 @api_router.get("/club-card/qr/{user_id}")
 async def get_user_profile_by_qr(user_id: str):
-    """Public endpoint for QR code access"""
+    """Public endpoint for QR code access - Legacy URL"""
+    return await get_public_user_profile(user_id)
+
+@api_router.get("/club/profile/{user_id}")
+async def get_public_user_profile(user_id: str):
+    """Enhanced public profile for QR code access with dynamic content"""
     user_doc = await db.users.find_one({"id": user_id})
     if not user_doc:
         raise HTTPException(status_code=404, detail="User not found")
     
     user = User(**user_doc)
+    current_month = get_current_month_year()
+    
+    # Get current leaderboard to determine user's rank
+    leaderboard = await db.users.find(
+        {"current_points": {"$gt": 0}},
+        {"id": 1, "name": 1, "current_points": 1}
+    ).sort("current_points", -1).to_list(None)
+    
+    user_rank = None
+    for idx, user_entry in enumerate(leaderboard):
+        if user_entry["id"] == user_id:
+            user_rank = idx + 1
+            break
+    
+    # Get user's mission completions count
+    mission_completions = await db.user_missions.count_documents({
+        "user_id": user_id,
+        "month_year": current_month
+    })
+    
+    # Check if user won any prizes this month or in the past
+    current_month_prizes = await db.winners_archive.find_one({"month_year": current_month})
+    past_prizes = await db.winners_archive.find({
+        "month_year": {"$ne": current_month},
+        "$or": [
+            {"first_place.user_id": user_id},
+            {"second_place.user_id": user_id}, 
+            {"third_place.user_id": user_id}
+        ]
+    }).to_list(None)
+    
+    # Determine status message
+    is_current_winner = False
+    current_prize = None
+    
+    if current_month_prizes:
+        for place, place_data in [("first_place", "1°"), ("second_place", "2°"), ("third_place", "3°")]:
+            if current_month_prizes.get(place, {}).get("user_id") == user_id:
+                is_current_winner = True
+                current_prize = {
+                    "place": place_data,
+                    "prize_name": current_month_prizes[place].get("prize_title", f"Premio {place_data} posto"),
+                    "win_date": current_month_prizes[place].get("awarded_at", "").split("T")[0] if current_month_prizes[place].get("awarded_at") else None
+                }
+                break
+    
+    # Format past prizes
+    past_prizes_list = []
+    for prize_month in past_prizes:
+        for place, place_data in [("first_place", "1°"), ("second_place", "2°"), ("third_place", "3°")]:
+            if prize_month.get(place, {}).get("user_id") == user_id:
+                past_prizes_list.append({
+                    "place": place_data,
+                    "prize_name": prize_month[place].get("prize_title", f"Premio {place_data} posto"),
+                    "month_name": prize_month["month_year"],
+                    "win_date": prize_month[place].get("awarded_at", "").split("T")[0] if prize_month[place].get("awarded_at") else None,
+                    "use_date": prize_month[place].get("used_at", "").split("T")[0] if prize_month[place].get("used_at") else None
+                })
+    
+    # Generate dynamic status message
+    if is_current_winner:
+        status_message = {
+            "type": "winner",
+            "message_it": f"🏆 Congratulazioni! Sei tra i Top 3 del mese di {current_month}.",
+            "message_en": f"🏆 Congratulations! You're in the Top 3 for {current_month}.",
+            "prize_info": current_prize
+        }
+    elif user_rank and user.current_points > 0:
+        status_message = {
+            "type": "active",
+            "message_it": f"🌿 Attualmente sei al posto #{user_rank} con {user.current_points} punti.",
+            "message_en": f"🌿 Currently you're at position #{user_rank} with {user.current_points} points."
+        }
+    else:
+        status_message = {
+            "type": "inactive",
+            "message_it": "🌿 Inizia a partecipare per entrare in classifica!",
+            "message_en": "🌿 Start participating to enter the leaderboard!"
+        }
     
     return {
-        "name": user.name,
-        "username": user.username,
-        "level": get_user_level(user.total_points),
-        "total_points": user.total_points,
-        "join_date": user.join_date.isoformat() if user.join_date else None,
-        "avatar_url": user.avatar_url,
-        "club_member": True
+        "user_info": {
+            "name": user.name,
+            "username": user.username,
+            "level": get_user_level(user.total_points),
+            "avatar_url": user.avatar_url,
+            "club_card_code": user.club_card_code,
+            "join_date": user.join_date.isoformat() if user.join_date else None
+        },
+        "stats": {
+            "total_points": user.total_points,
+            "current_points": user.current_points,
+            "current_rank": user_rank,
+            "mission_completions": mission_completions,
+            "month_year": current_month
+        },
+        "status": status_message,
+        "prizes": {
+            "current_month_winner": is_current_winner,
+            "current_prize": current_prize,
+            "past_prizes": past_prizes_list,
+            "has_won_before": len(past_prizes_list) > 0
+        },
+        "club_member": True,
+        "last_updated": datetime.utcnow().isoformat()
     }
 
 # === TRANSLATION ENDPOINTS ===
