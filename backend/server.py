@@ -326,7 +326,7 @@ async def update_user_profile(
     name: Optional[str] = None,
     username: Optional[str] = None,
     country: Optional[str] = None,
-    credentials: HTTPAuthorizationCredentials = security
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     current_user = await get_current_user(credentials)
     update_data = {}
