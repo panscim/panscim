@@ -570,7 +570,7 @@ const AdminPanel = () => {
                     Messaggio
                   </label>
                   <div className="mb-2 text-xs text-gray-500">
-                    Variabili disponibili: {'{'}{'{'}{'}'}user_name{'}'}{'}'}{'}'}, {'{'}{'{'}{'}'}user_points{'}'}{'}'}{'}'}, {'{'}{'{'}{'}'}user_level{'}'}{'}'}{'}'}, {'{'}{'{'}{'}'}points_to_top3{'}'}{'}'}{'}'}
+                    Variabili disponibili: {'{{user_name}}'}, {'{{user_points}}'}, {'{{user_level}}'}, {'{{points_to_top3}}'}
                   </div>
                   <textarea
                     value={emailForm.body}
