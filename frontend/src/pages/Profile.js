@@ -541,6 +541,18 @@ Vivi la Puglia autentica con noi!`;
             onCancel={handleCropCancel}
           />
         )}
+
+        {/* QR Scan Popup */}
+        <PublicProfilePopup
+          isOpen={showPopup}
+          onClose={() => {
+            setShowPopup(false);
+            setPopupUserId(null);
+            // Clean URL without popup parameter
+            window.history.replaceState({}, '', '/profile');
+          }}
+          userId={popupUserId}
+        />
       </div>
     </div>
   );
