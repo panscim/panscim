@@ -75,6 +75,8 @@ const AdminPanel = () => {
   const [prizes, setPrizes] = useState([]);
   const [editingPrize, setEditingPrize] = useState(null);
   const [prizeLoading, setPrizeLoading] = useState(false);
+  const [prizeHistory, setPrizeHistory] = useState([]);
+  const [showPrizeHistory, setShowPrizeHistory] = useState(false);
 
   useEffect(() => {
     fetchAdminData();
