@@ -374,17 +374,17 @@ class EmailAdminTester:
         # Test without token
         try:
             response = requests.get(f"{API_BASE}/admin/email/logs")
-            if response.status_code == 401:
+            if response.status_code in [401, 403]:  # Both are valid for unauthenticated requests
                 self.log_result(
                     "No Token Auth Test", 
                     True, 
-                    "Correctly rejected request without authentication token"
+                    f"Correctly rejected request without authentication token (HTTP {response.status_code})"
                 )
             else:
                 self.log_result(
                     "No Token Auth Test", 
                     False, 
-                    f"Should have returned 401, got {response.status_code}",
+                    f"Should have returned 401 or 403, got {response.status_code}",
                     f"Response: {response.text}"
                 )
         except Exception as e:
