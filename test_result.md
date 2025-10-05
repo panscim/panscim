@@ -193,6 +193,42 @@ frontend:
         agent: "main"
         comment: "SUBMISSION UI IMPLEMENTED: Replaced simple mission completion with submission modal. Dynamic form based on mission requirements (description, photo upload with camera/gallery choice, link fields). Validation and requirement indicators. Status display (completed/pending/available)."
 
+  - task: "Admin Prize Editor UI"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/pages/AdminPanel.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Need admin UI section for editing monthly prizes (1st, 2nd, 3rd place). Form fields: title, description, image upload, value. Save/restore default buttons with UX feedback messages."
+
+  - task: "Digital Club Card Component"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/pages/Profile.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Need Digital Club Card component in user profile. Design: horizontal card layout, brand colors (sand #F4EFEA, sea blue #2E4A5C, gold #CFAE6C), QR code, DP-XXXX code, join date, level. Download PNG feature."
+
+  - task: "Multilingual Frontend Toggle"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/components/Navbar.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Need IT/EN language toggle in navbar. Centralized translations system with translations.json file. All UI texts, buttons, messages translated. Smooth fade-in transition (300ms) on language change."
+
 backend:
   - task: "Mission Management API Enhancement"
     implemented: true
