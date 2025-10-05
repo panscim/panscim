@@ -1121,7 +1121,7 @@ async def get_email_logs(
 @api_router.post("/admin/email/test")
 async def test_email_config(
     test_email: str,
-    credentials: HTTPAuthorizationCredentials = security
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     """Test email configuration by sending a test email"""
     current_user = await get_current_user(credentials)
