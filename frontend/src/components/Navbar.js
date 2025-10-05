@@ -95,9 +95,35 @@ const Navbar = () => {
                   </div>
                 </div>
               </div>
+              
+              {/* Language Toggle */}
+              <div className="flex items-center bg-gray-100 rounded-lg p-1">
+                <button
+                  onClick={() => changeLanguage('it')}
+                  className={`px-2 py-1 text-xs font-medium rounded transition-all ${
+                    currentLanguage === 'it'
+                      ? 'bg-deep-sea-blue text-white shadow-sm'
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
+                >
+                  🇮🇹 IT
+                </button>
+                <button
+                  onClick={() => changeLanguage('en')}
+                  className={`px-2 py-1 text-xs font-medium rounded transition-all ${
+                    currentLanguage === 'en'
+                      ? 'bg-deep-sea-blue text-white shadow-sm'
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
+                >
+                  🇬🇧 EN
+                </button>
+              </div>
+              
               <button
                 onClick={handleLogout}
                 className="text-gray-500 hover:text-red-500 transition-colors"
+                title={t('logout')}
               >
                 <LogOut size={18} />
               </button>
