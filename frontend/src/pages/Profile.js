@@ -493,7 +493,9 @@ Vivi la Puglia autentica con noi!`;
                 <div className="w-12 h-12 bg-terracotta rounded-full flex items-center justify-center mx-auto mb-3">
                   <span className="text-white font-bold">#</span>
                 </div>
-                <div className="text-2xl font-bold text-deep-sea-blue mb-1">#{currentPosition || '-'}</div>
+                <div className="text-2xl font-bold text-deep-sea-blue mb-1">
+                  {currentPosition && currentPosition !== '-' ? `#${currentPosition}` : '-'}
+                </div>
                 <div className="text-sm text-gray-600">Posizione attuale</div>
               </div>
             </div>
