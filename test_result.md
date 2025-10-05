@@ -101,3 +101,61 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Implementing Email Admin functionality for Desideri di Puglia Club app. Need to complete the Email Admin feature with proper SMTP integration using Gmail SMTP (desideridipuglia@gmail.com). Current email API endpoints exist but lack actual email sending functionality."
+
+backend:
+  - task: "Fix SMTP Integration and Complete Email Admin"
+    implemented: false
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Email API endpoints exist but missing actual SMTP sending. Need to implement smtplib integration with Gmail SMTP settings."
+
+  - task: "Email Log Management"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py" 
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "Email logging functionality already implemented. EmailLog model and get_email_logs endpoint exist."
+
+frontend:
+  - task: "Email Admin UI"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/pages/AdminPanel.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Need to create frontend UI for email composition and management in AdminPanel"
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 0
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Fix SMTP Integration and Complete Email Admin"
+    - "Email Admin UI"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: "Starting Phase 1: Email Admin implementation. Backend has email API structure but lacks SMTP sending. Frontend UI needs to be created. Will implement Gmail SMTP integration first, then create admin UI."
