@@ -1670,6 +1670,115 @@ async def get_mission_statistics(
         "missions": statistics
     }
 
+@api_router.get("/admin/missions/submissions/pending")
+async def get_pending_mission_submissions(
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    """Get pending mission submissions for admin review"""
+    current_user = await get_current_user(credentials)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    submissions = await db.mission_submissions.find(
+        {"verification_status": "pending"}
+    ).sort("submitted_at", -1).to_list(100)
+    
+    clean_submissions = []
+    for submission in submissions:
+        # Get user info
+        user_doc = await db.users.find_one({"id": submission["user_id"]})
+        user_name = user_doc["name"] if user_doc else "Unknown User"
+        username = user_doc["username"] if user_doc else "unknown"
+        
+        clean_submission = {
+            "id": submission["id"],
+            "user_id": submission["user_id"],
+            "user_name": user_name,
+            "username": username,
+            "mission_id": submission["mission_id"],
+            "mission_title": submission["mission_title"],
+            "description": submission["description"],
+            "photo_url": submission.get("photo_url"),
+            "submission_url": submission.get("submission_url"),
+            "points_earned": submission["points_earned"],
+            "submitted_at": submission["submitted_at"].isoformat() if "submitted_at" in submission else None,
+            "verification_status": submission["verification_status"]
+        }
+        clean_submissions.append(clean_submission)
+    
+    return clean_submissions
+
+@api_router.put("/admin/missions/submissions/{submission_id}/verify")
+async def verify_mission_submission(
+    submission_id: str,
+    status: str,
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    """Approve or reject mission submission"""
+    current_user = await get_current_user(credentials)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    if status not in ["approved", "rejected"]:
+        raise HTTPException(status_code=400, detail="Status must be 'approved' or 'rejected'")
+    
+    # Get submission
+    submission = await db.mission_submissions.find_one({"id": submission_id})
+    if not submission:
+        raise HTTPException(status_code=404, detail="Submission not found")
+    
+    if submission["verification_status"] != "pending":
+        raise HTTPException(status_code=400, detail="Submission already processed")
+    
+    # Update submission status
+    await db.mission_submissions.update_one(
+        {"id": submission_id},
+        {"$set": {
+            "verification_status": status,
+            "verified_at": datetime.utcnow(),
+            "verified_by": current_user.id
+        }}
+    )
+    
+    if status == "approved":
+        # Create user mission record and award points
+        user_mission = UserMission(
+            user_id=submission["user_id"],
+            mission_id=submission["mission_id"],
+            mission_title=submission["mission_title"],
+            points_earned=submission["points_earned"],
+            month_year=submission["month_year"],
+            submission_id=submission_id
+        )
+        
+        await db.user_missions.insert_one(user_mission.dict())
+        
+        # Update user points
+        await db.users.update_one(
+            {"id": submission["user_id"]},
+            {"$inc": {"total_points": submission["points_earned"], "current_points": submission["points_earned"]}}
+        )
+        
+        # Create success notification
+        notification = Notification(
+            user_id=submission["user_id"],
+            title="🎉 Missione Approvata!",
+            message=f"Missione '{submission['mission_title']}' approvata! +{submission['points_earned']} punti",
+            type="success"
+        )
+    else:
+        # Create rejection notification
+        notification = Notification(
+            user_id=submission["user_id"],
+            title="❌ Missione Non Approvata",
+            message=f"La missione '{submission['mission_title']}' non è stata approvata. Riprova seguendo meglio le istruzioni.",
+            type="warning"
+        )
+    
+    await db.notifications.insert_one(notification.dict())
+    
+    return {"message": f"Mission submission {status} successfully"}
+
 # === WEEKLY QUIZ API ===
 
 @api_router.post("/admin/quiz")
