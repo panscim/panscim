@@ -79,6 +79,7 @@ const AdminPanel = () => {
     } else if (activeTab === 'missions') {
       fetchMissions();
       fetchMissionStats();
+      fetchPendingSubmissions();
     }
   }, [activeTab]);
 
