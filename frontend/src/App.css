@@ -1,34 +1,72 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
-}
+/* Desideri di Puglia Club - Main App Styles */
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
-}
-
-.App-header {
-    background-color: #0f0f10;
+.App {
+    background-color: #F4EFEA;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
 }
 
-.App-link {
-    color: #61dafb;
+/* Additional Puglia-themed utilities */
+.shadow-puglia {
+    box-shadow: 0 10px 25px rgba(46, 74, 92, 0.1), 0 4px 10px rgba(197, 126, 87, 0.05);
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
+.gradient-puglia {
+    background: linear-gradient(135deg, #2E4A5C 0%, #4A6B7C 50%, #CFAE6C 100%);
+}
+
+.text-gradient-gold {
+    background: linear-gradient(135deg, #CFAE6C 0%, #D4B76F 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #F4EFEA;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #CFAE6C;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #C57E57;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+    .puglia-card {
+        padding: 1rem;
+        margin-bottom: 1rem;
     }
-    to {
-        transform: rotate(360deg);
+    
+    .mediterranean-shadow {
+        box-shadow: 0 4px 15px rgba(46, 74, 92, 0.08);
     }
+}
+
+/* Focus states for accessibility */
+.btn-primary:focus,
+.btn-secondary:focus {
+    outline: 2px solid #CFAE6C;
+    outline-offset: 2px;
+}
+
+/* Loading states */
+.loading-shimmer {
+    background: linear-gradient(90deg, #F4EFEA 25%, #ffffff 50%, #F4EFEA 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
 }
