@@ -333,7 +333,7 @@ const Leaderboard = () => {
                     <div className="text-sm text-blue-600 mb-1">Per entrare in Top 3:</div>
                     <div className="font-bold text-blue-800">
                       {leaderboardData.leaderboard[2] ? 
-                        `+${Math.max(0, leaderboardData.leaderboard[2].points - user.current_points + 1)} punti` :
+                        `+${Math.max(0, leaderboardData.leaderboard[2].points - user.current_points + 1)} ${t('points')}` :
                         'Disponibile'
                       }
                     </div>
