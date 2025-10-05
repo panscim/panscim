@@ -371,66 +371,138 @@ class MissionVerificationTester:
                 f"Request failed: {str(e)}"
             )
     
-    def test_create_weekly_mission(self):
-        """Test creating a weekly mission with limits"""
-        print("\n📆 Testing Weekly Mission Creation...")
+    def test_admin_approval_workflow(self):
+        """Test admin approval workflow for mission submissions"""
+        print("\n✅ Testing Admin Approval Workflow...")
         
-        if not self.admin_token:
-            self.log_result("Create Weekly Mission", False, "No admin token available")
+        if not self.admin_token or not self.created_submission_ids:
+            self.log_result("Admin Approval Workflow", False, "No admin token or pending submissions available")
             return
         
         headers = {"Authorization": f"Bearer {self.admin_token}"}
-        mission_data = {
-            "title": "Recensione Partner Locale",
-            "description": "Lascia una recensione dettagliata su Google o TripAdvisor per uno dei nostri partner locali",
-            "points": 75,
-            "frequency": "weekly",
-            "daily_limit": 0,
-            "weekly_limit": 2,
-            "is_active": True
-        }
+        submission_id = self.created_submission_ids[0]  # Use first created submission
         
+        # First, get pending submissions to verify our submission is there
         try:
-            response = requests.post(
-                f"{API_BASE}/admin/missions",
-                json=mission_data,
-                headers=headers
-            )
+            response = requests.get(f"{API_BASE}/admin/missions/submissions/pending", headers=headers)
             
             if response.status_code == 200:
-                data = response.json()
-                mission_id = data.get("mission_id")
-                if mission_id:
-                    self.created_mission_ids.append(mission_id)
+                submissions = response.json()
+                submission = next((s for s in submissions if s["id"] == submission_id), None)
+                
+                if submission:
                     self.log_result(
-                        "Create Weekly Mission", 
+                        "Get Pending Submissions", 
                         True, 
-                        f"Weekly mission created successfully with limit 2/week: {data.get('message', 'Mission created')}"
+                        f"Found pending submission: {submission['mission_title']} by {submission['user_name']}"
                     )
+                    
+                    # Now approve the submission
+                    self.approve_mission_submission(submission_id, submission)
                 else:
                     self.log_result(
-                        "Create Weekly Mission", 
+                        "Get Pending Submissions", 
                         False, 
-                        "Mission created but no mission_id returned",
-                        f"Response: {data}"
+                        "Created submission not found in pending submissions list"
                     )
-            elif response.status_code == 403:
-                self.log_result(
-                    "Create Weekly Mission", 
-                    False, 
-                    "Access denied - user may not have admin privileges",
-                    f"Response: {response.text}"
-                )
             else:
                 self.log_result(
-                    "Create Weekly Mission", 
+                    "Get Pending Submissions", 
                     False, 
-                    f"Unexpected response status: {response.status_code}",
+                    f"Failed to get pending submissions: {response.status_code}",
                     f"Response: {response.text}"
                 )
         except Exception as e:
             self.log_result(
-                "Create Weekly Mission", 
+                "Get Pending Submissions", 
+                False, 
+                f"Request failed: {str(e)}"
+            )
+    
+    def approve_mission_submission(self, submission_id: str, submission_data: dict):
+        """Approve a mission submission and verify point awarding"""
+        print("\n🎉 Testing Mission Submission Approval...")
+        
+        headers = {"Authorization": f"Bearer {self.admin_token}"}
+        
+        # Get user's current points before approval
+        user_headers = {"Authorization": f"Bearer {self.regular_user_token}"}
+        
+        try:
+            # Get user profile before approval
+            profile_response = requests.get(f"{API_BASE}/user/profile", headers=user_headers)
+            points_before = 0
+            if profile_response.status_code == 200:
+                points_before = profile_response.json().get("current_points", 0)
+            
+            # Approve the submission
+            response = requests.put(
+                f"{API_BASE}/admin/missions/submissions/{submission_id}/verify?status=approved",
+                headers=headers
+            )
+            
+            if response.status_code == 200:
+                self.log_result(
+                    "Approve Submission", 
+                    True, 
+                    f"Mission submission approved successfully: {response.json().get('message', 'Approved')}"
+                )
+                
+                # Verify UserMission record was created and points awarded
+                time.sleep(1)  # Small delay for processing
+                self.verify_points_awarded(points_before, submission_data["points_earned"])
+                
+            else:
+                self.log_result(
+                    "Approve Submission", 
+                    False, 
+                    f"Failed to approve submission: {response.status_code}",
+                    f"Response: {response.text}"
+                )
+        except Exception as e:
+            self.log_result(
+                "Approve Submission", 
+                False, 
+                f"Request failed: {str(e)}"
+            )
+    
+    def verify_points_awarded(self, points_before: int, expected_points: int):
+        """Verify that points were correctly awarded after approval"""
+        print("\n💰 Verifying Points Awarded...")
+        
+        user_headers = {"Authorization": f"Bearer {self.regular_user_token}"}
+        
+        try:
+            response = requests.get(f"{API_BASE}/user/profile", headers=user_headers)
+            
+            if response.status_code == 200:
+                profile = response.json()
+                points_after = profile.get("current_points", 0)
+                points_awarded = points_after - points_before
+                
+                if points_awarded == expected_points:
+                    self.log_result(
+                        "Verify Points Awarded", 
+                        True, 
+                        f"Correct points awarded: {points_awarded} points (from {points_before} to {points_after})"
+                    )
+                else:
+                    self.log_result(
+                        "Verify Points Awarded", 
+                        False, 
+                        f"Incorrect points awarded: expected {expected_points}, got {points_awarded}",
+                        f"Points before: {points_before}, after: {points_after}"
+                    )
+            else:
+                self.log_result(
+                    "Verify Points Awarded", 
+                    False, 
+                    f"Failed to get user profile: {response.status_code}",
+                    f"Response: {response.text}"
+                )
+        except Exception as e:
+            self.log_result(
+                "Verify Points Awarded", 
                 False, 
                 f"Request failed: {str(e)}"
             )
