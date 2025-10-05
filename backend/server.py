@@ -1182,7 +1182,7 @@ async def create_mission(
     points: int,
     daily_limit: int = 0,
     weekly_limit: int = 0,
-    credentials: HTTPAuthorizationCredentials = security
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     current_user = await get_current_user(credentials)
     if not current_user.is_admin:
