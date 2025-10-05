@@ -275,7 +275,7 @@ const Prizes = () => {
             <div className="space-y-4">
               <h4 className="font-semibold text-deep-sea-blue flex items-center">
                 <Trophy className="mr-2 text-matte-gold" size={20} />
-                Selezione Vincitori
+                {t('winner_selection')}
               </h4>
               <ul className="space-y-2 text-sm text-gray-600">
                 <li className="flex items-start space-x-2">
