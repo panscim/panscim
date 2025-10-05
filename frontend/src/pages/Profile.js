@@ -60,13 +60,38 @@ const Profile = () => {
           headers: { Authorization: `Bearer ${token}` }
         });
         
+        console.log('Leaderboard response:', response.data);
+        console.log('Current user:', user);
+        
         if (response.data && user) {
-          const userIndex = response.data.findIndex(u => u.user_id === user.id);
-          setCurrentPosition(userIndex >= 0 ? userIndex + 1 : null);
+          // Handle both array format and object format
+          let leaderboard = response.data;
+          if (response.data.leaderboard) {
+            leaderboard = response.data.leaderboard;
+          }
+          
+          console.log('Leaderboard data:', leaderboard);
+          
+          // Try different user ID formats
+          let userIndex = leaderboard.findIndex(u => u.user_id === user.id);
+          if (userIndex === -1) {
+            userIndex = leaderboard.findIndex(u => u.user_id === user.user_id);
+          }
+          if (userIndex === -1) {
+            userIndex = leaderboard.findIndex(u => u.id === user.id);
+          }
+          if (userIndex === -1) {
+            userIndex = leaderboard.findIndex(u => u.email === user.email);
+          }
+          
+          console.log('User found at index:', userIndex);
+          setCurrentPosition(userIndex >= 0 ? userIndex + 1 : '-');
+        } else {
+          setCurrentPosition('-');
         }
       } catch (error) {
         console.error('Error fetching leaderboard position:', error);
-        setCurrentPosition(null);
+        setCurrentPosition('-');
       }
     };
 
