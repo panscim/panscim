@@ -436,7 +436,7 @@ backend:
     working: true
     file: "/app/backend/server.py"
     stuck_count: 0
-    priority: "high"
+    priority: "completed"
     needs_retesting: false
     status_history:
       - working: false
@@ -448,6 +448,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "COMPREHENSIVE TESTING COMPLETED ✅ Interactive QR Public Profile API fully functional! All 2 backend tests passed (100% success rate). PRIORITY VALIDATION CONFIRMED: 1) GET /api/club/profile/{user_identifier} (with valid user IDs returning user_info, stats, status, prizes, club_member, last_updated) ✅ 2) Error handling for invalid user_identifiers (proper 404 responses) ✅ Real-time stats working: User Marco Pugliese, Points: 629, Rank: 1. Enhanced User model fields (user_rank, user_points, winners_history, last_prize_use_date) properly implemented and accessible. Public profile system operational for QR code integration."
+      - working: true
+        agent: "testing"
+        comment: "QR CODE URL UPDATE VERIFICATION COMPLETED ✅ PRIORITY MAXIMUM validation successful! QR URL update mechanism working perfectly: 1) GET /api/club-card returns correct popup URL format 'https://puglia-club.preview.emergentagent.com/profile?popup={user_id}' ✅ 2) Old 'desideridipuglia.com' domain completely removed from QR URLs ✅ 3) Automatic QR URL update system functional - updates old URLs on first API call ✅ 4) Public profile popup API serving correct data (user: Marco Pugliese, points: 829, rank: 1) ✅ 5) Backend generate_club_card_qr_url() function generating correct popup format ✅ 6) Legacy QR endpoint working correctly ✅ All QR code corrections verified and fully operational."
 
   - task: "Wallet Integration System"
     implemented: false
