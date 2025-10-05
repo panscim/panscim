@@ -393,7 +393,7 @@ backend:
         comment: "IMPLEMENTED: Digital Club Card system complete. User model enhanced with club_card_code, club_card_qr_url, join_date fields. API endpoints: GET /club-card, GET /club-card/qr/{user_id}. Auto-initialization on user creation."
 
   - task: "Multilingual Backend Support"
-    implemented: false
+    implemented: true
     working: false
     file: "/app/backend/server.py"
     stuck_count: 0
@@ -406,6 +406,9 @@ backend:
       - working: true
         agent: "main"  
         comment: "IMPLEMENTED: Multilingual backend support complete. Translation model created. API endpoints: GET /translations, PUT /user/language, GET/POST /admin/translations. Default translations function with IT/EN support."
+      - working: false
+        agent: "main"
+        comment: "ENHANCED: Translation system updated with expanded translations.js integration. User model updated with preferred_language field. Ready for comprehensive backend testing of all translation endpoints."
 
   - task: "Enhanced Club Card Design"
     implemented: false
