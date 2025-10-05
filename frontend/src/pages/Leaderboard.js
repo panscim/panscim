@@ -326,7 +326,7 @@ const Leaderboard = () => {
                     <div className="text-2xl font-bold text-blue-600">#{userPosition}</div>
                     <div>
                       <div className="font-semibold text-blue-800">{user.name}</div>
-                      <div className="text-sm text-blue-600">{user.current_points} punti</div>
+                      <div className="text-sm text-blue-600">{user.current_points} {t('points')}</div>
                     </div>
                   </div>
                   <div className="text-right">
