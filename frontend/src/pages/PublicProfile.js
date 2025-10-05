@@ -120,30 +120,46 @@ const PublicProfile = () => {
             </div>
           </div>
 
-          {/* Status Message */}
+          {/* Dynamic Status Message */}
           <div className={`p-4 rounded-lg mb-6 ${
             status.type === 'winner' ? 'bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200' :
             status.type === 'active' ? 'bg-gradient-to-r from-green-50 to-blue-50 border border-green-200' :
             'bg-gradient-to-r from-gray-50 to-blue-50 border border-gray-200'
           }`}>
-            <p className={`text-lg font-medium ${
-              status.type === 'winner' ? 'text-orange-800' :
-              status.type === 'active' ? 'text-green-800' :
-              'text-gray-700'
-            }`}>
-              {status.message_it}
-            </p>
-            {status.prize_info && (
-              <div className="mt-2 p-3 bg-white rounded-lg border border-yellow-300">
-                <p className="text-sm font-medium text-yellow-800">
-                  🎁 Premio: {status.prize_info.prize_name}
+            
+            {/* Current Month Active */}
+            {status.type === 'active' && (
+              <p className="text-lg font-medium text-green-800">
+                🌿 Attualmente sei al posto <span className="font-bold">#{stats.current_rank}</span> con <span className="font-bold">{stats.current_points} punti</span> nella classifica di {stats.month_year}.
+              </p>
+            )}
+
+            {/* Current Month Winner */}
+            {status.type === 'winner' && prizes.current_prize && (
+              <div>
+                <p className="text-lg font-medium text-orange-800 mb-2">
+                  🏆 Congratulazioni! Sei tra i Top 3 del mese di {prizes.current_prize.month_name || stats.month_year}.
                 </p>
-                {status.prize_info.win_date && (
-                  <p className="text-xs text-yellow-700">
-                    Vinto il {status.prize_info.win_date}
+                <div className="mt-2 p-3 bg-white rounded-lg border border-yellow-300">
+                  <p className="text-sm font-medium text-yellow-800">
+                    🎁 Premio: {prizes.current_prize.prize_name} — vinto il {prizes.current_prize.win_date}
                   </p>
-                )}
+                </div>
               </div>
+            )}
+
+            {/* Month Concluded - Not Winner */}
+            {status.type === 'concluded' && !prizes.current_month_winner && (
+              <p className="text-lg font-medium text-gray-700">
+                📅 Il mese di {stats.month_year} è concluso. Hai ottenuto {stats.current_points} punti e posizione #{stats.current_rank}.
+              </p>
+            )}
+
+            {/* Default message */}
+            {!['active', 'winner', 'concluded'].includes(status.type) && (
+              <p className="text-lg font-medium text-gray-700">
+                {status.message_it || `🌿 Benvenuto nel profilo di ${user_info.name}!`}
+              </p>
             )}
           </div>
         </div>
