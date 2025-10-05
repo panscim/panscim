@@ -1,22 +1,24 @@
 #!/usr/bin/env python3
 """
-Backend Testing Suite for Desideri di Puglia Club - Mission Management System
-Tests the comprehensive Mission Management functionality including admin APIs and user mission completion.
+Backend Testing Suite for Desideri di Puglia Club - ENHANCED Mission Management with VERIFICATION
+Tests the verification workflow: mission creation with requirements, submission system, and admin approval.
 """
 
 import requests
 import json
 import os
 import sys
+import base64
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 import time
+from io import BytesIO
 
 # Get backend URL from environment
 BACKEND_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://puglia-loyalty.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
-class MissionManagementTester:
+class MissionVerificationTester:
     def __init__(self):
         self.admin_token = None
         self.regular_user_token = None
