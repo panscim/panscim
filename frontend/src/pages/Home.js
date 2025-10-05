@@ -37,9 +37,6 @@ const Home = () => {
               </div>
             </div>
             
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-brand-accent rounded-full mb-8 animate-float shadow-2xl">
-              <span className="text-5xl">🌿</span>
-            </div>
             <h1 className="text-6xl md:text-8xl font-cormorant font-bold text-white mb-8 drop-shadow-lg">
               Vivi la Puglia.
             </h1>
