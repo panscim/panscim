@@ -290,15 +290,15 @@ const DigitalClubCard = () => {
 
       {/* User Stats */}
       <div className="bg-white rounded-lg p-4 border border-gray-200">
-        <h3 className="font-semibold text-deep-sea-blue mb-3">📊 Le tue statistiche</h3>
+        <h3 className="font-semibold text-deep-sea-blue mb-3">📊 {t('club_statistics')}</h3>
         <div className="grid grid-cols-2 gap-4">
           <div className="text-center">
             <div className="text-2xl font-bold text-matte-gold">{cardData.total_points || 0}</div>
-            <div className="text-sm text-gray-600">Punti Totali</div>
+            <div className="text-sm text-gray-600">{t('total_points')}</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-deep-sea-blue">{cardData.level || 'Novizio'}</div>
-            <div className="text-sm text-gray-600">Livello Attuale</div>
+            <div className="text-sm text-gray-600">{t('level')} Attuale</div>
           </div>
         </div>
       </div>
