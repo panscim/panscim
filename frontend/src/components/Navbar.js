@@ -86,8 +86,8 @@ const Navbar = () => {
                   </div>
                 )}
                 <div className="text-sm">
-                  <div className="font-semibold text-deep-sea-blue">{user?.name}</div>
-                  <div className="text-xs text-matte-gold font-medium">
+                  <div className="font-semibold text-brand-dark">{user?.name}</div>
+                  <div className="text-xs text-brand-accent font-medium">
                     {user?.current_points} pts • {user?.level}
                   </div>
                 </div>
