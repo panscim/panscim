@@ -973,6 +973,334 @@ async def verify_action(
     
     return {"message": f"Action {status} successfully"}
 
+# === ADMIN PANEL APIs ===
+
+@api_router.post("/admin/email/send")
+async def send_admin_email(
+    recipients: List[str],
+    subject: str,
+    body: str,
+    credentials: HTTPAuthorizationCredentials = security
+):
+    current_user = await get_current_user(credentials)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    # Process template variables
+    processed_recipients = []
+    for recipient_id in recipients:
+        user_doc = await db.users.find_one({"id": recipient_id})
+        if user_doc:
+            # Replace variables in email body
+            user_body = body
+            user_body = user_body.replace("{{user_name}}", user_doc["name"])
+            user_body = user_body.replace("{{user_points}}", str(user_doc["current_points"]))
+            user_body = user_body.replace("{{user_level}}", user_doc["level"])
+            user_body = user_body.replace("{{month_theme}}", "Live Puglia Challenge")
+            
+            # Calculate points to top 3
+            leaderboard = await db.user_actions.aggregate([
+                {"$match": {"month_year": get_current_month_year(), "verification_status": "approved"}},
+                {"$group": {"_id": "$user_id", "total_points": {"$sum": "$points_earned"}}},
+                {"$sort": {"total_points": -1}},
+                {"$limit": 3}
+            ]).to_list(3)
+            
+            points_to_top3 = 0
+            if len(leaderboard) >= 3:
+                points_to_top3 = max(0, leaderboard[2]["total_points"] - user_doc["current_points"] + 1)
+            
+            user_body = user_body.replace("{{points_to_top3}}", str(points_to_top3))
+            
+            processed_recipients.append({
+                "email": user_doc["email"],
+                "body": user_body
+            })
+    
+    # Log email
+    email_log = EmailLog(
+        recipients=[r["email"] for r in processed_recipients],
+        subject=subject,
+        body=body,
+        admin_id=current_user.id,
+        status="sent"
+    )
+    await db.email_log.insert_one(email_log.dict())
+    
+    return {"message": f"📩 Email inviata con successo a {len(processed_recipients)} utenti 🌿"}
+
+@api_router.get("/admin/email/logs")
+async def get_email_logs(
+    limit: int = 50,
+    credentials: HTTPAuthorizationCredentials = security
+):
+    current_user = await get_current_user(credentials)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    logs = await db.email_log.find().sort("sent_at", -1).limit(limit).to_list(limit)
+    
+    clean_logs = []
+    for log in logs:
+        clean_log = {
+            "id": log["id"],
+            "recipients": log["recipients"],
+            "subject": log["subject"],
+            "sent_at": log["sent_at"].isoformat() if "sent_at" in log else None,
+            "status": log["status"],
+            "recipient_count": len(log["recipients"])
+        }
+        clean_logs.append(clean_log)
+    
+    return clean_logs
+
+# === MISSIONS API ===
+
+@api_router.post("/admin/missions")
+async def create_mission(
+    title: str,
+    description: str,
+    points: int,
+    daily_limit: int = 0,
+    weekly_limit: int = 0,
+    credentials: HTTPAuthorizationCredentials = security
+):
+    current_user = await get_current_user(credentials)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    mission = Mission(
+        title=title,
+        description=description,
+        points=points,
+        month_year=get_current_month_year(),
+        requirements=[f"Limite giornaliero: {daily_limit}" if daily_limit > 0 else "Nessun limite giornaliero"]
+    )
+    
+    await db.missions.insert_one(mission.dict())
+    return {"message": "Missione creata con successo!", "mission_id": mission.id}
+
+@api_router.get("/admin/missions")
+async def get_admin_missions(credentials: HTTPAuthorizationCredentials = security):
+    current_user = await get_current_user(credentials)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    missions = await db.missions.find().sort("created_at", -1).to_list(100)
+    
+    clean_missions = []
+    for mission in missions:
+        clean_mission = {
+            "id": mission["id"],
+            "title": mission["title"],
+            "description": mission["description"],
+            "points": mission["points"],
+            "month_year": mission["month_year"],
+            "is_active": mission["is_active"],
+            "created_at": mission["created_at"].isoformat() if "created_at" in mission else None
+        }
+        clean_missions.append(clean_mission)
+    
+    return clean_missions
+
+@api_router.put("/admin/missions/{mission_id}")
+async def update_mission(
+    mission_id: str,
+    title: Optional[str] = None,
+    description: Optional[str] = None,
+    points: Optional[int] = None,
+    is_active: Optional[bool] = None,
+    credentials: HTTPAuthorizationCredentials = security
+):
+    current_user = await get_current_user(credentials)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    update_data = {}
+    if title: update_data["title"] = title
+    if description: update_data["description"] = description
+    if points: update_data["points"] = points
+    if is_active is not None: update_data["is_active"] = is_active
+    
+    await db.missions.update_one({"id": mission_id}, {"$set": update_data})
+    return {"message": "Missione aggiornata con successo!"}
+
+# === WEEKLY QUIZ API ===
+
+@api_router.post("/admin/quiz")
+async def create_weekly_quiz(
+    title: str,
+    description: str,
+    questions: List[Dict],
+    credentials: HTTPAuthorizationCredentials = security
+):
+    current_user = await get_current_user(credentials)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    # Set end date to 7 days from now
+    end_date = datetime.utcnow() + timedelta(days=7)
+    
+    quiz = WeeklyQuiz(
+        title=title,
+        description=description,
+        questions=questions,
+        quiz_end_date=end_date,
+        created_by=current_user.id
+    )
+    
+    await db.weekly_quiz.insert_one(quiz.dict())
+    return {"message": "Quiz settimanale creato con successo!", "quiz_id": quiz.id}
+
+@api_router.get("/admin/quiz")
+async def get_admin_quizzes(credentials: HTTPAuthorizationCredentials = security):
+    current_user = await get_current_user(credentials)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    quizzes = await db.weekly_quiz.find().sort("quiz_start_date", -1).to_list(50)
+    
+    clean_quizzes = []
+    for quiz in quizzes:
+        # Count completions
+        completions = await db.quiz_completions.count_documents({"quiz_id": quiz["id"]})
+        
+        clean_quiz = {
+            "id": quiz["id"],
+            "title": quiz["title"],
+            "description": quiz["description"],
+            "quiz_start_date": quiz["quiz_start_date"].isoformat() if "quiz_start_date" in quiz else None,
+            "quiz_end_date": quiz["quiz_end_date"].isoformat() if quiz.get("quiz_end_date") else None,
+            "is_active": quiz["is_active"],
+            "completions_count": completions
+        }
+        clean_quizzes.append(clean_quiz)
+    
+    return clean_quizzes
+
+@api_router.put("/admin/quiz/{quiz_id}/close")
+async def close_quiz(
+    quiz_id: str,
+    credentials: HTTPAuthorizationCredentials = security
+):
+    current_user = await get_current_user(credentials)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    await db.weekly_quiz.update_one(
+        {"id": quiz_id},
+        {"$set": {"is_active": False, "quiz_end_date": datetime.utcnow()}}
+    )
+    
+    return {"message": "Quiz chiuso con successo!"}
+
+# === USER QUIZ API ===
+
+@api_router.get("/quiz/active")
+async def get_active_quiz(credentials: HTTPAuthorizationCredentials = security):
+    current_user = await get_current_user(credentials)
+    
+    # Get active quiz
+    quiz = await db.weekly_quiz.find_one({
+        "is_active": True,
+        "quiz_end_date": {"$gt": datetime.utcnow()}
+    })
+    
+    if not quiz:
+        return {"quiz": None, "message": "Nessun quiz attivo al momento"}
+    
+    # Check if user already completed it
+    completion = await db.quiz_completions.find_one({
+        "user_id": current_user.id,
+        "quiz_id": quiz["id"]
+    })
+    
+    if completion:
+        return {"quiz": None, "message": "Hai già completato il quiz di questa settimana!"}
+    
+    # Return quiz without correct answers
+    clean_quiz = {
+        "id": quiz["id"],
+        "title": quiz["title"],
+        "description": quiz["description"],
+        "questions": [{
+            "question": q["question"],
+            "options": q["options"]
+        } for q in quiz["questions"]],
+        "quiz_end_date": quiz["quiz_end_date"].isoformat() if quiz.get("quiz_end_date") else None
+    }
+    
+    return {"quiz": clean_quiz}
+
+@api_router.post("/quiz/{quiz_id}/submit")
+async def submit_quiz(
+    quiz_id: str,
+    answers: List[int],
+    credentials: HTTPAuthorizationCredentials = security
+):
+    current_user = await get_current_user(credentials)
+    
+    quiz = await db.weekly_quiz.find_one({"id": quiz_id})
+    if not quiz or not quiz["is_active"]:
+        raise HTTPException(status_code=404, detail="Quiz non trovato o non attivo")
+    
+    # Check if already completed
+    existing = await db.quiz_completions.find_one({
+        "user_id": current_user.id,
+        "quiz_id": quiz_id
+    })
+    if existing:
+        raise HTTPException(status_code=400, detail="Quiz già completato")
+    
+    # Calculate score
+    score = 0
+    for i, answer in enumerate(answers):
+        if i < len(quiz["questions"]) and answer == quiz["questions"][i]["correct"]:
+            score += 1
+    
+    points_earned = 30 if score == len(quiz["questions"]) else 0
+    
+    # Save completion
+    completion = QuizCompletion(
+        user_id=current_user.id,
+        quiz_id=quiz_id,
+        answers=answers,
+        score=score,
+        points_earned=points_earned
+    )
+    await db.quiz_completions.insert_one(completion.dict())
+    
+    # Award points if perfect score
+    if points_earned > 0:
+        await db.users.update_one(
+            {"id": current_user.id},
+            {
+                "$inc": {
+                    "current_points": points_earned,
+                    "total_points": points_earned
+                }
+            }
+        )
+        
+        # Check for badges
+        await check_and_award_badges(current_user.id, "quiz_complete")
+        
+        # Send notification
+        notification = Notification(
+            user_id=current_user.id,
+            title="🎯 Quiz Completato!",
+            message=f"Ottimo lavoro! Hai completato il quiz settimanale e guadagnato {points_earned} punti 🌿",
+            type="success"
+        )
+        await db.notifications.insert_one(notification.dict())
+    
+    return {
+        "score": score,
+        "total_questions": len(quiz["questions"]),
+        "points_earned": points_earned,
+        "message": "🎯 Ottimo lavoro! Hai completato il quiz settimanale e guadagnato 30 punti 🌿" if points_earned > 0 else "Quiz completato! Riprova la prossima settimana per guadagnare punti."
+    }
+
 # === SYSTEM ENDPOINTS ===
 
 @api_router.get("/")
