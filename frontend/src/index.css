@@ -1,19 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
         "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
         "Helvetica Neue", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: #F4EFEA;
 }
 
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
         monospace;
+}
+
+/* Puglia Theme Custom Styles */
+.font-poppins {
+    font-family: 'Poppins', sans-serif;
+}
+
+.font-cormorant {
+    font-family: 'Cormorant Garamond', serif;
+}
+
+.bg-sand-white {
+    background-color: #F4EFEA;
+}
+
+.bg-deep-sea-blue {
+    background-color: #2E4A5C;
+}
+
+.bg-matte-gold {
+    background-color: #CFAE6C;
+}
+
+.bg-terracotta {
+    background-color: #C57E57;
+}
+
+.text-sand-white {
+    color: #F4EFEA;
+}
+
+.text-deep-sea-blue {
+    color: #2E4A5C;
+}
+
+.text-matte-gold {
+    color: #CFAE6C;
+}
+
+.text-terracotta {
+    color: #C57E57;
+}
+
+.border-matte-gold {
+    border-color: #CFAE6C;
+}
+
+.border-terracotta {
+    border-color: #C57E57;
+}
+
+.avatar-ring {
+    border: 3px solid #CFAE6C;
+    border-radius: 50%;
+}
+
+.points-glow {
+    box-shadow: 0 0 20px rgba(207, 174, 108, 0.3);
+}
+
+.stone-texture {
+    background-image: 
+        radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+}
+
+.sea-wave-bg {
+    background: linear-gradient(135deg, #2E4A5C 0%, #4A6B7C 100%);
+}
+
+.gold-gradient {
+    background: linear-gradient(135deg, #CFAE6C 0%, #D4B76F 50%, #CFAE6C 100%);
+}
+
+.mediterranean-shadow {
+    box-shadow: 0 10px 25px rgba(46, 74, 92, 0.1), 0 4px 10px rgba(197, 126, 87, 0.1);
+}
+
+.puglia-card {
+    @apply bg-white rounded-[20px] mediterranean-shadow p-6 border border-gray-100;
+}
+
+.level-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-matte-gold text-white;
+}
+
+.btn-primary {
+    @apply bg-deep-sea-blue hover:bg-opacity-90 text-white font-semibold py-3 px-6 rounded-[20px] transition-all duration-200 mediterranean-shadow hover:shadow-lg;
+}
+
+.btn-secondary {
+    @apply bg-matte-gold hover:bg-opacity-90 text-white font-semibold py-3 px-6 rounded-[20px] transition-all duration-200 mediterranean-shadow hover:shadow-lg;
+}
+
+/* Animations */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes goldGlow {
+    0%, 100% { box-shadow: 0 0 20px rgba(207, 174, 108, 0.3); }
+    50% { box-shadow: 0 0 30px rgba(207, 174, 108, 0.6); }
+}
+
+@keyframes coinDrop {
+    0% { transform: translateY(-20px) scale(0); opacity: 0; }
+    50% { transform: translateY(10px) scale(1.1); opacity: 1; }
+    100% { transform: translateY(0px) scale(1); opacity: 1; }
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.animate-gold-glow {
+    animation: goldGlow 2s ease-in-out infinite;
+}
+
+.animate-coin-drop {
+    animation: coinDrop 0.6s ease-out;
 }
 
 
