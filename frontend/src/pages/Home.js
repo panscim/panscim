@@ -131,24 +131,23 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-deep-sea-blue relative overflow-hidden">
+      <section className="py-16 bg-brand-dark relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <div className="stone-texture w-full h-full"></div>
+          <div className="brand-texture w-full h-full"></div>
         </div>
         <div className="relative z-10 max-w-4xl mx-auto text-center px-4">
           <h2 className="text-3xl md:text-4xl font-cormorant font-bold text-white mb-6">
             La Puglia ti aspetta
           </h2>
-          <p className="text-lg text-sand-white/90 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-white mb-8 max-w-2xl mx-auto">
             Unisciti alla community che vive e racconta la Puglia autentica. Ogni storia condivisa è un passo verso il tuo prossimo premio.
           </p>
-          <div className="flex items-center justify-center space-x-2 text-sand-white mb-8">
-            <MapPin className="text-matte-gold" size={20} />
+          <div className="flex items-center justify-center space-x-2 text-white mb-8">
             <span>Barletta, Via Borgovecchio 65 - Puglia, Italia</span>
           </div>
           <Link 
             to="/register" 
-            className="inline-flex items-center px-8 py-4 bg-matte-gold hover:bg-opacity-90 text-white font-semibold rounded-[20px] transition-all duration-200 mediterranean-shadow hover:shadow-lg group"
+            className="inline-flex items-center px-8 py-4 bg-brand-accent hover:bg-opacity-90 text-white font-semibold rounded-[20px] transition-all duration-200 brand-shadow hover:shadow-lg group"
           >
             <span>Inizia la tua avventura</span>
             <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
