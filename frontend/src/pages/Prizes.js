@@ -203,22 +203,40 @@ const Prizes = () => {
                               Il premio è tuo! Riceverai le istruzioni via email.
                             </div>
                           </div>
+                        ) : isMonthConcluded ? (
+                          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
+                            <div className="text-gray-600 text-sm mb-1">
+                              Premio assegnato
+                            </div>
+                            <div className="text-gray-500 text-xs">
+                              Mese concluso - vinto da altro utente
+                            </div>
+                          </div>
+                        ) : isInTop3 && userPosition === prize.position ? (
+                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
+                            <div className="text-blue-800 font-semibold text-sm mb-1">
+                              🏆 Sei in posizione di vincita!
+                            </div>
+                            <div className="text-blue-600 text-xs">
+                              Mantieni la posizione fino alla fine del mese.
+                            </div>
+                          </div>
                         ) : isInTop3 ? (
                           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-center">
                             <div className="text-yellow-800 font-semibold text-sm mb-1">
-                              Vicino al premio!
+                              🥇 Sei in Top 3!
                             </div>
                             <div className="text-yellow-600 text-xs">
-                              Mantieni la posizione per vincere.
+                              Continua così per vincere un premio questo mese.
                             </div>
                           </div>
                         ) : (
                           <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
                             <div className="text-gray-600 text-sm mb-1">
-                              Riservato ai Top 3
+                              Partecipa alla competizione
                             </div>
                             <div className="text-gray-500 text-xs">
-                              {pointsToTop3 > 0 ? `${pointsToTop3} punti per qualificarti` : 'Completa le missioni per qualificarti'}
+                              {pointsToTop3 > 0 ? `${pointsToTop3} punti per entrare in Top 3` : 'Completa le missioni per qualificarti'}
                             </div>
                           </div>
                         )}
