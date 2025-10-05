@@ -1493,6 +1493,11 @@ async def update_mission(
     if update_request.daily_limit is not None: update_data["daily_limit"] = update_request.daily_limit
     if update_request.weekly_limit is not None: update_data["weekly_limit"] = update_request.weekly_limit
     if update_request.is_active is not None: update_data["is_active"] = update_request.is_active
+    if update_request.requires_description is not None: update_data["requires_description"] = update_request.requires_description
+    if update_request.requires_photo is not None: update_data["requires_photo"] = update_request.requires_photo
+    if update_request.photo_source: update_data["photo_source"] = update_request.photo_source
+    if update_request.requires_link is not None: update_data["requires_link"] = update_request.requires_link
+    if update_request.requires_approval is not None: update_data["requires_approval"] = update_request.requires_approval
     
     # Update requirements based on frequency changes
     if update_request.frequency or update_request.daily_limit is not None or update_request.weekly_limit is not None:
