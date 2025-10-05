@@ -252,7 +252,7 @@ const PublicProfile = () => {
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Gift className="text-gray-400" size={32} />
               </div>
-              <h4 className="text-lg font-medium text-gray-700 mb-2">🌿 Nessun premio ancora — continua a giocare!</h4>
+              <h4 className="text-lg font-medium text-gray-700 mb-2">🌿 {t('no_prizes_message')}</h4>
               <p className="text-gray-600">Partecipa alle missioni mensili per vincere fantastici premi!</p>
             </div>
           )}
