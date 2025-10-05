@@ -293,8 +293,10 @@ const DigitalClubCard = () => {
         
         <button
           onClick={() => {
-            if (cardData.club_card_qr_url) {
-              window.open(cardData.club_card_qr_url, '_blank');
+            if (currentUserId) {
+              setShowProfilePopup(true);
+            } else {
+              alert('Impossibile aprire il profilo');
             }
           }}
           className="px-6 py-3 border border-deep-sea-blue text-deep-sea-blue rounded-lg font-medium hover:bg-deep-sea-blue hover:text-white flex items-center space-x-2 transition-all"
