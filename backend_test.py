@@ -373,54 +373,441 @@ class MissionManagementTester:
                 f"Request failed: {str(e)}"
             )
     
-    def test_authentication_enforcement(self):
-        """Test that email endpoints require admin authentication"""
-        print("\n🔒 Testing Authentication & Authorization...")
+    def test_update_mission(self):
+        """Test updating mission properties"""
+        print("\n✏️ Testing Mission Update...")
         
-        # Test without token
+        if not self.admin_token or not self.created_mission_ids:
+            self.log_result("Update Mission", False, "No admin token or created missions available")
+            return
+        
+        headers = {"Authorization": f"Bearer {self.admin_token}"}
+        mission_id = self.created_mission_ids[0]  # Use first created mission
+        
+        update_data = {
+            "title": "Visita il Centro Storico di Lecce - AGGIORNATO",
+            "points": 60,  # Increased points
+            "is_active": False  # Deactivate mission
+        }
+        
         try:
-            response = requests.get(f"{API_BASE}/admin/email/logs")
-            if response.status_code in [401, 403]:  # Both are valid for unauthenticated requests
+            response = requests.put(
+                f"{API_BASE}/admin/missions/{mission_id}",
+                json=update_data,
+                headers=headers
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
                 self.log_result(
-                    "No Token Auth Test", 
+                    "Update Mission", 
                     True, 
-                    f"Correctly rejected request without authentication token (HTTP {response.status_code})"
+                    f"Mission updated successfully: {data.get('message', 'Mission updated')}"
+                )
+            elif response.status_code == 403:
+                self.log_result(
+                    "Update Mission", 
+                    False, 
+                    "Access denied - user may not have admin privileges",
+                    f"Response: {response.text}"
+                )
+            elif response.status_code == 404:
+                self.log_result(
+                    "Update Mission", 
+                    False, 
+                    "Mission not found - may have been deleted",
+                    f"Response: {response.text}"
                 )
             else:
                 self.log_result(
-                    "No Token Auth Test", 
+                    "Update Mission", 
+                    False, 
+                    f"Unexpected response status: {response.status_code}",
+                    f"Response: {response.text}"
+                )
+        except Exception as e:
+            self.log_result(
+                "Update Mission", 
+                False, 
+                f"Request failed: {str(e)}"
+            )
+    
+    def test_mission_statistics(self):
+        """Test mission statistics endpoint"""
+        print("\n📊 Testing Mission Statistics...")
+        
+        if not self.admin_token:
+            self.log_result("Mission Statistics", False, "No admin token available")
+            return
+        
+        headers = {"Authorization": f"Bearer {self.admin_token}"}
+        
+        try:
+            response = requests.get(f"{API_BASE}/admin/missions/statistics", headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                required_fields = ["month_year", "overview", "missions"]
+                missing_fields = [field for field in required_fields if field not in data]
+                
+                if not missing_fields:
+                    overview = data.get("overview", {})
+                    overview_fields = ["total_missions", "active_missions", "total_completions", "total_points_awarded"]
+                    missing_overview = [field for field in overview_fields if field not in overview]
+                    
+                    if not missing_overview:
+                        self.log_result(
+                            "Mission Statistics", 
+                            True, 
+                            f"Statistics retrieved: {overview['total_missions']} missions, {overview['total_completions']} completions, {overview['total_points_awarded']} points awarded"
+                        )
+                    else:
+                        self.log_result(
+                            "Mission Statistics", 
+                            False, 
+                            f"Overview missing fields: {missing_overview}",
+                            f"Overview: {overview}"
+                        )
+                else:
+                    self.log_result(
+                        "Mission Statistics", 
+                        False, 
+                        f"Statistics missing required fields: {missing_fields}",
+                        f"Response: {data}"
+                    )
+            elif response.status_code == 403:
+                self.log_result(
+                    "Mission Statistics", 
+                    False, 
+                    "Access denied - user may not have admin privileges",
+                    f"Response: {response.text}"
+                )
+            else:
+                self.log_result(
+                    "Mission Statistics", 
+                    False, 
+                    f"Unexpected response status: {response.status_code}",
+                    f"Response: {response.text}"
+                )
+        except Exception as e:
+            self.log_result(
+                "Mission Statistics", 
+                False, 
+                f"Request failed: {str(e)}"
+            )
+    
+    def test_get_user_missions(self):
+        """Test user missions endpoint with completion status"""
+        print("\n🎯 Testing User Missions Retrieval...")
+        
+        if not self.regular_user_token:
+            self.log_result("Get User Missions", False, "No regular user token available")
+            return
+        
+        headers = {"Authorization": f"Bearer {self.regular_user_token}"}
+        
+        try:
+            response = requests.get(f"{API_BASE}/missions", headers=headers)
+            
+            if response.status_code == 200:
+                data = response.json()
+                if isinstance(data, list):
+                    if len(data) > 0:
+                        # Check mission structure for users
+                        mission = data[0]
+                        required_fields = ["id", "title", "description", "points", "frequency", "available", "completed"]
+                        missing_fields = [field for field in required_fields if field not in mission]
+                        
+                        if not missing_fields:
+                            available_missions = sum(1 for m in data if m.get("available", False))
+                            self.log_result(
+                                "Get User Missions", 
+                                True, 
+                                f"Successfully retrieved {len(data)} missions ({available_missions} available) with completion status"
+                            )
+                        else:
+                            self.log_result(
+                                "Get User Missions", 
+                                False, 
+                                f"User missions missing required fields: {missing_fields}",
+                                f"Sample mission: {mission}"
+                            )
+                    else:
+                        self.log_result(
+                            "Get User Missions", 
+                            True, 
+                            "No missions found for user (this is normal if no active missions exist)"
+                        )
+                else:
+                    self.log_result(
+                        "Get User Missions", 
+                        False, 
+                        "Invalid response format - expected list",
+                        f"Response: {data}"
+                    )
+            elif response.status_code == 401:
+                self.log_result(
+                    "Get User Missions", 
+                    False, 
+                    "Authentication failed - invalid user token",
+                    f"Response: {response.text}"
+                )
+            else:
+                self.log_result(
+                    "Get User Missions", 
+                    False, 
+                    f"Unexpected response status: {response.status_code}",
+                    f"Response: {response.text}"
+                )
+        except Exception as e:
+            self.log_result(
+                "Get User Missions", 
+                False, 
+                f"Request failed: {str(e)}"
+            )
+    
+    def test_complete_mission(self):
+        """Test mission completion with point awarding"""
+        print("\n🏆 Testing Mission Completion...")
+        
+        if not self.regular_user_token or not self.created_mission_ids:
+            self.log_result("Complete Mission", False, "No regular user token or created missions available")
+            return
+        
+        headers = {"Authorization": f"Bearer {self.regular_user_token}"}
+        
+        # First, reactivate a mission for testing
+        if self.admin_token and self.created_mission_ids:
+            admin_headers = {"Authorization": f"Bearer {self.admin_token}"}
+            mission_id = self.created_mission_ids[0]
+            
+            # Reactivate mission
+            requests.put(
+                f"{API_BASE}/admin/missions/{mission_id}",
+                json={"is_active": True},
+                headers=admin_headers
+            )
+            
+            # Now try to complete it
+            try:
+                response = requests.post(
+                    f"{API_BASE}/missions/{mission_id}/complete",
+                    headers=headers
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    points_earned = data.get("points_earned", 0)
+                    if points_earned > 0:
+                        self.log_result(
+                            "Complete Mission", 
+                            True, 
+                            f"Mission completed successfully! Earned {points_earned} points: {data.get('message', 'Mission completed')}"
+                        )
+                    else:
+                        self.log_result(
+                            "Complete Mission", 
+                            False, 
+                            "Mission completed but no points awarded",
+                            f"Response: {data}"
+                        )
+                elif response.status_code == 400:
+                    # This could be a valid response if mission was already completed or limits reached
+                    error_msg = response.json().get("detail", response.text)
+                    if "already completed" in error_msg or "limit reached" in error_msg:
+                        self.log_result(
+                            "Complete Mission", 
+                            True, 
+                            f"Mission completion properly rejected: {error_msg}"
+                        )
+                    else:
+                        self.log_result(
+                            "Complete Mission", 
+                            False, 
+                            f"Mission completion failed: {error_msg}",
+                            f"Response: {response.text}"
+                        )
+                elif response.status_code == 404:
+                    self.log_result(
+                        "Complete Mission", 
+                        False, 
+                        "Mission not found or inactive",
+                        f"Response: {response.text}"
+                    )
+                elif response.status_code == 401:
+                    self.log_result(
+                        "Complete Mission", 
+                        False, 
+                        "Authentication failed - invalid user token",
+                        f"Response: {response.text}"
+                    )
+                else:
+                    self.log_result(
+                        "Complete Mission", 
+                        False, 
+                        f"Unexpected response status: {response.status_code}",
+                        f"Response: {response.text}"
+                    )
+            except Exception as e:
+                self.log_result(
+                    "Complete Mission", 
+                    False, 
+                    f"Request failed: {str(e)}"
+                )
+    
+    def test_mission_frequency_limits(self):
+        """Test mission frequency limits enforcement"""
+        print("\n⏰ Testing Mission Frequency Limits...")
+        
+        if not self.regular_user_token or not self.admin_token:
+            self.log_result("Mission Frequency Limits", False, "Missing required tokens")
+            return
+        
+        # Create a daily mission with limit 1
+        admin_headers = {"Authorization": f"Bearer {self.admin_token}"}
+        user_headers = {"Authorization": f"Bearer {self.regular_user_token}"}
+        
+        mission_data = {
+            "title": "Test Daily Limit Mission",
+            "description": "Test mission for frequency limit testing",
+            "points": 10,
+            "frequency": "daily",
+            "daily_limit": 1,
+            "weekly_limit": 0,
+            "is_active": True
+        }
+        
+        try:
+            # Create mission
+            response = requests.post(
+                f"{API_BASE}/admin/missions",
+                json=mission_data,
+                headers=admin_headers
+            )
+            
+            if response.status_code == 200:
+                mission_id = response.json().get("mission_id")
+                self.created_mission_ids.append(mission_id)
+                
+                # Complete mission first time (should succeed)
+                response1 = requests.post(
+                    f"{API_BASE}/missions/{mission_id}/complete",
+                    headers=user_headers
+                )
+                
+                # Complete mission second time (should fail due to daily limit)
+                time.sleep(1)  # Small delay
+                response2 = requests.post(
+                    f"{API_BASE}/missions/{mission_id}/complete",
+                    headers=user_headers
+                )
+                
+                if response1.status_code == 200 and response2.status_code == 400:
+                    error_msg = response2.json().get("detail", "")
+                    if "limit reached" in error_msg.lower():
+                        self.log_result(
+                            "Mission Frequency Limits", 
+                            True, 
+                            "Daily limit properly enforced - first completion succeeded, second rejected"
+                        )
+                    else:
+                        self.log_result(
+                            "Mission Frequency Limits", 
+                            False, 
+                            f"Second completion rejected but wrong reason: {error_msg}"
+                        )
+                else:
+                    self.log_result(
+                        "Mission Frequency Limits", 
+                        False, 
+                        f"Unexpected responses - First: {response1.status_code}, Second: {response2.status_code}",
+                        f"First: {response1.text}, Second: {response2.text}"
+                    )
+            else:
+                self.log_result(
+                    "Mission Frequency Limits", 
+                    False, 
+                    f"Failed to create test mission: {response.status_code}",
+                    f"Response: {response.text}"
+                )
+        except Exception as e:
+            self.log_result(
+                "Mission Frequency Limits", 
+                False, 
+                f"Request failed: {str(e)}"
+            )
+    
+    def test_authentication_enforcement(self):
+        """Test that mission endpoints require proper authentication"""
+        print("\n🔒 Testing Authentication & Authorization...")
+        
+        # Test admin endpoints without token
+        try:
+            response = requests.get(f"{API_BASE}/admin/missions")
+            if response.status_code in [401, 403]:
+                self.log_result(
+                    "No Token Admin Auth Test", 
+                    True, 
+                    f"Correctly rejected admin request without authentication token (HTTP {response.status_code})"
+                )
+            else:
+                self.log_result(
+                    "No Token Admin Auth Test", 
                     False, 
                     f"Should have returned 401 or 403, got {response.status_code}",
                     f"Response: {response.text}"
                 )
         except Exception as e:
             self.log_result(
-                "No Token Auth Test", 
+                "No Token Admin Auth Test", 
                 False, 
                 f"Request failed: {str(e)}"
             )
         
-        # Test with regular user token (should fail with 403)
+        # Test user endpoints without token
+        try:
+            response = requests.get(f"{API_BASE}/missions")
+            if response.status_code in [401, 403]:
+                self.log_result(
+                    "No Token User Auth Test", 
+                    True, 
+                    f"Correctly rejected user request without authentication token (HTTP {response.status_code})"
+                )
+            else:
+                self.log_result(
+                    "No Token User Auth Test", 
+                    False, 
+                    f"Should have returned 401 or 403, got {response.status_code}",
+                    f"Response: {response.text}"
+                )
+        except Exception as e:
+            self.log_result(
+                "No Token User Auth Test", 
+                False, 
+                f"Request failed: {str(e)}"
+            )
+        
+        # Test admin endpoints with regular user token (should fail with 403)
         if self.regular_user_token:
             headers = {"Authorization": f"Bearer {self.regular_user_token}"}
             try:
-                response = requests.get(f"{API_BASE}/admin/email/logs", headers=headers)
+                response = requests.get(f"{API_BASE}/admin/missions", headers=headers)
                 if response.status_code == 403:
                     self.log_result(
-                        "Regular User Auth Test", 
+                        "Regular User Admin Access Test", 
                         True, 
-                        "Correctly rejected regular user access to admin endpoints"
+                        "Correctly rejected regular user access to admin mission endpoints"
                     )
                 else:
                     self.log_result(
-                        "Regular User Auth Test", 
+                        "Regular User Admin Access Test", 
                         False, 
                         f"Should have returned 403, got {response.status_code}",
                         f"Response: {response.text}"
                     )
             except Exception as e:
                 self.log_result(
-                    "Regular User Auth Test", 
+                    "Regular User Admin Access Test", 
                     False, 
                     f"Request failed: {str(e)}"
                 )
