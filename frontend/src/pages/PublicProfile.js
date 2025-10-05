@@ -41,7 +41,7 @@ const PublicProfile = () => {
       <div className="min-h-screen bg-gradient-to-br from-sand-light to-sand-medium flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-deep-sea-blue mx-auto mb-4"></div>
-          <p className="text-gray-600">Caricamento profilo Club...</p>
+          <p className="text-gray-600">{t('loading_profile')}</p>
         </div>
       </div>
     );
