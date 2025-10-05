@@ -303,71 +303,72 @@ class MissionManagementTester:
                 f"Request failed: {str(e)}"
             )
     
-    def test_email_logs(self):
-        """Test email logs retrieval"""
-        print("\n📋 Testing Email Logs Retrieval...")
+    def test_get_admin_missions(self):
+        """Test retrieving admin missions list with statistics"""
+        print("\n📋 Testing Admin Missions List Retrieval...")
         
         if not self.admin_token:
-            self.log_result("Email Logs Test", False, "No admin token available")
+            self.log_result("Get Admin Missions", False, "No admin token available")
             return
         
         headers = {"Authorization": f"Bearer {self.admin_token}"}
         
         try:
-            response = requests.get(f"{API_BASE}/admin/email/logs", headers=headers)
+            response = requests.get(f"{API_BASE}/admin/missions", headers=headers)
             
             if response.status_code == 200:
                 data = response.json()
                 if isinstance(data, list):
                     if len(data) > 0:
-                        # Check log structure
-                        log = data[0]
-                        required_fields = ["id", "recipients", "subject", "sent_at", "status", "recipient_count"]
-                        missing_fields = [field for field in required_fields if field not in log]
+                        # Check mission structure
+                        mission = data[0]
+                        required_fields = ["id", "title", "description", "points", "frequency", "is_active", "completion_count"]
+                        missing_fields = [field for field in required_fields if field not in mission]
                         
                         if not missing_fields:
+                            active_missions = sum(1 for m in data if m.get("is_active", False))
                             self.log_result(
-                                "Email Logs Test", 
+                                "Get Admin Missions", 
                                 True, 
-                                f"Successfully retrieved {len(data)} email logs with all required fields"
+                                f"Successfully retrieved {len(data)} missions ({active_missions} active) with all required fields"
                             )
                         else:
                             self.log_result(
-                                "Email Logs Test", 
+                                "Get Admin Missions", 
                                 False, 
-                                f"Email logs missing required fields: {missing_fields}",
-                                f"Sample log: {log}"
+                                f"Missions missing required fields: {missing_fields}",
+                                f"Sample mission: {mission}"
                             )
                     else:
                         self.log_result(
-                            "Email Logs Test", 
+                            "Get Admin Missions", 
                             True, 
-                            "No email logs found (this is normal for new installations)"
+                            "No missions found (this is normal for new installations)"
                         )
                 else:
                     self.log_result(
-                        "Email Logs Test", 
+                        "Get Admin Missions", 
                         False, 
                         "Invalid response format - expected list",
                         f"Response: {data}"
                     )
             elif response.status_code == 403:
                 self.log_result(
-                    "Email Logs Test", 
+                    "Get Admin Missions", 
                     False, 
                     "Access denied - user may not have admin privileges",
                     f"Response: {response.text}"
                 )
             else:
                 self.log_result(
-                    "Email Logs Test", 
+                    "Get Admin Missions", 
                     False, 
                     f"Unexpected response status: {response.status_code}",
                     f"Response: {response.text}"
                 )
         except Exception as e:
             self.log_result(
-                "Email Logs Test", 
+                "Get Admin Missions", 
                 False, 
                 f"Request failed: {str(e)}"
             )
