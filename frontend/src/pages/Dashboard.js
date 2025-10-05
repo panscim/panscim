@@ -293,7 +293,7 @@ const Dashboard = () => {
                         </div>
                       </div>
                       <button
-                        onClick={() => completeMission(mission.id)}
+                        onClick={() => setMissionSubmissionForm({ show: true, mission: mission, description: '', submissionUrl: '', photo: null })}
                         disabled={!mission.available}
                         className={`w-full text-sm py-2 flex items-center justify-center space-x-1 rounded-lg font-medium transition-colors ${
                           mission.available 
@@ -305,6 +305,11 @@ const Dashboard = () => {
                           <>
                             <CheckCircle size={16} />
                             <span>Completata</span>
+                          </>
+                        ) : mission.pending_approval ? (
+                          <>
+                            <Clock size={16} />
+                            <span>In verifica</span>
                           </>
                         ) : mission.available ? (
                           <>
