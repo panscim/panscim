@@ -18,7 +18,10 @@ import {
   Plus,
   Edit3,
   ToggleLeft,
-  ToggleRight
+  ToggleRight,
+  Gift,
+  Upload,
+  RotateCcw
 } from 'lucide-react';
 
 const AdminPanel = () => {
