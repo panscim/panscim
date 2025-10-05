@@ -12,7 +12,8 @@ import {
   AlertTriangle,
   ExternalLink,
   Calendar,
-  Trophy
+  Trophy,
+  Mail
 } from 'lucide-react';
 
 const AdminPanel = () => {
