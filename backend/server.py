@@ -1444,6 +1444,11 @@ async def get_admin_missions(credentials: HTTPAuthorizationCredentials = Depends
             "month_year": mission["month_year"],
             "is_active": mission["is_active"],
             "requirements": mission.get("requirements", []),
+            "requires_description": mission.get("requires_description", True),
+            "requires_photo": mission.get("requires_photo", False),
+            "photo_source": mission.get("photo_source", "both"),
+            "requires_link": mission.get("requires_link", False),
+            "requires_approval": mission.get("requires_approval", True),
             "completion_count": completion_count,
             "created_at": mission["created_at"].isoformat() if "created_at" in mission else None
         }
