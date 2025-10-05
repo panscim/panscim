@@ -833,7 +833,12 @@ async def get_leaderboard(month_year: Optional[str] = None):
 # === MISSIONS ENDPOINTS ===
 
 @api_router.get("/missions")
-async def get_missions(month_year: Optional[str] = None):
+async def get_missions(
+    month_year: Optional[str] = None,
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    current_user = await get_current_user(credentials)
+    
     if not month_year:
         month_year = get_current_month_year()
     
@@ -841,7 +846,162 @@ async def get_missions(month_year: Optional[str] = None):
         {"month_year": month_year, "is_active": True}
     ).to_list(100)
     
-    return missions
+    # Get user's mission completions for this month
+    user_completions = await db.user_missions.find({
+        "user_id": current_user.id,
+        "month_year": month_year
+    }).to_list(None)
+    
+    completed_mission_ids = {completion["mission_id"]: completion for completion in user_completions}
+    
+    # Get today's date for daily limit checking
+    today = datetime.now().date()
+    week_start = today - timedelta(days=today.weekday())
+    
+    enhanced_missions = []
+    for mission in missions:
+        mission_data = {
+            "id": mission["id"],
+            "title": mission["title"],
+            "description": mission["description"],
+            "points": mission["points"],
+            "frequency": mission.get("frequency", "one-time"),
+            "daily_limit": mission.get("daily_limit", 0),
+            "weekly_limit": mission.get("weekly_limit", 0),
+            "requirements": mission.get("requirements", [])
+        }
+        
+        # Check completion status and availability
+        mission_id = mission["id"]
+        frequency = mission.get("frequency", "one-time")
+        
+        if frequency == "one-time":
+            mission_data["completed"] = mission_id in completed_mission_ids
+            mission_data["available"] = mission_id not in completed_mission_ids
+            mission_data["completions_today"] = 0
+            mission_data["completions_this_week"] = 0
+        else:
+            # Count completions for frequency-based missions
+            if frequency == "daily":
+                completions_today = await db.user_missions.count_documents({
+                    "user_id": current_user.id,
+                    "mission_id": mission_id,
+                    "completed_at": {
+                        "$gte": datetime.combine(today, datetime.min.time()),
+                        "$lt": datetime.combine(today + timedelta(days=1), datetime.min.time())
+                    }
+                })
+                daily_limit = mission.get("daily_limit", 0)
+                mission_data["completions_today"] = completions_today
+                mission_data["available"] = daily_limit == 0 or completions_today < daily_limit
+                mission_data["completed"] = False  # Daily missions are never "completed"
+                mission_data["completions_this_week"] = 0
+                
+            elif frequency == "weekly":
+                completions_this_week = await db.user_missions.count_documents({
+                    "user_id": current_user.id,
+                    "mission_id": mission_id,
+                    "completed_at": {
+                        "$gte": datetime.combine(week_start, datetime.min.time()),
+                        "$lt": datetime.combine(week_start + timedelta(days=7), datetime.min.time())
+                    }
+                })
+                weekly_limit = mission.get("weekly_limit", 0)
+                mission_data["completions_this_week"] = completions_this_week
+                mission_data["available"] = weekly_limit == 0 or completions_this_week < weekly_limit
+                mission_data["completed"] = False  # Weekly missions are never "completed"
+                mission_data["completions_today"] = 0
+        
+        enhanced_missions.append(mission_data)
+    
+    return enhanced_missions
+
+@api_router.post("/missions/{mission_id}/complete")
+async def complete_mission(
+    mission_id: str,
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    current_user = await get_current_user(credentials)
+    
+    # Get mission details
+    mission = await db.missions.find_one({"id": mission_id, "is_active": True})
+    if not mission:
+        raise HTTPException(status_code=404, detail="Mission not found or inactive")
+    
+    frequency = mission.get("frequency", "one-time")
+    month_year = get_current_month_year()
+    
+    # Check if user can complete this mission based on frequency and limits
+    today = datetime.now().date()
+    
+    if frequency == "one-time":
+        # Check if already completed
+        existing_completion = await db.user_missions.find_one({
+            "user_id": current_user.id,
+            "mission_id": mission_id
+        })
+        if existing_completion:
+            raise HTTPException(status_code=400, detail="Mission already completed")
+    
+    elif frequency == "daily":
+        daily_limit = mission.get("daily_limit", 0)
+        if daily_limit > 0:
+            completions_today = await db.user_missions.count_documents({
+                "user_id": current_user.id,
+                "mission_id": mission_id,
+                "completed_at": {
+                    "$gte": datetime.combine(today, datetime.min.time()),
+                    "$lt": datetime.combine(today + timedelta(days=1), datetime.min.time())
+                }
+            })
+            if completions_today >= daily_limit:
+                raise HTTPException(status_code=400, detail="Daily limit reached for this mission")
+    
+    elif frequency == "weekly":
+        weekly_limit = mission.get("weekly_limit", 0)
+        if weekly_limit > 0:
+            week_start = today - timedelta(days=today.weekday())
+            completions_this_week = await db.user_missions.count_documents({
+                "user_id": current_user.id,
+                "mission_id": mission_id,
+                "completed_at": {
+                    "$gte": datetime.combine(week_start, datetime.min.time()),
+                    "$lt": datetime.combine(week_start + timedelta(days=7), datetime.min.time())
+                }
+            })
+            if completions_this_week >= weekly_limit:
+                raise HTTPException(status_code=400, detail="Weekly limit reached for this mission")
+    
+    # Create mission completion record
+    user_mission = UserMission(
+        user_id=current_user.id,
+        mission_id=mission_id,
+        mission_title=mission["title"],
+        points_earned=mission["points"],
+        month_year=month_year
+    )
+    
+    await db.user_missions.insert_one(user_mission.dict())
+    
+    # Update user's total points
+    await db.users.update_one(
+        {"id": current_user.id},
+        {"$inc": {"total_points": mission["points"], "current_points": mission["points"]}}
+    )
+    
+    # Create notification
+    notification = Notification(
+        user_id=current_user.id,
+        message=f"🎯 Missione completata: '{mission['title']}' (+{mission['points']} punti)",
+        type="success"
+    )
+    await db.notifications.insert_one(notification.dict())
+    
+    return {
+        "message": f"Missione completata! +{mission['points']} punti 🌿",
+        "points_earned": mission["points"],
+        "mission_title": mission["title"]
+    }
 
 # === PRIZES ENDPOINTS ===
 
