@@ -81,6 +81,88 @@ const AdminPanel = () => {
     }
   };
 
+  // Email Admin Functions
+  const fetchUsers = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/admin/users/list`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setUsers(response.data);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
+  const fetchEmailLogs = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/admin/email/logs`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setEmailLogs(response.data);
+    } catch (error) {
+      console.error('Error fetching email logs:', error);
+    }
+  };
+
+  const sendTestEmail = async () => {
+    if (!testEmailAddress) {
+      alert('Inserisci un indirizzo email per il test');
+      return;
+    }
+    
+    setEmailLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/admin/email/test`, 
+        { test_email: testEmailAddress },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert('📩 Email di test inviata con successo!');
+      setTestEmailAddress('');
+    } catch (error) {
+      alert('Errore invio test: ' + (error.response?.data?.detail || 'Errore sconosciuto'));
+    } finally {
+      setEmailLoading(false);
+    }
+  };
+
+  const sendEmail = async () => {
+    if (emailForm.recipients.length === 0) {
+      alert('Seleziona almeno un destinatario');
+      return;
+    }
+    if (!emailForm.subject.trim()) {
+      alert('Inserisci un oggetto');
+      return;
+    }
+    if (!emailForm.body.trim()) {
+      alert('Inserisci il contenuto del messaggio');
+      return;
+    }
+
+    setEmailLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/admin/email/send`, {
+        recipients: emailForm.recipients,
+        subject: emailForm.subject,
+        body: emailForm.body
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      alert('📩 Email inviata con successo!');
+      setEmailForm({ recipients: [], subject: '', body: '' });
+      fetchEmailLogs(); // Refresh logs
+    } catch (error) {
+      alert('Errore invio email: ' + (error.response?.data?.detail || 'Errore sconosciuto'));
+    } finally {
+      setEmailLoading(false);
+    }
+  };
+
   const getActionIcon = (actionTypeId) => {
     const icons = {
       'like_post': '👍',
