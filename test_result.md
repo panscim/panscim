@@ -162,7 +162,10 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Manual Frontend Testing - Email Admin UI"
+    - "Mission Management Backend Implementation"
+    - "Mission Management Frontend UI"
+    - "User Mission Dashboard Integration"
+    - "Mission Statistics for Admin"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
