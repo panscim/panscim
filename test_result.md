@@ -110,7 +110,7 @@ backend:
     working: true
     file: "/app/backend/server.py"
     stuck_count: 0
-    priority: "high"
+    priority: "completed"
     needs_retesting: false
     status_history:
       - working: false
@@ -244,7 +244,7 @@ backend:
     working: true
     file: "/app/backend/server.py"
     stuck_count: 0
-    priority: "high"
+    priority: "completed"
     needs_retesting: false
     status_history:
       - working: false
@@ -271,7 +271,7 @@ backend:
     working: true
     file: "/app/backend/server.py"
     stuck_count: 0
-    priority: "high"
+    priority: "completed"
     needs_retesting: false
     status_history:
       - working: false
