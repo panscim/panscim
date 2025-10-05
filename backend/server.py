@@ -896,7 +896,12 @@ async def get_missions(
             "frequency": mission.get("frequency", "one-time"),
             "daily_limit": mission.get("daily_limit", 0),
             "weekly_limit": mission.get("weekly_limit", 0),
-            "requirements": mission.get("requirements", [])
+            "requirements": mission.get("requirements", []),
+            "requires_description": mission.get("requires_description", True),
+            "requires_photo": mission.get("requires_photo", False),
+            "photo_source": mission.get("photo_source", "both"),
+            "requires_link": mission.get("requires_link", False),
+            "requires_approval": mission.get("requires_approval", True)
         }
         
         # Check completion status and availability
