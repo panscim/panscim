@@ -27,10 +27,10 @@ const Navbar = () => {
   };
 
   const navItems = [
-    { path: '/dashboard', icon: Home, label: 'Dashboard' },
-    { path: '/leaderboard', icon: Trophy, label: 'Classifica' },
-    { path: '/prizes', icon: Gift, label: 'Premi' },
-    { path: '/profile', icon: User, label: 'Profilo' }
+    { path: '/dashboard', icon: Home, label: t('home') },
+    { path: '/leaderboard', icon: Trophy, label: t('leaderboard') },
+    { path: '/prizes', icon: Gift, label: t('prizes') },
+    { path: '/profile', icon: User, label: t('profile') }
   ];
 
   if (user?.is_admin) {
