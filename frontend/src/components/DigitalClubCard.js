@@ -8,6 +8,8 @@ const DigitalClubCard = () => {
   const [cardData, setCardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [qrCodeUrl, setQrCodeUrl] = useState('');
+  const [showProfilePopup, setShowProfilePopup] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState(null);
   const cardRef = useRef(null);
 
   useEffect(() => {
