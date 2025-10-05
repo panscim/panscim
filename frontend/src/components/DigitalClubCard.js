@@ -133,9 +133,9 @@ const DigitalClubCard = () => {
               <div className="flex-1 pr-6">
                 {/* Avatar and Name */}
                 <div className="flex items-center space-x-4 mb-6">
-                  {cardData.avatar_url ? (
+                  {cardData.avatar ? (
                     <img
-                      src={`data:image/jpeg;base64,${cardData.avatar_url}`}
+                      src={`data:image/jpeg;base64,${cardData.avatar}`}
                       alt="Avatar"
                       className="w-20 h-20 rounded-full border-3 border-matte-gold object-cover shadow-md"
                       style={{ borderWidth: '3px' }}
