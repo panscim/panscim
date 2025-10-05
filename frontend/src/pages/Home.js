@@ -69,12 +69,12 @@ const Home = () => {
           </div>
 
           {/* Current Challenge Banner */}
-          <div className="mt-12 bg-white/10 backdrop-blur-sm rounded-[20px] p-6 border border-brand-accent/30">
-            <div className="flex items-center justify-center space-x-2 text-white">
-              <Trophy className="text-brand-accent" size={24} />
-              <span className="text-lg font-semibold">🍇 {new Date().toLocaleDateString('it-IT', { month: 'long', year: 'numeric' }).replace(/^\w/, c => c.toUpperCase())}: Live Puglia Challenge</span>
+          <div className="mt-16 bg-white/90 backdrop-blur-sm rounded-[25px] p-8 border-2 border-brand-accent shadow-2xl">
+            <div className="flex items-center justify-center space-x-3 text-black mb-3">
+              <Trophy className="text-brand-accent" size={32} />
+              <span className="text-xl font-bold">🍇 {new Date().toLocaleDateString('it-IT', { month: 'long', year: 'numeric' }).replace(/^\w/, c => c.toUpperCase())}: Live Puglia Challenge</span>
             </div>
-            <p className="text-white/90 mt-2">
+            <p className="text-gray-800 text-lg font-semibold text-center">
               Vivi e condividi la Puglia autentica. I primi 3 vincono premi reali!
             </p>
           </div>
