@@ -328,7 +328,12 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Manual Frontend Testing - Enhanced Mission Management System"
+    - "Admin Prize Editor System"
+    - "Digital Club Card Generation" 
+    - "Multilingual Backend Support"
+    - "Admin Prize Editor UI"
+    - "Digital Club Card Component"
+    - "Multilingual Frontend Toggle"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
