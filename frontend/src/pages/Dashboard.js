@@ -204,39 +204,121 @@ const Dashboard = () => {
 
         {/* Tab Content */}
         {activeTab === 'missioni' && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.actionTypes.map((action) => (
-              <div key={action.id} className="puglia-card hover:transform hover:scale-105 transition-all duration-200">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-deep-sea-blue mb-1">{action.name}</h3>
-                    <p className="text-sm text-gray-600 mb-2">{action.description}</p>
-                    <div className="flex items-center space-x-4 text-xs text-gray-500">
-                      {action.max_per_day > 0 && (
-                        <span>{action.max_per_day}/giorno</span>
-                      )}
-                      {action.max_per_week > 0 && (
-                        <span>{action.max_per_week}/settimana</span>
-                      )}
-                      {action.max_per_month > 0 && (
-                        <span>{action.max_per_month}/mese</span>
-                      )}
+          <div className="space-y-8">
+            {/* New Missions System */}
+            {data.missions && data.missions.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold text-deep-sea-blue mb-4 flex items-center">
+                  <Target className="mr-2" size={20} />
+                  Missioni Speciali
+                </h3>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                  {data.missions.map((mission) => (
+                    <div key={mission.id} className={`puglia-card hover:transform hover:scale-105 transition-all duration-200 ${!mission.available ? 'opacity-60' : ''}`}>
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <h3 className="font-semibold text-deep-sea-blue">{mission.title}</h3>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              mission.frequency === 'one-time' ? 'bg-blue-100 text-blue-800' :
+                              mission.frequency === 'daily' ? 'bg-green-100 text-green-800' :
+                              'bg-purple-100 text-purple-800'
+                            }`}>
+                              {mission.frequency === 'one-time' ? 'Una volta' :
+                               mission.frequency === 'daily' ? 'Giornaliera' : 'Settimanale'}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-600 mb-2">{mission.description}</p>
+                          <div className="flex items-center space-x-4 text-xs text-gray-500">
+                            {mission.frequency === 'daily' && mission.daily_limit > 0 && (
+                              <span>{mission.completions_today}/{mission.daily_limit} oggi</span>
+                            )}
+                            {mission.frequency === 'weekly' && mission.weekly_limit > 0 && (
+                              <span>{mission.completions_this_week}/{mission.weekly_limit} settimana</span>
+                            )}
+                            {mission.completed && (
+                              <span className="text-green-600 font-medium">✓ Completata</span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-lg font-bold text-matte-gold">+{mission.points}</div>
+                          <div className="text-xs text-gray-500">punti</div>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => completeMission(mission.id)}
+                        disabled={!mission.available}
+                        className={`w-full text-sm py-2 flex items-center justify-center space-x-1 rounded-lg font-medium transition-colors ${
+                          mission.available 
+                            ? 'bg-deep-sea-blue text-white hover:bg-opacity-90' 
+                            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        }`}
+                      >
+                        {mission.completed ? (
+                          <>
+                            <CheckCircle size={16} />
+                            <span>Completata</span>
+                          </>
+                        ) : mission.available ? (
+                          <>
+                            <Target size={16} />
+                            <span>Completa</span>
+                          </>
+                        ) : (
+                          <>
+                            <Clock size={16} />
+                            <span>Limite raggiunto</span>
+                          </>
+                        )}
+                      </button>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-lg font-bold text-matte-gold">+{action.points}</div>
-                    <div className="text-xs text-gray-500">punti</div>
-                  </div>
+                  ))}
                 </div>
-                <button
-                  onClick={() => setSubmissionForm({ show: true, actionType: action, description: '', submissionUrl: '' })}
-                  className="w-full btn-secondary text-sm py-2 flex items-center justify-center space-x-1"
-                >
-                  <Plus size={16} />
-                  <span>Completa</span>
-                </button>
               </div>
-            ))}
+            )}
+
+            {/* Action Types (Original System) */}
+            <div>
+              <h3 className="text-lg font-semibold text-deep-sea-blue mb-4 flex items-center">
+                <Activity className="mr-2" size={20} />
+                Azioni Social
+              </h3>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {data.actionTypes.map((action) => (
+                  <div key={action.id} className="puglia-card hover:transform hover:scale-105 transition-all duration-200">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-deep-sea-blue mb-1">{action.name}</h3>
+                        <p className="text-sm text-gray-600 mb-2">{action.description}</p>
+                        <div className="flex items-center space-x-4 text-xs text-gray-500">
+                          {action.max_per_day > 0 && (
+                            <span>{action.max_per_day}/giorno</span>
+                          )}
+                          {action.max_per_week > 0 && (
+                            <span>{action.max_per_week}/settimana</span>
+                          )}
+                          {action.max_per_month > 0 && (
+                            <span>{action.max_per_month}/mese</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-lg font-bold text-matte-gold">+{action.points}</div>
+                        <div className="text-xs text-gray-500">punti</div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setSubmissionForm({ show: true, actionType: action, description: '', submissionUrl: '' })}
+                      className="w-full btn-secondary text-sm py-2 flex items-center justify-center space-x-1"
+                    >
+                      <Plus size={16} />
+                      <span>Completa</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
