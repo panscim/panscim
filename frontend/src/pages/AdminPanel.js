@@ -56,7 +56,12 @@ const AdminPanel = () => {
     frequency: 'one-time',
     daily_limit: 0,
     weekly_limit: 0,
-    is_active: true
+    is_active: true,
+    requires_description: true,
+    requires_photo: false,
+    photo_source: 'both',
+    requires_link: false,
+    requires_approval: true
   });
   const [editingMission, setEditingMission] = useState(null);
   const [missionLoading, setMissionLoading] = useState(false);
