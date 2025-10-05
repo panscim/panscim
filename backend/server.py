@@ -194,6 +194,21 @@ class EmailLog(BaseModel):
     status: str = "sent"  # sent, partial, failed
     admin_id: str
 
+class MissionSubmission(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    mission_id: str
+    mission_title: str
+    description: str
+    photo_url: Optional[str] = None
+    submission_url: Optional[str] = None
+    verification_status: str = "pending"  # pending, approved, rejected
+    submitted_at: datetime = Field(default_factory=datetime.utcnow)
+    verified_at: Optional[datetime] = None
+    verified_by: Optional[str] = None
+    points_earned: int
+    month_year: str
+
 class UserMission(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     user_id: str
@@ -202,6 +217,7 @@ class UserMission(BaseModel):
     points_earned: int
     completed_at: datetime = Field(default_factory=datetime.utcnow)
     month_year: str
+    submission_id: Optional[str] = None  # Link to submission if verification was required
 
 class WeeklyQuiz(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
