@@ -122,8 +122,8 @@ const Dashboard = () => {
               </p>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-deep-sea-blue">{user.current_points} pts</div>
-              <div className="text-sm text-matte-gold font-medium">{user.level}</div>
+              <div className="text-2xl font-bold text-white">{user.current_points} pts</div>
+              <div className="text-sm text-brand-accent font-medium">{user.level}</div>
               {userPosition > 0 && (
                 <div className="text-xs text-gray-500">#{userPosition} in classifica</div>
               )}
