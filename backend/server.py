@@ -1149,7 +1149,7 @@ async def test_email_config(
 
 @api_router.get("/admin/users/list")
 async def get_users_for_email(
-    credentials: HTTPAuthorizationCredentials = security
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     """Get list of users for email selection"""
     current_user = await get_current_user(credentials)
