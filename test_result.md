@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Phase 2: Implementing Mission Management functionality for Desideri di Puglia Club app. Need comprehensive mission system: Admin can create/edit/deactivate missions (title, description, points, frequency, status). Users view missions in dashboard. Mission completion awards points automatically. Admin sees mission statistics."
+user_problem_statement: "Phase 2: ENHANCED Mission Management with VERIFICATION system. Missions need proof requirements: description, photos (gallery/live camera choice), optional links. Admin configures proof requirements when creating missions. Mission completion requires verification like existing actions system. Admin approves mission completions before awarding points."
 
 backend:
   - task: "Fix SMTP Integration and Complete Email Admin"
