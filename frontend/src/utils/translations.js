@@ -181,8 +181,14 @@ const translations = {
     total_points: 'Total Points',
     current_points: 'Points this month',
     current_position: 'Current Position',
+    current_rank: 'Current Rank',
     notifications: 'Notifications',
     action_history: 'Action History',
+    history: 'History',
+    activity: 'Activity',
+    card: 'Card',
+    achievements: 'Achievements',
+    next_level: 'Next level',
     
     // Club Card
     club_card_ready: 'Your new Desideri di Puglia Card is ready — elegant and interactive like you 🌿',
