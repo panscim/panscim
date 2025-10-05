@@ -1316,7 +1316,7 @@ async def close_quiz(
 # === USER QUIZ API ===
 
 @api_router.get("/quiz/active")
-async def get_active_quiz(credentials: HTTPAuthorizationCredentials = security):
+async def get_active_quiz(credentials: HTTPAuthorizationCredentials = Depends(security)):
     current_user = await get_current_user(credentials)
     
     # Get active quiz
