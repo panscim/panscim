@@ -454,6 +454,185 @@ const AdminPanel = () => {
             </div>
           </div>
         )}
+
+        {activeTab === 'email' && (
+          <div className="space-y-6">
+            {/* Email Configuration Test */}
+            <div className="bg-white rounded-[20px] p-6 mediterranean-shadow">
+              <h3 className="text-lg font-semibold text-deep-sea-blue mb-4 flex items-center">
+                <Settings className="mr-2" size={20} />
+                Test Configurazione Email
+              </h3>
+              <div className="flex space-x-4 items-end">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email di test
+                  </label>
+                  <input
+                    type="email"
+                    value={testEmailAddress}
+                    onChange={(e) => setTestEmailAddress(e.target.value)}
+                    placeholder="inserisci@email.com"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-deep-sea-blue focus:border-transparent"
+                  />
+                </div>
+                <button
+                  onClick={sendTestEmail}
+                  disabled={emailLoading}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center space-x-2"
+                >
+                  <Mail size={16} />
+                  <span>{emailLoading ? 'Invio...' : 'Test'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Compose Email */}
+            <div className="bg-white rounded-[20px] p-6 mediterranean-shadow">
+              <h3 className="text-lg font-semibold text-deep-sea-blue mb-4 flex items-center">
+                <Mail className="mr-2" size={20} />
+                Componi Email
+              </h3>
+              
+              <div className="space-y-4">
+                {/* Recipients Selection */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Destinatari ({emailForm.recipients.length} selezionati)
+                  </label>
+                  <div className="max-h-48 overflow-y-auto border border-gray-300 rounded-lg p-3">
+                    {users.length === 0 ? (
+                      <p className="text-gray-500 text-sm">Caricamento utenti...</p>
+                    ) : (
+                      <div className="space-y-2">
+                        {users.map(user => (
+                          <label key={user.id} className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={emailForm.recipients.includes(user.id)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setEmailForm(prev => ({
+                                    ...prev,
+                                    recipients: [...prev.recipients, user.id]
+                                  }));
+                                } else {
+                                  setEmailForm(prev => ({
+                                    ...prev,
+                                    recipients: prev.recipients.filter(id => id !== user.id)
+                                  }));
+                                }
+                              }}
+                              className="rounded text-deep-sea-blue"
+                            />
+                            <div className="flex-1">
+                              <div className="font-medium text-gray-900">{user.name}</div>
+                              <div className="text-sm text-gray-500">{user.email} • {user.current_points} punti</div>
+                            </div>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div className="mt-2 flex space-x-2">
+                    <button
+                      onClick={() => setEmailForm(prev => ({ ...prev, recipients: users.map(u => u.id) }))}
+                      className="text-sm text-deep-sea-blue hover:underline"
+                    >
+                      Seleziona tutti
+                    </button>
+                    <button
+                      onClick={() => setEmailForm(prev => ({ ...prev, recipients: [] }))}
+                      className="text-sm text-gray-500 hover:underline"
+                    >
+                      Deseleziona tutti
+                    </button>
+                  </div>
+                </div>
+
+                {/* Subject */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Oggetto
+                  </label>
+                  <input
+                    type="text"
+                    value={emailForm.subject}
+                    onChange={(e) => setEmailForm(prev => ({ ...prev, subject: e.target.value }))}
+                    placeholder="🌿 Oggetto dell'email..."
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-deep-sea-blue focus:border-transparent"
+                  />
+                </div>
+
+                {/* Body */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Messaggio
+                  </label>
+                  <div className="mb-2 text-xs text-gray-500">
+                    Variabili disponibili: {{'{{'}}user_name{{'}}'}}, {{'{{'}}user_points{{'}}'}}, {{'{{'}}user_level{{'}}'}}, {{'{{'}}points_to_top3{{'}}'}}
+                  </div>
+                  <textarea
+                    value={emailForm.body}
+                    onChange={(e) => setEmailForm(prev => ({ ...prev, body: e.target.value }))}
+                    placeholder="Ciao {{user_name}}, hai attualmente {{user_points}} punti..."
+                    rows={8}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-deep-sea-blue focus:border-transparent"
+                  />
+                </div>
+
+                {/* Send Button */}
+                <button
+                  onClick={sendEmail}
+                  disabled={emailLoading || emailForm.recipients.length === 0}
+                  className="w-full bg-deep-sea-blue text-white py-3 px-4 rounded-lg font-medium hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                >
+                  <Mail size={18} />
+                  <span>{emailLoading ? 'Invio in corso...' : `Invia a ${emailForm.recipients.length} utenti`}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Email Logs */}
+            <div className="bg-white rounded-[20px] p-6 mediterranean-shadow">
+              <h3 className="text-lg font-semibold text-deep-sea-blue mb-4 flex items-center">
+                <Calendar className="mr-2" size={20} />
+                Cronologia Email
+              </h3>
+              
+              {emailLogs.length === 0 ? (
+                <div className="text-center py-8">
+                  <Mail className="mx-auto text-gray-400 mb-4" size={48} />
+                  <p className="text-gray-500">Nessuna email inviata ancora</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {emailLogs.map((log, index) => (
+                    <div key={log.id || index} className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h4 className="font-medium text-gray-900">{log.subject}</h4>
+                          <div className="text-sm text-gray-500 mt-1">
+                            {log.recipient_count} destinatari • {log.sent_at ? new Date(log.sent_at).toLocaleString('it-IT') : 'N/A'}
+                          </div>
+                        </div>
+                        <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          log.status === 'sent' ? 'bg-green-100 text-green-800' : 
+                          log.status === 'partial' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {log.status === 'sent' ? '✓ Inviata' : 
+                           log.status === 'partial' ? '⚠ Parziale' : 
+                           '✗ Fallita'}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Action Details Modal */}
