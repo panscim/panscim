@@ -1043,31 +1043,29 @@ class MissionVerificationTester:
                 )
     
     def run_all_tests(self):
-        """Run all mission management tests"""
-        print("🚀 Starting Mission Management Backend Tests...")
+        """Run all mission verification tests"""
+        print("🚀 Starting ENHANCED Mission Management with VERIFICATION Backend Tests...")
         print(f"Backend URL: {BACKEND_URL}")
-        print("=" * 60)
+        print("=" * 80)
         
         # Setup
         if not self.setup_test_users():
             print("❌ Failed to setup test users. Aborting tests.")
             return
         
-        # Run authentication tests first
-        self.test_authentication_enforcement()
+        # Run verification workflow tests in order
+        print("\n🎯 PRIORITY VALIDATION TESTS:")
+        print("1. Mission Creation with Verification Settings")
+        self.test_create_mission_with_verification_settings()
         
-        # Run admin mission management tests
-        self.test_create_one_time_mission()
-        self.test_create_daily_mission()
-        self.test_create_weekly_mission()
-        self.test_get_admin_missions()
-        self.test_update_mission()
-        self.test_mission_statistics()
+        print("\n2. Mission Submission System")
+        self.test_mission_submission_system()
         
-        # Run user mission tests
-        self.test_get_user_missions()
-        self.test_complete_mission()
-        self.test_mission_frequency_limits()
+        print("\n3. Admin Approval Workflow")
+        self.test_admin_approval_workflow()
+        
+        print("\n4. Enhanced Mission Retrieval")
+        self.test_enhanced_mission_retrieval()
         
         # Summary
         self.print_summary()
