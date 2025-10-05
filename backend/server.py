@@ -183,6 +183,12 @@ class MissionRequest(BaseModel):
     daily_limit: int = 0
     weekly_limit: int = 0
     is_active: bool = True
+    # Verification requirements
+    requires_description: bool = True
+    requires_photo: bool = False
+    photo_source: str = "both"  # none, gallery, camera, both
+    requires_link: bool = False
+    requires_approval: bool = True
 
 class EmailLog(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
