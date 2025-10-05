@@ -238,6 +238,66 @@ frontend:
         agent: "main"
         comment: "IMPLEMENTED: Multilingual frontend system complete. LanguageContext created, translations.js with IT/EN support. Navbar updated with IT/EN toggle (desktop + mobile). Smooth 300ms fade transition on language change. Translation function t() ready for use."
 
+  - task: "Premium Digital Club Card UI"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/components/DigitalClubCard.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Need to redesign DigitalClubCard component with premium layout: credit card format (3:2 ratio), proper spacing, 80x80px avatar with gold border, linen texture background, Cormorant Garamond title (22pt), Poppins text (14pt)."
+
+  - task: "Interactive QR Public Profile Page"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/pages/PublicProfile.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Need to create PublicProfile page accessible via QR scan. Shows user stats, current rank, prizes won, dynamic messages based on month status. Clean design with sand background and Puglia branding."
+
+  - task: "Complete Multilingual Translation"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/utils/translations.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Need to expand translation system to cover ENTIRE site (not just navbar). All pages, buttons, messages, notifications must translate dynamically. Update all components to use t() function."
+
+  - task: "Enhanced Admin Prize Editor"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/pages/AdminPanel.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Need to enhance prize editor with: month validity settings, real-time updates to user dashboard, prize history section showing past months, winners, and delivery status."
+
+  - task: "Wallet Integration UI"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/components/DigitalClubCard.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Need 'Add to Wallet' button in DigitalClubCard. Trigger wallet file generation and download. Show appropriate message if wallet integration not fully available yet."
+
 backend:
   - task: "Mission Management API Enhancement"
     implemented: true
