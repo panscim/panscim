@@ -13,7 +13,12 @@ import {
   ExternalLink,
   Calendar,
   Trophy,
-  Mail
+  Mail,
+  Target,
+  Plus,
+  Edit3,
+  ToggleLeft,
+  ToggleRight
 } from 'lucide-react';
 
 const AdminPanel = () => {
