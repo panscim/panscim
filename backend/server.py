@@ -1435,6 +1435,15 @@ async def get_club_card(
     
     user = User(**user_doc)
     
+    # Force QR URL update with new popup URL format
+    updated_qr_url = generate_club_card_qr_url(current_user.id)
+    if current_user.club_card_qr_url != updated_qr_url:
+        await db.users.update_one(
+            {"_id": current_user.id},
+            {"$set": {"club_card_qr_url": updated_qr_url}}
+        )
+        current_user.club_card_qr_url = updated_qr_url
+    
     return {
         "name": user.name,
         "username": user.username,
