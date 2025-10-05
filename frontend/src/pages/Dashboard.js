@@ -257,7 +257,7 @@ const Dashboard = () => {
               <div>
                 <h3 className="text-lg font-semibold text-deep-sea-blue mb-4 flex items-center">
                   <Target className="mr-2" size={20} />
-                  {t('special_missions')}
+                  Missioni Speciali
                 </h3>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
                   {data.missions.map((mission) => (
