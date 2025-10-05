@@ -4,7 +4,7 @@ import { ArrowRight, Users, Trophy, Gift, MapPin } from 'lucide-react';
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-brand-light">
+    <div className="min-h-screen bg-gray-100">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Background with maximum contrast */}
