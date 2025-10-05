@@ -533,6 +533,9 @@ async def register_user(user_data: UserCreate):
     
     await db.users.insert_one(user.dict())
     
+    # Initialize club card for new user
+    await initialize_club_card(user.id)
+    
     # Create access token
     access_token = create_access_token(data={"sub": user.id})
     
