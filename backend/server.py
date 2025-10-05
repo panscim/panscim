@@ -264,6 +264,87 @@ def get_user_level(total_points: int) -> str:
     else:
         return "Explorer"
 
+def generate_club_card_code() -> str:
+    """Generate unique club card code DP-XXXX"""
+    import random
+    import string
+    suffix = ''.join(random.choices(string.digits, k=4))
+    return f"DP-{suffix}"
+
+def generate_qr_code(data: str) -> str:
+    """Generate QR code for club card"""
+    import qrcode
+    import base64
+    from io import BytesIO
+    
+    qr = qrcode.QRCode(version=1, box_size=10, border=5)
+    qr.add_data(data)
+    qr.make(fit=True)
+    
+    img = qr.make_image(fill_color="black", back_color="white")
+    buffer = BytesIO()
+    img.save(buffer, format='PNG')
+    img_str = base64.b64encode(buffer.getvalue()).decode()
+    return f"data:image/png;base64,{img_str}"
+
+async def check_and_award_badges(user_id: str, action_type: str):
+    """Check and award badges based on user actions"""
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        return
+    
+    # Check for badge conditions
+    badges_to_award = []
+    
+    # First mission badge
+    if action_type == "first_mission":
+        existing_badge = await db.user_badges.find_one({
+            "user_id": user_id, 
+            "badge_name": "Prima Missione"
+        })
+        if not existing_badge:
+            badges_to_award.append({
+                "name": "Prima Missione",
+                "icon": "🎯",
+                "description": "Hai completato la tua prima missione!"
+            })
+    
+    # Award badges
+    for badge_info in badges_to_award:
+        user_badge = UserBadge(
+            user_id=user_id,
+            badge_id=str(uuid.uuid4()),
+            badge_name=badge_info["name"],
+            badge_icon=badge_info["icon"]
+        )
+        await db.user_badges.insert_one(user_badge.dict())
+        
+        # Send notification
+        notification = Notification(
+            user_id=user_id,
+            title=f"🏆 Nuovo Badge Sbloccato!",
+            message=f"Hai guadagnato il badge '{badge_info['name']}' {badge_info['icon']}",
+            type="achievement"
+        )
+        await db.notifications.insert_one(notification.dict())
+
+async def get_system_config(key: str, default_value: str = "") -> str:
+    """Get system configuration value"""
+    config = await db.system_config.find_one({"key": key})
+    return config["value"] if config else default_value
+
+async def set_system_config(key: str, value: str, admin_id: str = None):
+    """Set system configuration value"""
+    await db.system_config.update_one(
+        {"key": key},
+        {"$set": {
+            "value": value,
+            "updated_at": datetime.utcnow(),
+            "updated_by": admin_id
+        }},
+        upsert=True
+    )
+
 async def get_current_user(credentials: HTTPAuthorizationCredentials):
     try:
         token = credentials.credentials
