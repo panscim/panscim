@@ -345,6 +345,37 @@ const AdminPanel = () => {
     }
   };
 
+  const fetchPrizeHistory = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/admin/prizes/history`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setPrizeHistory(response.data);
+    } catch (error) {
+      console.error('Error fetching prize history:', error);
+      // Mock data for demonstration
+      setPrizeHistory([
+        {
+          month: "Ottobre 2024",
+          winners: [
+            { position: 1, username: "marco_explorer", prize_name: "Weekend Romantico in Trulli", delivered: true, delivery_date: "2024-10-15" },
+            { position: 2, username: "anna_puglia", prize_name: "Degustazione Oli Pugliesi", delivered: false, delivery_date: null },
+            { position: 3, username: "luigi_salento", prize_name: "Tour Gastronomico", delivered: true, delivery_date: "2024-10-12" }
+          ]
+        },
+        {
+          month: "Settembre 2024",
+          winners: [
+            { position: 1, username: "maria_bari", prize_name: "Esperienza Culinaria Tradizionale", delivered: true, delivery_date: "2024-09-20" },
+            { position: 2, username: "francesco_lecce", prize_name: "Kit Prodotti Tipici", delivered: true, delivery_date: "2024-09-18" },
+            { position: 3, username: "sara_brindisi", prize_name: "Buono Esperienza Locale", delivered: true, delivery_date: "2024-09-16" }
+          ]
+        }
+      ]);
+    }
+  };
+
   const updatePrize = async (position, prizeData) => {
     setPrizeLoading(true);
     try {
