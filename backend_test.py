@@ -507,72 +507,87 @@ class MissionVerificationTester:
                 f"Request failed: {str(e)}"
             )
     
-    def test_get_admin_missions(self):
-        """Test retrieving admin missions list with statistics"""
-        print("\n📋 Testing Admin Missions List Retrieval...")
+    def test_enhanced_mission_retrieval(self):
+        """Test enhanced mission retrieval with verification requirements and submission status"""
+        print("\n📋 Testing Enhanced Mission Retrieval...")
         
-        if not self.admin_token:
-            self.log_result("Get Admin Missions", False, "No admin token available")
+        if not self.regular_user_token:
+            self.log_result("Enhanced Mission Retrieval", False, "No regular user token available")
             return
         
-        headers = {"Authorization": f"Bearer {self.admin_token}"}
+        headers = {"Authorization": f"Bearer {self.regular_user_token}"}
         
         try:
-            response = requests.get(f"{API_BASE}/admin/missions", headers=headers)
+            response = requests.get(f"{API_BASE}/missions", headers=headers)
             
             if response.status_code == 200:
-                data = response.json()
-                if isinstance(data, list):
-                    if len(data) > 0:
-                        # Check mission structure
-                        mission = data[0]
-                        required_fields = ["id", "title", "description", "points", "frequency", "is_active", "completion_count"]
+                missions = response.json()
+                if isinstance(missions, list):
+                    if len(missions) > 0:
+                        # Check mission structure includes verification requirements
+                        mission = missions[0]
+                        required_fields = [
+                            "id", "title", "description", "points", "frequency",
+                            "requires_description", "requires_photo", "photo_source", 
+                            "requires_link", "requires_approval", "available", "completed"
+                        ]
                         missing_fields = [field for field in required_fields if field not in mission]
                         
                         if not missing_fields:
-                            active_missions = sum(1 for m in data if m.get("is_active", False))
-                            self.log_result(
-                                "Get Admin Missions", 
-                                True, 
-                                f"Successfully retrieved {len(data)} missions ({active_missions} active) with all required fields"
-                            )
+                            # Check submission status tracking
+                            status_fields = ["pending_approval", "available", "completed"]
+                            has_status_tracking = all(field in mission for field in status_fields)
+                            
+                            if has_status_tracking:
+                                verification_missions = sum(1 for m in missions if m.get("requires_approval", False))
+                                self.log_result(
+                                    "Enhanced Mission Retrieval", 
+                                    True, 
+                                    f"Successfully retrieved {len(missions)} missions with verification requirements and status tracking ({verification_missions} require approval)"
+                                )
+                            else:
+                                self.log_result(
+                                    "Enhanced Mission Retrieval", 
+                                    False, 
+                                    f"Missions missing submission status fields: {[f for f in status_fields if f not in mission]}"
+                                )
                         else:
                             self.log_result(
-                                "Get Admin Missions", 
+                                "Enhanced Mission Retrieval", 
                                 False, 
-                                f"Missions missing required fields: {missing_fields}",
+                                f"Missions missing verification requirement fields: {missing_fields}",
                                 f"Sample mission: {mission}"
                             )
                     else:
                         self.log_result(
-                            "Get Admin Missions", 
+                            "Enhanced Mission Retrieval", 
                             True, 
-                            "No missions found (this is normal for new installations)"
+                            "No missions found (this is normal if no active missions exist)"
                         )
                 else:
                     self.log_result(
-                        "Get Admin Missions", 
+                        "Enhanced Mission Retrieval", 
                         False, 
                         "Invalid response format - expected list",
-                        f"Response: {data}"
+                        f"Response: {missions}"
                     )
-            elif response.status_code == 403:
+            elif response.status_code == 401:
                 self.log_result(
-                    "Get Admin Missions", 
+                    "Enhanced Mission Retrieval", 
                     False, 
-                    "Access denied - user may not have admin privileges",
+                    "Authentication failed - invalid user token",
                     f"Response: {response.text}"
                 )
             else:
                 self.log_result(
-                    "Get Admin Missions", 
+                    "Enhanced Mission Retrieval", 
                     False, 
                     f"Unexpected response status: {response.status_code}",
                     f"Response: {response.text}"
                 )
         except Exception as e:
             self.log_result(
-                "Get Admin Missions", 
+                "Enhanced Mission Retrieval", 
                 False, 
                 f"Request failed: {str(e)}"
             )
