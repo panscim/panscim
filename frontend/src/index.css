@@ -98,46 +98,50 @@ code {
 }
 
 .avatar-ring {
-    border: 3px solid #CFAE6C;
+    border: 3px solid #d4af37;
     border-radius: 50%;
 }
 
 .points-glow {
-    box-shadow: 0 0 20px rgba(207, 174, 108, 0.3);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
 }
 
-.stone-texture {
+.brand-texture {
     background-image: 
-        radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
-        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.05) 2px, transparent 2px),
+        radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.05) 1px, transparent 1px);
 }
 
-.sea-wave-bg {
-    background: linear-gradient(135deg, #2E4A5C 0%, #4A6B7C 100%);
+.brand-gradient-dark {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
 }
 
-.gold-gradient {
-    background: linear-gradient(135deg, #CFAE6C 0%, #D4B76F 50%, #CFAE6C 100%);
+.brand-gradient-accent {
+    background: linear-gradient(135deg, #d4af37 0%, #f0c35a 50%, #d4af37 100%);
 }
 
-.mediterranean-shadow {
-    box-shadow: 0 10px 25px rgba(46, 74, 92, 0.1), 0 4px 10px rgba(197, 126, 87, 0.1);
+.brand-shadow {
+    box-shadow: 0 10px 25px rgba(26, 26, 26, 0.15), 0 4px 10px rgba(212, 175, 55, 0.1);
 }
 
 .puglia-card {
-    @apply bg-white rounded-[20px] mediterranean-shadow p-6 border border-gray-100;
+    @apply bg-white rounded-[20px] brand-shadow p-6 border border-gray-100;
 }
 
 .level-badge {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-matte-gold text-white;
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-brand-accent text-white;
 }
 
 .btn-primary {
-    @apply bg-deep-sea-blue hover:bg-opacity-90 text-white font-semibold py-3 px-6 rounded-[20px] transition-all duration-200 mediterranean-shadow hover:shadow-lg;
+    @apply bg-brand-dark hover:bg-brand-secondary text-white font-semibold py-3 px-6 rounded-[20px] transition-all duration-200 brand-shadow hover:shadow-lg;
 }
 
 .btn-secondary {
-    @apply bg-matte-gold hover:bg-opacity-90 text-white font-semibold py-3 px-6 rounded-[20px] transition-all duration-200 mediterranean-shadow hover:shadow-lg;
+    @apply bg-brand-accent hover:bg-opacity-90 text-white font-semibold py-3 px-6 rounded-[20px] transition-all duration-200 brand-shadow hover:shadow-lg;
+}
+
+.btn-outline {
+    @apply border-2 border-brand-accent bg-transparent text-brand-accent hover:bg-brand-accent hover:text-white font-semibold py-3 px-6 rounded-[20px] transition-all duration-200;
 }
 
 /* Animations */
