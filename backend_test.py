@@ -813,8 +813,8 @@ class MissionManagementTester:
                 )
     
     def run_all_tests(self):
-        """Run all email admin tests"""
-        print("🚀 Starting Email Admin Backend Tests...")
+        """Run all mission management tests"""
+        print("🚀 Starting Mission Management Backend Tests...")
         print(f"Backend URL: {BACKEND_URL}")
         print("=" * 60)
         
@@ -823,12 +823,21 @@ class MissionManagementTester:
             print("❌ Failed to setup test users. Aborting tests.")
             return
         
-        # Run tests
+        # Run authentication tests first
         self.test_authentication_enforcement()
-        self.test_get_users_list()
-        self.test_smtp_configuration()
-        self.test_send_email_with_templates()
-        self.test_email_logs()
+        
+        # Run admin mission management tests
+        self.test_create_one_time_mission()
+        self.test_create_daily_mission()
+        self.test_create_weekly_mission()
+        self.test_get_admin_missions()
+        self.test_update_mission()
+        self.test_mission_statistics()
+        
+        # Run user mission tests
+        self.test_get_user_missions()
+        self.test_complete_mission()
+        self.test_mission_frequency_limits()
         
         # Summary
         self.print_summary()
