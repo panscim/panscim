@@ -338,6 +338,42 @@ backend:
         agent: "main"  
         comment: "IMPLEMENTED: Multilingual backend support complete. Translation model created. API endpoints: GET /translations, PUT /user/language, GET/POST /admin/translations. Default translations function with IT/EN support."
 
+  - task: "Enhanced Club Card Design"
+    implemented: false
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Need to enhance club card with premium design: proper spacing, 3:2 ratio, elegant layout with avatar (80x80px), gold borders, linen texture background. Cormorant Garamond title, Poppins text."
+
+  - task: "Interactive QR Public Profile"
+    implemented: false
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Need dynamic public profile page at /club/profile/{user_id}. Shows real-time stats: current points, rank, prizes won, join date. Different messages for active/concluded months and winners."
+
+  - task: "Wallet Integration System"
+    implemented: false
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Need Apple/Google Wallet integration. Generate .pkpass files with user data, QR code, branding. 'Add to Wallet' button with proper metadata."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
