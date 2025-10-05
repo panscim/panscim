@@ -38,6 +38,7 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState('profile');
   const [showPopup, setShowPopup] = useState(false);
   const [popupUserId, setPopupUserId] = useState(null);
+  const [currentPosition, setCurrentPosition] = useState(null);
   const fileInputRef = useRef(null);
   const [searchParams] = useSearchParams();
 
