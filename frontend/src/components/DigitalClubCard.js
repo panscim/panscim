@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from '../utils/axios';
+import axios from 'axios';
 import { QrCode, Download, Copy, Calendar, Star } from 'lucide-react';
 
 const DigitalClubCard = () => {
