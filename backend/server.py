@@ -1487,7 +1487,7 @@ async def get_translations(language: str = "it"):
 
 @api_router.put("/user/language")
 async def update_user_language(
-    language: str,
+    language: str = Query(...),
     credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     """Update user's preferred language"""
