@@ -1059,17 +1059,39 @@ async def send_admin_email(
                 "body": user_body
             })
     
+    # Send emails to all recipients
+    sent_count = 0
+    failed_count = 0
+    failed_emails = []
+    
+    for recipient in processed_recipients:
+        success = await send_email(recipient["email"], subject, recipient["body"])
+        if success:
+            sent_count += 1
+        else:
+            failed_count += 1
+            failed_emails.append(recipient["email"])
+    
+    # Determine status based on results
+    email_status = "sent" if failed_count == 0 else ("partial" if sent_count > 0 else "failed")
+    
     # Log email
     email_log = EmailLog(
         recipients=[r["email"] for r in processed_recipients],
         subject=subject,
         body=body,
         admin_id=current_user.id,
-        status="sent"
+        status=email_status
     )
     await db.email_log.insert_one(email_log.dict())
     
-    return {"message": f"📩 Email inviata con successo a {len(processed_recipients)} utenti 🌿"}
+    # Prepare response message
+    if failed_count == 0:
+        return {"message": f"📩 Email inviata con successo a {sent_count} utenti 🌿"}
+    elif sent_count > 0:
+        return {"message": f"📩 Email inviata a {sent_count} utenti, {failed_count} fallite. Controlla la configurazione SMTP."}
+    else:
+        return {"message": f"❌ Invio email fallito per tutti i {failed_count} destinatari. Controlla la configurazione SMTP."}
 
 @api_router.get("/admin/email/logs")
 async def get_email_logs(
