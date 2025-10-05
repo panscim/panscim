@@ -144,6 +144,7 @@ const AdminPanel = () => {
               { id: 'pending', label: 'Azioni in attesa', icon: Clock, count: data.stats.pendingActions },
               { id: 'stats', label: 'Statistiche', icon: BarChart3 },
               { id: 'users', label: 'Utenti', icon: Users },
+              { id: 'email', label: 'Email Admin', icon: Mail },
               { id: 'settings', label: 'Impostazioni', icon: Settings }
             ].map((tab) => {
               const Icon = tab.icon;
