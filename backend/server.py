@@ -504,7 +504,7 @@ async def submit_action(
 @api_router.get("/actions/history")
 async def get_action_history(
     limit: int = 20,
-    credentials: HTTPAuthorizationCredentials = security
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     current_user = await get_current_user(credentials)
     
