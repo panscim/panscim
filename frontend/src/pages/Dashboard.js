@@ -100,6 +100,22 @@ const Dashboard = () => {
     }
   };
 
+  const completeMission = async (missionId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/missions/${missionId}/complete`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      alert(response.data.message);
+      fetchDashboardData(); // Refresh data to update mission availability
+      updateUser(); // Update user points in context
+    } catch (error) {
+      const message = error.response?.data?.detail || 'Errore nel completamento della missione';
+      alert(message);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-sand-white flex items-center justify-center">
