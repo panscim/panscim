@@ -109,6 +109,87 @@ class Prize(BaseModel):
     winner_id: Optional[str] = None
     claimed: bool = False
     claimed_at: Optional[datetime] = None
+    delivered: bool = False
+    delivered_at: Optional[datetime] = None
+
+class EmailLog(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    sender: str = "desideridipuglia@gmail.com"
+    recipients: List[str]
+    subject: str
+    body: str
+    sent_at: datetime = Field(default_factory=datetime.utcnow)
+    status: str = "sent"  # sent, failed
+    admin_id: str
+
+class UserMission(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    mission_id: str
+    mission_title: str
+    points_earned: int
+    completed_at: datetime = Field(default_factory=datetime.utcnow)
+    month_year: str
+
+class WeeklyQuiz(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    description: str
+    questions: List[Dict] = []  # [{"question": "...", "options": ["a", "b", "c"], "correct": 0}]
+    quiz_start_date: datetime = Field(default_factory=datetime.utcnow)
+    quiz_end_date: Optional[datetime] = None
+    is_active: bool = True
+    created_by: str  # admin_id
+
+class QuizCompletion(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    quiz_id: str
+    answers: List[int]  # [0, 1, 2] indices of selected answers
+    score: int  # number of correct answers
+    points_earned: int
+    completed_at: datetime = Field(default_factory=datetime.utcnow)
+
+class WinnersArchive(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    username: str
+    user_name: str
+    position: int  # 1, 2, 3
+    prize_title: str
+    prize_description: str
+    month_year: str
+    points: int
+    assigned_at: datetime = Field(default_factory=datetime.utcnow)
+    delivered: bool = False
+    delivered_at: Optional[datetime] = None
+
+class Badge(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    description: str
+    icon: str  # emoji or icon name
+    condition_type: str  # first_mission, first_review, months_active, top3_month
+    condition_value: Optional[int] = None  # for numeric conditions
+    created_by: str  # admin_id
+    is_active: bool = True
+
+class UserBadge(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    badge_id: str
+    badge_name: str
+    badge_icon: str
+    earned_at: datetime = Field(default_factory=datetime.utcnow)
+
+class SecurityEvent(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: Optional[str] = None
+    event_type: str  # login_attempt, suspicious_activity, rate_limit
+    ip_address: str
+    user_agent: str
+    details: Dict = {}
+    created_at: datetime = Field(default_factory=datetime.utcnow)
 
 class Leaderboard(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
