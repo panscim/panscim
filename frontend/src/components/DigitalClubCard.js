@@ -16,6 +16,19 @@ const DigitalClubCard = () => {
     fetchCardData();
   }, []);
 
+  // Get user ID from token for popup
+  useEffect(() => {
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        setCurrentUserId(payload.user_id || payload.sub);
+      }
+    } catch (error) {
+      console.error('Error parsing token:', error);
+    }
+  }, []);
+
   const fetchCardData = async () => {
     try {
       const token = localStorage.getItem('token');
