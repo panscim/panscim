@@ -93,8 +93,8 @@ const DigitalClubCard = () => {
         </p>
       </div>
 
-      {/* Premium Digital Club Card */}
-      <div className="flex justify-center">
+      {/* Premium Digital Club Card - Hidden on Mobile */}
+      <div className="hidden lg:flex justify-center">
         <div 
           ref={cardRef}
           className="relative rounded-[20px] shadow-2xl border border-matte-gold overflow-hidden"
