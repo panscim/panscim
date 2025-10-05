@@ -93,7 +93,7 @@ const DigitalClubCard = () => {
         </p>
       </div>
 
-      {/* Digital Club Card */}
+      {/* Premium Digital Club Card */}
       <div className="flex justify-center">
         <div 
           ref={cardRef}
