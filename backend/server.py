@@ -1037,7 +1037,7 @@ async def send_admin_email(
         user_doc = await db.users.find_one({"id": recipient_id})
         if user_doc:
             # Replace variables in email body
-            user_body = body
+            user_body = email_request.body
             user_body = user_body.replace("{{user_name}}", user_doc["name"])
             user_body = user_body.replace("{{user_points}}", str(user_doc["current_points"]))
             user_body = user_body.replace("{{user_level}}", user_doc["level"])
