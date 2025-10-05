@@ -56,13 +56,13 @@ async def send_email(to_email: str, subject: str, body: str) -> bool:
             return False
         
         # Create message
-        msg = MimeMultipart()
+        msg = MIMEMultipart()
         msg['From'] = smtp_email
         msg['To'] = to_email
         msg['Subject'] = subject
         
         # Add body to email
-        msg.attach(MimeText(body, 'html'))
+        msg.attach(MIMEText(body, 'html'))
         
         # Gmail SMTP server setup
         server = smtplib.SMTP_SSL(smtp_server, smtp_port)
