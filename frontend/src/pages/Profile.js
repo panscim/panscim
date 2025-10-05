@@ -113,7 +113,7 @@ const Profile = () => {
     }
   };
 
-  const generateShareableProfile = () => {
+  const generateShareableProfile = async () => {
     const profileData = {
       name: user.name,
       username: user.username,
@@ -131,14 +131,27 @@ ${getUserFlag(profileData.country)} ${countries.find(c => c.code === profileData
 
 Vivi la Puglia autentica con noi!`;
     
-    if (navigator.share) {
-      navigator.share({
-        title: 'Il mio profilo Desideri di Puglia',
-        text: shareText
-      });
-    } else {
-      navigator.clipboard.writeText(shareText);
-      setSuccess('Profilo copiato negli appunti! 💷');
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Il mio profilo Desideri di Puglia',
+          text: shareText
+        });
+      } else {
+        await navigator.clipboard.writeText(shareText);
+        setSuccess('Profilo copiato negli appunti! 📋');
+        setTimeout(() => setSuccess(''), 3000);
+      }
+    } catch (error) {
+      // Fallback if clipboard fails
+      const textarea = document.createElement('textarea');
+      textarea.value = shareText;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      
+      setSuccess('Profilo copiato negli appunti! 📋');
       setTimeout(() => setSuccess(''), 3000);
     }
   };
