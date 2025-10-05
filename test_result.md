@@ -234,6 +234,9 @@ frontend:
       - working: false
         agent: "main"
         comment: "Need IT/EN language toggle in navbar. Centralized translations system with translations.json file. All UI texts, buttons, messages translated. Smooth fade-in transition (300ms) on language change."
+      - working: true
+        agent: "main"
+        comment: "IMPLEMENTED: Multilingual frontend system complete. LanguageContext created, translations.js with IT/EN support. Navbar updated with IT/EN toggle (desktop + mobile). Smooth 300ms fade transition on language change. Translation function t() ready for use."
 
 backend:
   - task: "Mission Management API Enhancement"
