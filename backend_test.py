@@ -236,10 +236,15 @@ class MissionVerificationTester:
         headers = {"Authorization": f"Bearer {self.regular_user_token}"}
         mission_id = self.created_mission_ids[0]  # Use first created mission
         
-        # Create a simple test image (1x1 pixel PNG)
-        test_image_data = base64.b64decode(
-            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA4GgKxQAAAABJRU5ErkJggg=="
-        )
+        # Create a simple test image (10x10 pixel PNG with proper format)
+        from PIL import Image
+        import io
+        
+        # Create a simple 10x10 red image
+        img = Image.new('RGB', (10, 10), color='red')
+        img_buffer = io.BytesIO()
+        img.save(img_buffer, format='PNG')
+        test_image_data = img_buffer.getvalue()
         
         # Prepare FormData
         files = {
