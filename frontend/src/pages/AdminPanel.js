@@ -568,6 +568,69 @@ const AdminPanel = () => {
 
         {activeTab === 'missions' && (
           <div className="space-y-6">
+            {/* Pending Mission Submissions */}
+            {pendingSubmissions.length > 0 && (
+              <div className="bg-white rounded-[20px] p-6 mediterranean-shadow">
+                <h3 className="text-lg font-semibold text-deep-sea-blue mb-4 flex items-center">
+                  <Clock className="mr-2" size={20} />
+                  Missioni in Attesa ({pendingSubmissions.length})
+                </h3>
+                
+                <div className="space-y-4">
+                  {pendingSubmissions.map((submission) => (
+                    <div key={submission.id} className="border border-yellow-200 rounded-lg p-4 bg-yellow-50">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-3 mb-2">
+                            <h4 className="font-semibold text-gray-900">{submission.mission_title}</h4>
+                            <span className="text-sm font-medium text-yellow-600">
+                              +{submission.points_earned} punti
+                            </span>
+                          </div>
+                          <div className="text-sm text-gray-600 mb-2">
+                            <strong>{submission.user_name}</strong> (@{submission.username})
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {new Date(submission.submitted_at).toLocaleDateString('it-IT', {
+                              day: 'numeric',
+                              month: 'short',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </div>
+                        </div>
+                        <div className="flex space-x-2 ml-4">
+                          <button
+                            onClick={() => setSubmissionDetails(submission)}
+                            className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm flex items-center space-x-1"
+                          >
+                            <Eye size={14} />
+                            <span>Vedi</span>
+                          </button>
+                          <button
+                            onClick={() => verifySubmission(submission.id, 'approved')}
+                            disabled={missionLoading}
+                            className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 text-sm flex items-center space-x-1"
+                          >
+                            <CheckCircle size={14} />
+                            <span>Approva</span>
+                          </button>
+                          <button
+                            onClick={() => verifySubmission(submission.id, 'rejected')}
+                            disabled={missionLoading}
+                            className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50 text-sm flex items-center space-x-1"
+                          >
+                            <XCircle size={14} />
+                            <span>Rifiuta</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Mission Statistics */}
             {missionStats && (
               <div className="bg-white rounded-[20px] p-6 mediterranean-shadow">
