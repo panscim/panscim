@@ -1033,7 +1033,7 @@ async def send_admin_email(
     
     # Process template variables
     processed_recipients = []
-    for recipient_id in recipients:
+    for recipient_id in email_request.recipients:
         user_doc = await db.users.find_one({"id": recipient_id})
         if user_doc:
             # Replace variables in email body
