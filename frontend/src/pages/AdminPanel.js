@@ -70,6 +70,11 @@ const AdminPanel = () => {
   const [missionLoading, setMissionLoading] = useState(false);
   const [pendingSubmissions, setPendingSubmissions] = useState([]);
   const [submissionDetails, setSubmissionDetails] = useState(null);
+  
+  // Prize Management State
+  const [prizes, setPrizes] = useState([]);
+  const [editingPrize, setEditingPrize] = useState(null);
+  const [prizeLoading, setPrizeLoading] = useState(false);
 
   useEffect(() => {
     fetchAdminData();
