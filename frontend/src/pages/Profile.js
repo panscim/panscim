@@ -4,6 +4,7 @@ import { useLocation, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import ImageCropper from '@/components/ImageCropper';
 import DigitalClubCard from '@/components/DigitalClubCard';
+import PublicProfilePopup from '@/components/PublicProfilePopup';
 import { 
   User, 
   Camera, 
