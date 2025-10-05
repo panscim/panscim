@@ -1257,24 +1257,57 @@ async def get_admin_missions(credentials: HTTPAuthorizationCredentials = Depends
     
     return clean_missions
 
+class MissionUpdateRequest(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    points: Optional[int] = None
+    frequency: Optional[str] = None
+    daily_limit: Optional[int] = None
+    weekly_limit: Optional[int] = None
+    is_active: Optional[bool] = None
+
 @api_router.put("/admin/missions/{mission_id}")
 async def update_mission(
     mission_id: str,
-    title: Optional[str] = None,
-    description: Optional[str] = None,
-    points: Optional[int] = None,
-    is_active: Optional[bool] = None,
+    update_request: MissionUpdateRequest,
     credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     current_user = await get_current_user(credentials)
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin access required")
     
+    # Check if mission exists
+    mission = await db.missions.find_one({"id": mission_id})
+    if not mission:
+        raise HTTPException(status_code=404, detail="Mission not found")
+    
     update_data = {}
-    if title: update_data["title"] = title
-    if description: update_data["description"] = description
-    if points: update_data["points"] = points
-    if is_active is not None: update_data["is_active"] = is_active
+    if update_request.title: update_data["title"] = update_request.title
+    if update_request.description: update_data["description"] = update_request.description
+    if update_request.points: update_data["points"] = update_request.points
+    if update_request.frequency: update_data["frequency"] = update_request.frequency
+    if update_request.daily_limit is not None: update_data["daily_limit"] = update_request.daily_limit
+    if update_request.weekly_limit is not None: update_data["weekly_limit"] = update_request.weekly_limit
+    if update_request.is_active is not None: update_data["is_active"] = update_request.is_active
+    
+    # Update requirements based on frequency changes
+    if update_request.frequency or update_request.daily_limit is not None or update_request.weekly_limit is not None:
+        frequency = update_request.frequency or mission.get("frequency", "one-time")
+        daily_limit = update_request.daily_limit if update_request.daily_limit is not None else mission.get("daily_limit", 0)
+        weekly_limit = update_request.weekly_limit if update_request.weekly_limit is not None else mission.get("weekly_limit", 0)
+        
+        requirements = []
+        if frequency == "daily" and daily_limit > 0:
+            requirements.append(f"Limite giornaliero: {daily_limit}")
+        elif frequency == "weekly" and weekly_limit > 0:
+            requirements.append(f"Limite settimanale: {weekly_limit}")
+        elif frequency == "one-time":
+            requirements.append("Completabile una volta sola")
+        
+        if not requirements:
+            requirements.append("Nessun limite")
+        
+        update_data["requirements"] = requirements
     
     await db.missions.update_one({"id": mission_id}, {"$set": update_data})
     return {"message": "Missione aggiornata con successo!"}
