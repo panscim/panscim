@@ -51,6 +51,30 @@ const Profile = () => {
     }
   }, [searchParams]);
 
+  // Fetch current position from leaderboard
+  useEffect(() => {
+    const fetchCurrentPosition = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/leaderboard`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        if (response.data && user) {
+          const userIndex = response.data.findIndex(u => u.user_id === user.id);
+          setCurrentPosition(userIndex >= 0 ? userIndex + 1 : null);
+        }
+      } catch (error) {
+        console.error('Error fetching leaderboard position:', error);
+        setCurrentPosition(null);
+      }
+    };
+
+    if (user) {
+      fetchCurrentPosition();
+    }
+  }, [user]);
+
   const countries = [
     { code: 'IT', name: 'Italia', flag: '🇮🇹' },
     { code: 'US', name: 'Stati Uniti', flag: '🇺🇸' },
