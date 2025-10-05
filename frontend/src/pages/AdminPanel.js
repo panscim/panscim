@@ -1170,6 +1170,116 @@ const AdminPanel = () => {
         )}
       </div>
 
+      {/* Mission Submission Details Modal */}
+      {submissionDetails && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-[20px] p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-deep-sea-blue">Dettagli Missione</h3>
+              <button
+                onClick={() => setSubmissionDetails(null)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <XCircle size={24} />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Utente</label>
+                  <div className="text-deep-sea-blue font-semibold">{submissionDetails.user_name}</div>
+                  <div className="text-sm text-gray-600">@{submissionDetails.username}</div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Missione</label>
+                  <div className="text-deep-sea-blue font-semibold">{submissionDetails.mission_title}</div>
+                  <div className="text-sm text-yellow-600">+{submissionDetails.points_earned} punti</div>
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Descrizione</label>
+                <div className="bg-gray-50 p-3 rounded-lg text-sm">
+                  {submissionDetails.description}
+                </div>
+              </div>
+              
+              {submissionDetails.photo_url && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Foto</label>
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <img 
+                      src={`data:image/jpeg;base64,${submissionDetails.photo_url}`}
+                      alt="Mission submission"
+                      className="max-w-full h-auto rounded-lg"
+                      style={{maxHeight: '300px'}}
+                    />
+                  </div>
+                </div>
+              )}
+              
+              {submissionDetails.submission_url && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Link</label>
+                  <div className="bg-gray-50 p-3 rounded-lg">
+                    <a 
+                      href={submissionDetails.submission_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline flex items-center space-x-1"
+                    >
+                      <ExternalLink size={14} />
+                      <span>{submissionDetails.submission_url}</span>
+                    </a>
+                  </div>
+                </div>
+              )}
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Data Invio</label>
+                  <div className="text-sm text-gray-600">
+                    {new Date(submissionDetails.submitted_at).toLocaleDateString('it-IT', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                  <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs">
+                    In attesa di verifica
+                  </span>
+                </div>
+              </div>
+              
+              <div className="flex space-x-3 pt-4 border-t">
+                <button
+                  onClick={() => verifySubmission(submissionDetails.id, 'approved')}
+                  disabled={missionLoading}
+                  className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-green-700 disabled:opacity-50 flex items-center justify-center space-x-2"
+                >
+                  <CheckCircle size={18} />
+                  <span>{missionLoading ? 'Approvo...' : 'Approva Missione'}</span>
+                </button>
+                <button
+                  onClick={() => verifySubmission(submissionDetails.id, 'rejected')}
+                  disabled={missionLoading}
+                  className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-red-700 disabled:opacity-50 flex items-center justify-center space-x-2"
+                >
+                  <XCircle size={18} />
+                  <span>{missionLoading ? 'Rifiuto...' : 'Rifiuta Missione'}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Action Details Modal */}
       {actionDetails && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
