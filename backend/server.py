@@ -882,6 +882,14 @@ async def get_missions(
     
     completed_mission_ids = {completion["mission_id"]: completion for completion in user_completions}
     
+    # Get user's mission submissions (including pending) for this month
+    user_submissions = await db.mission_submissions.find({
+        "user_id": current_user.id,
+        "month_year": month_year
+    }).to_list(None)
+    
+    submitted_mission_ids = {sub["mission_id"]: sub for sub in user_submissions}
+    
     # Get today's date for daily limit checking
     today = datetime.now().date()
     week_start = today - timedelta(days=today.weekday())
