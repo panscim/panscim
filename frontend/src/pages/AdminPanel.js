@@ -326,6 +326,76 @@ const AdminPanel = () => {
     }
   };
 
+  // Prize Management Functions
+  const fetchPrizes = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/admin/prizes`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setPrizes(response.data);
+    } catch (error) {
+      console.error('Error fetching prizes:', error);
+    }
+  };
+
+  const updatePrize = async (position, prizeData) => {
+    setPrizeLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/admin/prizes/${position}`, prizeData, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      alert('🌿 Premio aggiornato con successo!');
+      setEditingPrize(null);
+      fetchPrizes();
+    } catch (error) {
+      alert('Errore aggiornamento: ' + (error.response?.data?.detail || 'Errore sconosciuto'));
+    } finally {
+      setPrizeLoading(false);
+    }
+  };
+
+  const restoreDefaultPrize = async (position) => {
+    if (!confirm('Vuoi ripristinare questo premio ai valori predefiniti?')) return;
+    
+    setPrizeLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/api/admin/prizes/${position}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      alert('⚙️ Premio ripristinato ai valori predefiniti!');
+      fetchPrizes();
+    } catch (error) {
+      alert('Errore ripristino: ' + (error.response?.data?.detail || 'Errore sconosciuto'));
+    } finally {
+      setPrizeLoading(false);
+    }
+  };
+
+  const uploadPrizeImage = async (imageFile) => {
+    try {
+      const token = localStorage.getItem('token');
+      const formData = new FormData();
+      formData.append('photo', imageFile);
+      
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/admin/prizes/upload-image`, formData, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      
+      return response.data.image_url;
+    } catch (error) {
+      alert('Errore caricamento immagine: ' + (error.response?.data?.detail || 'Errore sconosciuto'));
+      return null;
+    }
+  };
+
   const getActionIcon = (actionTypeId) => {
     const icons = {
       'like_post': '👍',
