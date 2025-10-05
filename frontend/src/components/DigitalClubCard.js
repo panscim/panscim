@@ -131,20 +131,22 @@ const DigitalClubCard = () => {
             <div className="flex-1 flex items-start justify-between">
               {/* Left Side - User Information */}
               <div className="flex-1 pr-6">
-                {/* Avatar and Name */}
+                {/* Avatar fisso per livello */}
                 <div className="flex items-center space-x-4 mb-6">
-                  {cardData.avatar ? (
-                    <img
-                      src={`data:image/jpeg;base64,${cardData.avatar}`}
-                      alt="Avatar"
-                      className="w-20 h-20 rounded-full border-3 border-matte-gold object-cover shadow-md"
-                      style={{ borderWidth: '3px' }}
-                    />
-                  ) : (
-                    <div className="w-20 h-20 bg-gradient-to-br from-matte-gold to-yellow-600 rounded-full flex items-center justify-center text-deep-sea-blue font-bold text-xl shadow-md border-3 border-matte-gold" style={{ borderWidth: '3px' }}>
-                      {cardData.name?.charAt(0) || '?'}
-                    </div>
-                  )}
+                  <div className="w-20 h-20 rounded-full border-3 border-matte-gold flex items-center justify-center shadow-md text-white font-bold text-2xl" style={{ 
+                    borderWidth: '3px',
+                    background: cardData.level === 'Explorer' ? 'linear-gradient(135deg, #CFAE6C, #DAB973)' :
+                               cardData.level === 'Adventurer' ? 'linear-gradient(135deg, #2E4A5C, #3A5A6E)' :
+                               cardData.level === 'Master' ? 'linear-gradient(135deg, #8B4513, #A0522D)' :
+                               cardData.level === 'Legend' ? 'linear-gradient(135deg, #800080, #9932CC)' :
+                               'linear-gradient(135deg, #CFAE6C, #DAB973)' // Default Explorer
+                  }}>
+                    {cardData.level === 'Explorer' ? '🌱' :
+                     cardData.level === 'Adventurer' ? '🗺️' :
+                     cardData.level === 'Master' ? '👑' :
+                     cardData.level === 'Legend' ? '🏆' :
+                     '🌱'}
+                  </div>
                   <div className="flex-1">
                     <h2 className="text-xl font-bold text-deep-sea-blue mb-1" style={{ fontFamily: 'Poppins, sans-serif' }}>
                       {cardData.name}
