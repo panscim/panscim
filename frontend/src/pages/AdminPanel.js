@@ -100,22 +100,68 @@ const AdminPanel = () => {
 
   const fetchAdminData = async () => {
     try {
-      const response = await axios.get('/admin/actions/pending');
-      setData(prev => ({
-        ...prev,
-        pendingActions: response.data
-      }));
+      const token = localStorage.getItem('token');
       
-      // Calculate basic stats from pending actions
+      // Fetch multiple endpoints for comprehensive stats
+      const [usersResponse, leaderboardResponse, missionsResponse, submissionsResponse] = await Promise.all([
+        axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/admin/users`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/leaderboard`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/admin/missions`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/admin/missions/submissions/pending`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+      ]);
+
+      // Calculate comprehensive statistics
+      const users = usersResponse.data;
+      const leaderboard = leaderboardResponse.data;
+      const missions = missionsResponse.data;
+      const submissions = submissionsResponse.data;
+
       const stats = {
-        totalUsers: new Set(response.data.map(a => a.user_id)).size,
-        totalActions: response.data.length,
-        pendingActions: response.data.filter(a => a.verification_status === 'pending').length,
-        monthlyPoints: response.data.reduce((sum, a) => sum + (a.points_earned || 0), 0)
+        totalUsers: users.length,
+        activeUsers: leaderboard.filter(u => u.points > 0).length,
+        totalMissions: missions.length,
+        activeMissions: missions.filter(m => m.active).length,
+        pendingSubmissions: submissions.length,
+        monthlyPoints: leaderboard.reduce((sum, u) => sum + (u.points || 0), 0),
+        totalRegistrations: users.length,
+        topUser: leaderboard[0]?.name || 'Nessuno',
+        averagePoints: leaderboard.length > 0 ? Math.round(leaderboard.reduce((sum, u) => sum + u.points, 0) / leaderboard.length) : 0
       };
-      setData(prev => ({ ...prev, stats }));
+
+      setData(prev => ({ 
+        ...prev, 
+        stats,
+        users,
+        leaderboard,
+        missions: missions || [],
+        pendingSubmissions: submissions || []
+      }));
+
     } catch (error) {
       console.error('Error fetching admin data:', error);
+      // Set default stats if API fails
+      setData(prev => ({ 
+        ...prev, 
+        stats: {
+          totalUsers: 0,
+          activeUsers: 0,
+          totalMissions: 0,
+          activeMissions: 0,
+          pendingSubmissions: 0,
+          monthlyPoints: 0,
+          totalRegistrations: 0,
+          topUser: 'N/A',
+          averagePoints: 0
+        }
+      }));
     } finally {
       setLoading(false);
     }
