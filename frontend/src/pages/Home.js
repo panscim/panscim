@@ -55,7 +55,7 @@ const Home = () => {
               className="inline-flex items-center px-8 py-4 bg-brand-accent hover:bg-opacity-90 text-white font-semibold rounded-[20px] transition-all duration-200 brand-shadow hover:shadow-lg group"
             >
               <span>Partecipa alla Sfida</span>
-              <span className="ml-2 text-2xl">🌿</span>
+              <span className="ml-2 text-2xl">🏆</span>
               <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
             </Link>
             <Link 
