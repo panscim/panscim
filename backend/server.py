@@ -633,7 +633,21 @@ async def get_notifications(
         {"user_id": current_user.id}
     ).sort("created_at", -1).limit(limit).to_list(limit)
     
-    return notifications
+    # Clean notifications to avoid ObjectId issues
+    clean_notifications = []
+    for notif in notifications:
+        clean_notif = {
+            "id": notif["id"],
+            "user_id": notif["user_id"],
+            "title": notif["title"],
+            "message": notif["message"],
+            "type": notif["type"],
+            "read": notif["read"],
+            "created_at": notif["created_at"].isoformat() if "created_at" in notif else None
+        }
+        clean_notifications.append(clean_notif)
+    
+    return clean_notifications
 
 @api_router.put("/notifications/{notification_id}/read")
 async def mark_notification_read(
