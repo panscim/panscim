@@ -28,10 +28,10 @@ const Home = () => {
             <h1 className="text-5xl md:text-7xl font-cormorant font-bold text-white mb-6">
               Vivi la Puglia.
             </h1>
-            <h2 className="text-2xl md:text-4xl font-poppins font-light text-sand-white mb-8">
+            <h2 className="text-2xl md:text-4xl font-poppins font-light text-brand-light mb-8">
               Guadagna momenti. Vinci esperienze reali.
             </h2>
-            <p className="text-lg md:text-xl text-sand-white/90 max-w-2xl mx-auto mb-8">
+            <p className="text-lg md:text-xl text-brand-light/90 max-w-2xl mx-auto mb-8">
               Entra nel Desideri di Puglia Club e trasforma ogni momento vissuto in Puglia in punti per vincere premi autentici.
             </p>
           </div>
