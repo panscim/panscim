@@ -256,18 +256,9 @@ class EmailAdminTester:
         }
         
         try:
-            # Convert recipients list to query parameters
-            params = {
-                "subject": email_data["subject"],
-                "body": email_data["body"]
-            }
-            # Add recipients as multiple parameters
-            for recipient in email_data["recipients"]:
-                params[f"recipients"] = recipient
-            
             response = requests.post(
                 f"{API_BASE}/admin/email/send",
-                params=params,
+                json=email_data,
                 headers=headers
             )
             
