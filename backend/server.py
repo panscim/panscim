@@ -188,7 +188,7 @@ def process_avatar_image(image_data: bytes) -> str:
         img.save(buffer, format='JPEG', quality=85)
         img_str = base64.b64encode(buffer.getvalue()).decode()
         return f"data:image/jpeg;base64,{img_str}"
-    except Exception as e:
+    except Exception:
         raise HTTPException(status_code=400, detail="Invalid image format")
 
 # === AUTHENTICATION ENDPOINTS ===
