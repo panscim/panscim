@@ -172,7 +172,7 @@ const PublicProfile = () => {
               <Trophy className="text-white" size={24} />
             </div>
             <div className="text-2xl font-bold text-deep-sea-blue mb-1">{stats.total_points}</div>
-            <div className="text-sm text-gray-600">Punti Totali</div>
+            <div className="text-sm text-gray-600">{t('total_points')}</div>
           </div>
 
           <div className="bg-white rounded-[20px] p-6 shadow-lg border border-matte-gold text-center">
@@ -180,7 +180,7 @@ const PublicProfile = () => {
               <TrendingUp className="text-white" size={24} />
             </div>
             <div className="text-2xl font-bold text-deep-sea-blue mb-1">{stats.current_points}</div>
-            <div className="text-sm text-gray-600">Punti Questo Mese</div>
+            <div className="text-sm text-gray-600">{t('current_points')}</div>
           </div>
 
           <div className="bg-white rounded-[20px] p-6 shadow-lg border border-matte-gold text-center">
@@ -190,7 +190,7 @@ const PublicProfile = () => {
             <div className="text-2xl font-bold text-deep-sea-blue mb-1">
               {stats.current_rank || '-'}
             </div>
-            <div className="text-sm text-gray-600">Posizione Attuale</div>
+            <div className="text-sm text-gray-600">{t('current_rank')}</div>
           </div>
 
           <div className="bg-white rounded-[20px] p-6 shadow-lg border border-matte-gold text-center">
@@ -198,7 +198,7 @@ const PublicProfile = () => {
               <Clock className="text-white" size={24} />
             </div>
             <div className="text-2xl font-bold text-deep-sea-blue mb-1">{stats.mission_completions}</div>
-            <div className="text-sm text-gray-600">Missioni Complete</div>
+            <div className="text-sm text-gray-600">{t('missions_completed')}</div>
           </div>
         </div>
 
