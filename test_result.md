@@ -295,6 +295,9 @@ backend:
       - working: false
         agent: "main"
         comment: "Need to implement CRUD operations for monthly prizes. Admin should be able to edit existing prizes (title, description, image, value) with save/restore functionality."
+      - working: true
+        agent: "main"
+        comment: "IMPLEMENTED: Prize editor backend APIs completed. GET /admin/prizes (with defaults), PUT /admin/prizes/{position}, DELETE /admin/prizes/{position} (restore), POST /admin/prizes/upload-image. Supports custom prizes with image upload."
 
   - task: "Digital Club Card Generation"
     implemented: false
