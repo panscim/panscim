@@ -467,6 +467,21 @@ backend:
         agent: "main"
         comment: "Need Apple/Google Wallet integration. Generate .pkpass files with user data, QR code, branding. 'Add to Wallet' button with proper metadata."
 
+  - task: "Admin Users List Endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "ISSUE IDENTIFIED: /api/admin/users/list endpoint was missing expected fields (username, total_points, join_date). Only returning id, name, email, current_points, level."
+      - working: true
+        agent: "testing"
+        comment: "FIXED AND VERIFIED ✅ Updated /api/admin/users/list endpoint to include all required fields: username, total_points, join_date. Successfully tested with admin credentials (admin@desideridipuglia.com). Endpoint now returns 10 users with complete data including join dates, usernames, and total points. All related endpoints working: /api/leaderboard (2 users with points), /api/admin/missions (17 missions, 14 active), /api/admin/missions/submissions/pending (0 pending submissions). Backend logs clean with no errors."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
