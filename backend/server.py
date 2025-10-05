@@ -1564,6 +1564,11 @@ class MissionUpdateRequest(BaseModel):
     requires_link: Optional[bool] = None
     requires_approval: Optional[bool] = None
 
+class PrizeUpdateRequest(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    image_url: Optional[str] = None
+
 @api_router.put("/admin/missions/{mission_id}")
 async def update_mission(
     mission_id: str,
