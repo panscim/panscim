@@ -77,7 +77,7 @@ const Leaderboard = () => {
             <Trophy className="text-white" size={32} />
           </div>
           <h1 className="text-3xl font-cormorant font-bold text-deep-sea-blue mb-2">
-            Classifica Live Puglia
+            {t('live_leaderboard_puglia')}
           </h1>
           <p className="text-gray-600">
             Vedi chi sta vivendo e condividendo di più la Puglia autentica
