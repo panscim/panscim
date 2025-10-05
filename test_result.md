@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Phase 2: ENHANCED Mission Management with VERIFICATION system COMPLETED. Full implementation: admin creates missions with proof requirements (description, photos with gallery/camera choice, links), user submission system with verification, admin approval workflow for mission completions before point awarding."
+user_problem_statement: "Phase 4: Admin Prize Editor + Digital Club Card + Multilingual Toggle (EN/IT). Need: 1) Admin can edit monthly prizes (title, description, image, value) with save/restore functions, 2) Digital Club Card for each user (personal QR code, club code DP-XXXX, join date, level) with download feature, 3) Active IT/EN language toggle throughout entire app with centralized translations system."
 
 backend:
   - task: "Fix SMTP Integration and Complete Email Admin"
