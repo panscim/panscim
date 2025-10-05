@@ -54,8 +54,9 @@
 
 /* Focus states for accessibility */
 .btn-primary:focus,
-.btn-secondary:focus {
-    outline: 2px solid #CFAE6C;
+.btn-secondary:focus,
+.btn-outline:focus {
+    outline: 2px solid #d4af37;
     outline-offset: 2px;
 }
 
