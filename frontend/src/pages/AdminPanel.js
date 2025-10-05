@@ -29,6 +29,17 @@ const AdminPanel = () => {
   });
   const [loading, setLoading] = useState(true);
   const [actionDetails, setActionDetails] = useState(null);
+  
+  // Email Admin State
+  const [users, setUsers] = useState([]);
+  const [emailForm, setEmailForm] = useState({
+    recipients: [],
+    subject: '',
+    body: ''
+  });
+  const [emailLogs, setEmailLogs] = useState([]);
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [testEmailAddress, setTestEmailAddress] = useState('');
 
   useEffect(() => {
     fetchAdminData();
