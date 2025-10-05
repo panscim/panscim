@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { t, setLanguage, getCurrentLanguage } from '../utils/translations';
-import axios from '../utils/axios';
+import axios from 'axios';
 
 const LanguageContext = createContext();
 
