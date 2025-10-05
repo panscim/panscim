@@ -7,15 +7,17 @@ const Home = () => {
     <div className="min-h-screen bg-brand-light">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Background with better contrast */}
+        {/* Background with maximum contrast */}
         <div className="absolute inset-0 z-0">
-          <div className="w-full h-full bg-gradient-to-br from-brand-dark via-brand-secondary to-brand-dark">
-            {/* Animated Wave Effect */}
-            <div className="absolute inset-0 opacity-20">
+          <div className="w-full h-full bg-gradient-to-br from-gray-900 via-black to-gray-800">
+            {/* Animated Wave Effect with gold accent */}
+            <div className="absolute inset-0 opacity-30">
               <svg className="absolute bottom-0 left-0 w-full h-32" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                <path d="M0,60 C300,90 900,30 1200,60 L1200,120 L0,120 Z" fill="rgba(212, 175, 55, 0.3)" className="animate-pulse"/>
+                <path d="M0,60 C300,90 900,30 1200,60 L1200,120 L0,120 Z" fill="rgba(212, 175, 55, 0.4)" className="animate-pulse"/>
               </svg>
             </div>
+            {/* Additional overlay for extra contrast */}
+            <div className="absolute inset-0 bg-black bg-opacity-20"></div>
           </div>
         </div>
 
