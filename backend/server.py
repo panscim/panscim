@@ -284,6 +284,470 @@ async def upload_avatar(
     
     return {"avatar_url": avatar_url}
 
+# === USER ENDPOINTS ===
+
+@api_router.get("/user/profile")
+async def get_user_profile(credentials: HTTPAuthorizationCredentials = security):
+    current_user = await get_current_user(credentials)
+    
+    # Get user's position in current leaderboard
+    leaderboard = await db.leaderboards.find(
+        {"month_year": get_current_month_year()}
+    ).sort("points", -1).to_list(1000)
+    
+    position = 0
+    for i, entry in enumerate(leaderboard, 1):
+        if entry["user_id"] == current_user.id:
+            position = i
+            break
+    
+    # Get user notifications
+    notifications = await db.notifications.find(
+        {"user_id": current_user.id, "read": False}
+    ).sort("created_at", -1).limit(5).to_list(5)
+    
+    return {
+        "id": current_user.id,
+        "name": current_user.name,
+        "username": current_user.username,
+        "email": current_user.email,
+        "country": current_user.country,
+        "current_points": current_user.current_points,
+        "total_points": current_user.total_points,
+        "level": current_user.level,
+        "avatar_url": current_user.avatar_url,
+        "position": position,
+        "badges": current_user.badges,
+        "unread_notifications": len(notifications)
+    }
+
+@api_router.put("/user/profile")
+async def update_user_profile(
+    name: Optional[str] = None,
+    username: Optional[str] = None,
+    country: Optional[str] = None,
+    credentials: HTTPAuthorizationCredentials = security
+):
+    current_user = await get_current_user(credentials)
+    update_data = {}
+    
+    if name:
+        update_data["name"] = name
+    if username:
+        # Check if username is taken
+        existing = await db.users.find_one({"username": username, "id": {"$ne": current_user.id}})
+        if existing:
+            raise HTTPException(status_code=400, detail="Username already taken")
+        update_data["username"] = username
+    if country:
+        update_data["country"] = country
+    
+    if update_data:
+        await db.users.update_one({"id": current_user.id}, {"$set": update_data})
+    
+    return {"message": "Profile updated successfully"}
+
+# === ACTIONS & POINTS ENDPOINTS ===
+
+@api_router.get("/actions/types")
+async def get_action_types():
+    """Get available action types with points and limits"""
+    action_types = [
+        {
+            "id": "like_post",
+            "name": "Mi piace a post IG",
+            "points": 5,
+            "max_per_day": 3,
+            "max_per_week": 0,
+            "max_per_month": 0,
+            "description": "Metti mi piace a un post di @desideridipuglia"
+        },
+        {
+            "id": "comment_post",
+            "name": "Commenta post",
+            "points": 10,
+            "max_per_day": 2,
+            "max_per_week": 0,
+            "max_per_month": 0,
+            "description": "Commenta in modo autentico un post"
+        },
+        {
+            "id": "share_story",
+            "name": "Condividi storia",
+            "points": 25,
+            "max_per_day": 1,
+            "max_per_week": 0,
+            "max_per_month": 0,
+            "description": "Condividi storia taggando @desideridipuglia"
+        },
+        {
+            "id": "post_hashtag",
+            "name": "Post con hashtag",
+            "points": 30,
+            "max_per_day": 0,
+            "max_per_week": 1,
+            "max_per_month": 0,
+            "description": "Pubblica post con #DesideridiPugliaClub"
+        },
+        {
+            "id": "google_review",
+            "name": "Recensione Google/Booking",
+            "points": 50,
+            "max_per_day": 0,
+            "max_per_week": 0,
+            "max_per_month": 1,
+            "description": "Lascia recensione su Google o Booking"
+        },
+        {
+            "id": "visit_partner",
+            "name": "Visita partner (QR)",
+            "points": 40,
+            "max_per_day": 1,
+            "max_per_week": 0,
+            "max_per_month": 0,
+            "description": "Scansiona QR code di un partner"
+        },
+        {
+            "id": "tag_bnb_photo",
+            "name": "Tagga foto B&B",
+            "points": 20,
+            "max_per_day": 1,
+            "max_per_week": 0,
+            "max_per_month": 0,
+            "description": "Tagga foto scattata al B&B"
+        },
+        {
+            "id": "invite_friend",
+            "name": "Invita amico",
+            "points": 60,
+            "max_per_day": 0,
+            "max_per_week": 0,
+            "max_per_month": 0,
+            "description": "Invita un amico che si iscrive"
+        }
+    ]
+    return action_types
+
+@api_router.post("/actions/submit")
+async def submit_action(
+    action_type_id: str = Form(...),
+    description: str = Form(...),
+    submission_url: Optional[str] = Form(None),
+    credentials: HTTPAuthorizationCredentials = security
+):
+    current_user = await get_current_user(credentials)
+    month_year = get_current_month_year()
+    
+    # Get action type info
+    action_types = await get_action_types()
+    action_type = next((a for a in action_types if a["id"] == action_type_id), None)
+    if not action_type:
+        raise HTTPException(status_code=404, detail="Action type not found")
+    
+    # Check daily/weekly/monthly limits
+    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    week_start = today - timedelta(days=today.weekday())
+    month_start = today.replace(day=1)
+    
+    # Count existing actions for this period
+    if action_type["max_per_day"] > 0:
+        daily_count = await db.user_actions.count_documents({
+            "user_id": current_user.id,
+            "action_type_id": action_type_id,
+            "created_at": {"$gte": today}
+        })
+        if daily_count >= action_type["max_per_day"]:
+            raise HTTPException(status_code=400, detail=f"Daily limit reached for this action ({action_type['max_per_day']}/day)")
+    
+    if action_type["max_per_week"] > 0:
+        weekly_count = await db.user_actions.count_documents({
+            "user_id": current_user.id,
+            "action_type_id": action_type_id,
+            "created_at": {"$gte": week_start}
+        })
+        if weekly_count >= action_type["max_per_week"]:
+            raise HTTPException(status_code=400, detail=f"Weekly limit reached for this action ({action_type['max_per_week']}/week)")
+    
+    if action_type["max_per_month"] > 0:
+        monthly_count = await db.user_actions.count_documents({
+            "user_id": current_user.id,
+            "action_type_id": action_type_id,
+            "created_at": {"$gte": month_start}
+        })
+        if monthly_count >= action_type["max_per_month"]:
+            raise HTTPException(status_code=400, detail=f"Monthly limit reached for this action ({action_type['max_per_month']}/month)")
+    
+    # Create action record
+    action = UserAction(
+        user_id=current_user.id,
+        action_type_id=action_type_id,
+        action_name=action_type["name"],
+        points_earned=action_type["points"],
+        description=description,
+        submission_url=submission_url,
+        month_year=month_year
+    )
+    
+    await db.user_actions.insert_one(action.dict())
+    
+    # Create notification
+    notification = Notification(
+        user_id=current_user.id,
+        title="Azione inviata! 🌿",
+        message=f"La tua azione '{action_type['name']}' è in verifica. Riceverai {action_type['points']} punti una volta approvata!",
+        type="info"
+    )
+    await db.notifications.insert_one(notification.dict())
+    
+    return {"message": "Action submitted for verification", "action_id": action.id}
+
+@api_router.get("/actions/history")
+async def get_action_history(
+    limit: int = 20,
+    credentials: HTTPAuthorizationCredentials = security
+):
+    current_user = await get_current_user(credentials)
+    
+    actions = await db.user_actions.find(
+        {"user_id": current_user.id}
+    ).sort("created_at", -1).limit(limit).to_list(limit)
+    
+    return actions
+
+# === LEADERBOARD ENDPOINTS ===
+
+@api_router.get("/leaderboard")
+async def get_leaderboard(month_year: Optional[str] = None):
+    if not month_year:
+        month_year = get_current_month_year()
+    
+    # Get top users for the month
+    pipeline = [
+        {
+            "$match": {
+                "month_year": month_year,
+                "verification_status": "approved"
+            }
+        },
+        {
+            "$group": {
+                "_id": "$user_id",
+                "total_points": {"$sum": "$points_earned"}
+            }
+        },
+        {
+            "$sort": {"total_points": -1}
+        },
+        {
+            "$limit": 50
+        }
+    ]
+    
+    leaderboard_data = await db.user_actions.aggregate(pipeline).to_list(50)
+    
+    # Get user details and create leaderboard
+    leaderboard = []
+    for i, entry in enumerate(leaderboard_data, 1):
+        user_doc = await db.users.find_one({"id": entry["_id"]})
+        if user_doc:
+            user = User(**user_doc)
+            leaderboard.append({
+                "position": i,
+                "user_id": user.id,
+                "username": user.username,
+                "name": user.name,
+                "avatar_url": user.avatar_url,
+                "country": user.country,
+                "points": entry["total_points"],
+                "level": get_user_level(user.total_points)
+            })
+    
+    return {
+        "month_year": month_year,
+        "leaderboard": leaderboard,
+        "total_participants": len(leaderboard)
+    }
+
+# === MISSIONS ENDPOINTS ===
+
+@api_router.get("/missions")
+async def get_missions(month_year: Optional[str] = None):
+    if not month_year:
+        month_year = get_current_month_year()
+    
+    missions = await db.missions.find(
+        {"month_year": month_year, "is_active": True}
+    ).to_list(100)
+    
+    return missions
+
+# === PRIZES ENDPOINTS ===
+
+@api_router.get("/prizes")
+async def get_prizes(month_year: Optional[str] = None):
+    if not month_year:
+        month_year = get_current_month_year()
+    
+    # Default prizes for each month
+    default_prizes = [
+        {
+            "position": 1,
+            "title": "🥇 Notte per 2 persone",
+            "description": "Una notte gratuita nel nostro B&B per 2 persone con colazione inclusa",
+            "month_year": month_year
+        },
+        {
+            "position": 2,
+            "title": "🥈 Cena o degustazione per 2",
+            "description": "Esperienza culinaria presso un partner selezionato per 2 persone",
+            "month_year": month_year
+        },
+        {
+            "position": 3,
+            "title": "🥉 Drink Experience per 2",
+            "description": "Aperitivo o drink speciale presso un partner per 2 persone",
+            "month_year": month_year
+        }
+    ]
+    
+    # Try to get custom prizes first
+    prizes = await db.prizes.find({"month_year": month_year}).to_list(10)
+    
+    # If no custom prizes, return defaults
+    if not prizes:
+        prizes = default_prizes
+    
+    return prizes
+
+# === NOTIFICATIONS ENDPOINTS ===
+
+@api_router.get("/notifications")
+async def get_notifications(
+    limit: int = 20,
+    credentials: HTTPAuthorizationCredentials = security
+):
+    current_user = await get_current_user(credentials)
+    
+    notifications = await db.notifications.find(
+        {"user_id": current_user.id}
+    ).sort("created_at", -1).limit(limit).to_list(limit)
+    
+    return notifications
+
+@api_router.put("/notifications/{notification_id}/read")
+async def mark_notification_read(
+    notification_id: str,
+    credentials: HTTPAuthorizationCredentials = security
+):
+    current_user = await get_current_user(credentials)
+    
+    await db.notifications.update_one(
+        {"id": notification_id, "user_id": current_user.id},
+        {"$set": {"read": True}}
+    )
+    
+    return {"message": "Notification marked as read"}
+
+# === ADMIN ENDPOINTS ===
+
+@api_router.get("/admin/actions/pending")
+async def get_pending_actions(credentials: HTTPAuthorizationCredentials = security):
+    current_user = await get_current_user(credentials)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    actions = await db.user_actions.find(
+        {"verification_status": "pending"}
+    ).sort("created_at", -1).to_list(100)
+    
+    # Get user details for each action
+    for action in actions:
+        user_doc = await db.users.find_one({"id": action["user_id"]})
+        if user_doc:
+            action["user_name"] = user_doc["name"]
+            action["username"] = user_doc["username"]
+    
+    return actions
+
+@api_router.put("/admin/actions/{action_id}/verify")
+async def verify_action(
+    action_id: str,
+    status: str,  # approved or rejected
+    credentials: HTTPAuthorizationCredentials = security
+):
+    current_user = await get_current_user(credentials)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    if status not in ["approved", "rejected"]:
+        raise HTTPException(status_code=400, detail="Status must be 'approved' or 'rejected'")
+    
+    action_doc = await db.user_actions.find_one({"id": action_id})
+    if not action_doc:
+        raise HTTPException(status_code=404, detail="Action not found")
+    
+    # Update action status
+    await db.user_actions.update_one(
+        {"id": action_id},
+        {
+            "$set": {
+                "verification_status": status,
+                "verified_at": datetime.utcnow()
+            }
+        }
+    )
+    
+    # If approved, add points to user
+    if status == "approved":
+        await db.users.update_one(
+            {"id": action_doc["user_id"]},
+            {
+                "$inc": {
+                    "current_points": action_doc["points_earned"],
+                    "total_points": action_doc["points_earned"]
+                }
+            }
+        )
+        
+        # Update user level
+        user_doc = await db.users.find_one({"id": action_doc["user_id"]})
+        if user_doc:
+            new_level = get_user_level(user_doc["total_points"] + action_doc["points_earned"])
+            await db.users.update_one(
+                {"id": action_doc["user_id"]},
+                {"$set": {"level": new_level}}
+            )
+        
+        # Create success notification
+        notification = Notification(
+            user_id=action_doc["user_id"],
+            title="🎉 Punti guadagnati!",
+            message=f"Hai guadagnato {action_doc['points_earned']} punti per '{action_doc['action_name']}'. Continua così!",
+            type="success"
+        )
+    else:
+        # Create rejection notification
+        notification = Notification(
+            user_id=action_doc["user_id"],
+            title="❌ Azione rifiutata",
+            message=f"La tua azione '{action_doc['action_name']}' non è stata approvata. Riprova seguendo le linee guida.",
+            type="warning"
+        )
+    
+    await db.notifications.insert_one(notification.dict())
+    
+    return {"message": f"Action {status} successfully"}
+
+# === SYSTEM ENDPOINTS ===
+
+@api_router.get("/")
+async def root():
+    return {"message": "Desideri di Puglia Club API - Live Puglia Challenge 🌿"}
+
+@api_router.get("/health")
+async def health_check():
+    return {"status": "healthy", "timestamp": datetime.utcnow()}
+
 # Include the router in the main app
 app.include_router(api_router)
 
