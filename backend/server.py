@@ -218,6 +218,21 @@ class Notification(BaseModel):
     read: bool = False
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
+class SystemConfig(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    key: str  # month_status, welcome_bonus, quiz_points
+    value: str
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_by: Optional[str] = None
+
+class MultiLanguageText(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    key: str  # welcome_message, mission_complete, etc.
+    italian: str
+    english: str
+    updated_by: str  # admin_id
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
 # === HELPER FUNCTIONS ===
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
