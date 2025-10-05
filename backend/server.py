@@ -916,41 +916,49 @@ async def get_missions(
         mission_id = mission["id"]
         frequency = mission.get("frequency", "one-time")
         
+        # Check submission status
+        has_submission = mission_id in submitted_mission_ids
+        submission_info = submitted_mission_ids.get(mission_id)
+        submission_status = submission_info["verification_status"] if submission_info else None
+        
         if frequency == "one-time":
             mission_data["completed"] = mission_id in completed_mission_ids
-            mission_data["available"] = mission_id not in completed_mission_ids
+            mission_data["pending_approval"] = has_submission and submission_status == "pending"
+            mission_data["available"] = not has_submission and mission_id not in completed_mission_ids
             mission_data["completions_today"] = 0
             mission_data["completions_this_week"] = 0
         else:
-            # Count completions for frequency-based missions
+            # Count submissions for frequency-based missions (including pending and approved)
             if frequency == "daily":
-                completions_today = await db.user_missions.count_documents({
+                submissions_today = await db.mission_submissions.count_documents({
                     "user_id": current_user.id,
                     "mission_id": mission_id,
-                    "completed_at": {
+                    "submitted_at": {
                         "$gte": datetime.combine(today, datetime.min.time()),
                         "$lt": datetime.combine(today + timedelta(days=1), datetime.min.time())
                     }
                 })
                 daily_limit = mission.get("daily_limit", 0)
-                mission_data["completions_today"] = completions_today
-                mission_data["available"] = daily_limit == 0 or completions_today < daily_limit
+                mission_data["completions_today"] = submissions_today
+                mission_data["available"] = daily_limit == 0 or submissions_today < daily_limit
                 mission_data["completed"] = False  # Daily missions are never "completed"
+                mission_data["pending_approval"] = False
                 mission_data["completions_this_week"] = 0
                 
             elif frequency == "weekly":
-                completions_this_week = await db.user_missions.count_documents({
+                submissions_this_week = await db.mission_submissions.count_documents({
                     "user_id": current_user.id,
                     "mission_id": mission_id,
-                    "completed_at": {
+                    "submitted_at": {
                         "$gte": datetime.combine(week_start, datetime.min.time()),
                         "$lt": datetime.combine(week_start + timedelta(days=7), datetime.min.time())
                     }
                 })
                 weekly_limit = mission.get("weekly_limit", 0)
-                mission_data["completions_this_week"] = completions_this_week
-                mission_data["available"] = weekly_limit == 0 or completions_this_week < weekly_limit
+                mission_data["completions_this_week"] = submissions_this_week
+                mission_data["available"] = weekly_limit == 0 or submissions_this_week < weekly_limit
                 mission_data["completed"] = False  # Weekly missions are never "completed"
+                mission_data["pending_approval"] = False
                 mission_data["completions_today"] = 0
         
         enhanced_missions.append(mission_data)
