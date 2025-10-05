@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Implementing Email Admin functionality for Desideri di Puglia Club app. Need to complete the Email Admin feature with proper SMTP integration using Gmail SMTP (desideridipuglia@gmail.com). Current email API endpoints exist but lack actual email sending functionality."
+user_problem_statement: "Phase 2: Implementing Mission Management functionality for Desideri di Puglia Club app. Need comprehensive mission system: Admin can create/edit/deactivate missions (title, description, points, frequency, status). Users view missions in dashboard. Mission completion awards points automatically. Admin sees mission statistics."
 
 backend:
   - task: "Fix SMTP Integration and Complete Email Admin"
