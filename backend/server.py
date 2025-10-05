@@ -1068,7 +1068,7 @@ async def send_admin_email(
     failed_emails = []
     
     for recipient in processed_recipients:
-        success = await send_email(recipient["email"], subject, recipient["body"])
+        success = await send_email(recipient["email"], email_request.subject, recipient["body"])
         if success:
             sent_count += 1
         else:
