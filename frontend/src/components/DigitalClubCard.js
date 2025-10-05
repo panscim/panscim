@@ -210,6 +210,48 @@ const DigitalClubCard = () => {
         </div>
       </div>
 
+      {/* Mobile Card Info - Only on Mobile */}
+      <div className="lg:hidden bg-white rounded-lg p-4 border border-gray-200">
+        <div className="flex items-center space-x-4 mb-4">
+          {cardData.avatar ? (
+            <img
+              src={`data:image/jpeg;base64,${cardData.avatar}`}
+              alt="Avatar"
+              className="w-16 h-16 rounded-full border-2 border-matte-gold object-cover"
+            />
+          ) : (
+            <div className="w-16 h-16 bg-gradient-to-br from-matte-gold to-yellow-600 rounded-full flex items-center justify-center text-deep-sea-blue font-bold text-lg border-2 border-matte-gold">
+              {cardData.name?.charAt(0) || '?'}
+            </div>
+          )}
+          <div>
+            <h3 className="text-lg font-bold text-deep-sea-blue">{cardData.name}</h3>
+            <div className="flex items-center space-x-2">
+              <span className="text-sm font-medium text-matte-gold">{cardData.level}</span>
+              <Star size={14} className="text-matte-gold fill-current" />
+            </div>
+            <p className="text-xs text-gray-600 mt-1">
+              Codice: <span className="font-mono font-semibold">{cardData.club_card_code}</span>
+            </p>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-4 text-center">
+          <div>
+            <div className="text-lg font-bold text-matte-gold">{cardData.total_points || 0}</div>
+            <div className="text-xs text-gray-600">Punti Totali</div>
+          </div>
+          <div>
+            <div className="text-lg font-bold text-deep-sea-blue">
+              {cardData.join_date 
+                ? new Date(cardData.join_date).getFullYear()
+                : 'N/A'}
+            </div>
+            <div className="text-xs text-gray-600">Membro dal</div>
+          </div>
+        </div>
+      </div>
+
       {/* Action Buttons */}
       <div className="flex flex-wrap gap-4 justify-center">
         <button
