@@ -1,5 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import ImageCropper from '@/components/ImageCropper';
 import DigitalClubCard from '@/components/DigitalClubCard';
