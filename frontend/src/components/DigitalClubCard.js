@@ -212,48 +212,44 @@ const DigitalClubCard = () => {
         </div>
       </div>
 
-      {/* Mobile Card Info - Only on Mobile */}
-      <div className="lg:hidden bg-white rounded-lg p-4 border border-gray-200">
-        <div className="flex items-center space-x-4 mb-4">
-          <div className="w-16 h-16 rounded-full border-2 border-matte-gold flex items-center justify-center text-white font-bold text-lg" style={{ 
-            background: cardData.level === 'Explorer' ? 'linear-gradient(135deg, #CFAE6C, #DAB973)' :
-                       cardData.level === 'Adventurer' ? 'linear-gradient(135deg, #2E4A5C, #3A5A6E)' :
-                       cardData.level === 'Master' ? 'linear-gradient(135deg, #8B4513, #A0522D)' :
-                       cardData.level === 'Legend' ? 'linear-gradient(135deg, #800080, #9932CC)' :
-                       'linear-gradient(135deg, #CFAE6C, #DAB973)'
-          }}>
-            {cardData.level === 'Explorer' ? '🌱' :
-             cardData.level === 'Adventurer' ? '🗺️' :
-             cardData.level === 'Master' ? '👑' :
-             cardData.level === 'Legend' ? '🏆' :
-             '🌱'}
-          </div>
-          <div>
-            <h3 className="text-lg font-bold text-deep-sea-blue">{cardData.name}</h3>
-            <div className="flex items-center space-x-2">
-              <span className="text-sm font-medium text-matte-gold">{cardData.level}</span>
-              <Star size={14} className="text-matte-gold fill-current" />
-            </div>
-            <p className="text-xs text-gray-600 mt-1">
-              Codice: <span className="font-mono font-semibold">{cardData.club_card_code}</span>
-            </p>
-          </div>
+      {/* Mobile QR Code Only - Shows popup when scanned */}
+      <div className="lg:hidden bg-white rounded-lg p-6 border border-gray-200 text-center">
+        <div className="mb-4">
+          <h3 className="text-lg font-bold text-deep-sea-blue mb-2">La tua Digital Club Card</h3>
+          <p className="text-sm text-gray-600">Inquadra il QR code per visualizzare il tuo profilo Club</p>
         </div>
         
-        <div className="grid grid-cols-2 gap-4 text-center">
-          <div>
-            <div className="text-lg font-bold text-matte-gold">{cardData.total_points || 0}</div>
-            <div className="text-xs text-gray-600">Punti Totali</div>
-          </div>
-          <div>
-            <div className="text-lg font-bold text-deep-sea-blue">
-              {cardData.join_date 
-                ? new Date(cardData.join_date).getFullYear()
-                : 'N/A'}
+        <div className="flex justify-center mb-4">
+          {qrCodeUrl ? (
+            <div className="p-4 bg-gray-50 rounded-lg border-2 border-dashed border-matte-gold">
+              <img
+                src={qrCodeUrl}
+                alt="QR Code Club"
+                className="w-32 h-32 mx-auto"
+              />
             </div>
-            <div className="text-xs text-gray-600">{t('member_since')}</div>
-          </div>
+          ) : (
+            <div className="w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center">
+              <QrCode size={48} className="text-gray-400" />
+            </div>
+          )}
         </div>
+        
+        <p className="text-xs text-matte-gold font-medium mb-4">
+          Codice: {cardData.club_card_code}
+        </p>
+        
+        <button
+          onClick={() => {
+            alert(`📲 ${t('wallet_coming_soon')}`);
+          }}
+          className="w-full px-4 py-3 bg-gradient-to-r from-matte-gold to-yellow-600 text-white rounded-lg font-medium hover:from-yellow-600 hover:to-matte-gold flex items-center justify-center space-x-2 transition-all"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.71,19.5C17.88,20.74 17,21.95 15.66,21.97C14.32,22 13.89,21.18 12.37,21.18C10.84,21.18 10.37,21.95 9.1,22C7.79,22.05 6.8,20.68 5.96,19.47C4.25,17 2.94,12.45 4.7,9.39C5.57,7.87 7.13,6.91 8.82,6.88C10.1,6.86 11.32,7.75 12.11,7.75C12.89,7.75 14.37,6.68 15.92,6.84C16.57,6.87 18.39,7.1 19.56,8.82C19.47,8.88 17.39,10.19 17.41,12.63C17.44,15.65 20.06,16.66 20.09,16.67C20.06,16.74 19.67,18.11 18.71,19.5M13,3.5C13.73,2.67 14.94,2.04 15.94,2C16.07,3.17 15.6,4.35 14.9,5.19C14.21,6.04 13.07,6.7 11.95,6.61C11.8,5.46 12.36,4.26 13,3.5Z"/>
+          </svg>
+          <span>{t('add_to_wallet')}</span>
+        </button>
       </div>
 
       {/* Action Buttons */}
