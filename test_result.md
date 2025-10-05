@@ -106,8 +106,8 @@ user_problem_statement: "Implementing Email Admin functionality for Desideri di 
 
 backend:
   - task: "Fix SMTP Integration and Complete Email Admin"
-    implemented: false
-    working: false
+    implemented: true
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
@@ -116,6 +116,9 @@ backend:
       - working: false
         agent: "main"
         comment: "Email API endpoints exist but missing actual SMTP sending. Need to implement smtplib integration with Gmail SMTP settings."
+      - working: true
+        agent: "main"
+        comment: "SMTP integration completed. Added send_email() function with Gmail SMTP. Gmail credentials configured. API endpoints: /api/admin/email/send, /api/admin/email/test, /api/admin/email/logs, /api/admin/users/list"
 
   - task: "Email Log Management"
     implemented: true
@@ -131,8 +134,8 @@ backend:
 
 frontend:
   - task: "Email Admin UI"
-    implemented: false
-    working: false
+    implemented: true
+    working: true
     file: "/app/frontend/src/pages/AdminPanel.js"
     stuck_count: 0
     priority: "high"
@@ -141,6 +144,9 @@ frontend:
       - working: false
         agent: "main"
         comment: "Need to create frontend UI for email composition and management in AdminPanel"
+      - working: true
+        agent: "main"
+        comment: "Email Admin UI completed and integrated into AdminPanel. Features: SMTP test, user selection, email composition with template variables, email history. Fixed syntax errors."
 
 metadata:
   created_by: "main_agent"
