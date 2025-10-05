@@ -265,6 +265,7 @@ const AdminPanel = () => {
               { id: 'stats', label: 'Statistiche', icon: BarChart3 },
               { id: 'users', label: 'Utenti', icon: Users },
               { id: 'email', label: 'Email Admin', icon: Mail },
+              { id: 'missions', label: 'Missioni', icon: Target },
               { id: 'settings', label: 'Impostazioni', icon: Settings }
             ].map((tab) => {
               const Icon = tab.icon;
