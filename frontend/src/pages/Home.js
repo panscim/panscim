@@ -23,15 +23,15 @@ const Home = () => {
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
           <div className="mb-8">
             {/* Logo e Branding */}
-            <div className="flex items-center justify-center mb-6">
+            <div className="flex items-center justify-center mb-8">
               <img 
-                src="https://customer-assets.emergentagent.com/job_idea-showcase-6/artifacts/l5fhones_Progetto%20senza%20titolo%20%285%29.svg" 
+                src="https://customer-assets.emergentagent.com/job_idea-showcase-6/artifacts/xc7s59ph_Progetto_senza_titolo__3_-removebg-preview.png" 
                 alt="Desideri di Puglia Logo" 
-                className="w-24 h-24 mr-4"
+                className="w-32 h-32 mr-6"
               />
-              <div className="text-left">
-                <h3 className="text-2xl font-cormorant font-bold text-brand-accent">Desideri di Puglia</h3>
-                <h4 className="text-lg font-poppins text-white">Club</h4>
+              <div className="text-center">
+                <h3 className="text-3xl font-cormorant font-bold text-white mb-2">Desideri di Puglia</h3>
+                <h4 className="text-xl font-poppins text-brand-accent font-semibold">Club</h4>
               </div>
             </div>
             
