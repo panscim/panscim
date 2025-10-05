@@ -126,7 +126,7 @@ class EmailAdminTester:
         try:
             response = requests.post(
                 f"{API_BASE}/admin/email/test",
-                params={"test_email": test_email},
+                json={"test_email": test_email},
                 headers=headers
             )
             
