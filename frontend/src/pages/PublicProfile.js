@@ -115,7 +115,7 @@ const PublicProfile = () => {
               <div className="flex items-center space-x-2 text-gray-600">
                 <Calendar size={16} />
                 <span className="text-sm">
-                  Membro dal {user_info.join_date ? new Date(user_info.join_date).toLocaleDateString('it-IT') : 'N/A'}
+                  {t('member_since')} {user_info.join_date ? new Date(user_info.join_date).toLocaleDateString('it-IT') : 'N/A'}
                 </span>
               </div>
             </div>
