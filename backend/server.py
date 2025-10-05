@@ -1236,13 +1236,21 @@ async def get_admin_missions(credentials: HTTPAuthorizationCredentials = Depends
     
     clean_missions = []
     for mission in missions:
+        # Count completions for statistics
+        completion_count = await db.user_missions.count_documents({"mission_id": mission["id"]})
+        
         clean_mission = {
             "id": mission["id"],
             "title": mission["title"],
             "description": mission["description"],
             "points": mission["points"],
+            "frequency": mission.get("frequency", "one-time"),
+            "daily_limit": mission.get("daily_limit", 0),
+            "weekly_limit": mission.get("weekly_limit", 0),
             "month_year": mission["month_year"],
             "is_active": mission["is_active"],
+            "requirements": mission.get("requirements", []),
+            "completion_count": completion_count,
             "created_at": mission["created_at"].isoformat() if "created_at" in mission else None
         }
         clean_missions.append(clean_mission)
