@@ -290,7 +290,7 @@ const Dashboard = () => {
                         </div>
                         <div className="text-right">
                           <div className="text-lg font-bold text-matte-gold">+{mission.points}</div>
-                          <div className="text-xs text-gray-500">punti</div>
+                          <div className="text-xs text-gray-500">{t('points')}</div>
                         </div>
                       </div>
                       <button
