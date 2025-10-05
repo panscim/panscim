@@ -143,10 +143,13 @@ class Mission(BaseModel):
     title: str
     description: str
     points: int
+    frequency: str = "one-time"  # daily, weekly, one-time
     month_year: str
     is_active: bool = True
     requirements: List[str] = Field(default_factory=list)
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    daily_limit: int = 0  # 0 means no limit
+    weekly_limit: int = 0  # 0 means no limit
 
 class Prize(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
