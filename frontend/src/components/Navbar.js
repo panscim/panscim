@@ -185,12 +185,43 @@ const Navbar = () => {
                     </div>
                   </div>
                 </div>
+                
+                {/* Mobile Language Toggle */}
+                <div className="px-4 py-2">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Globe size={16} className="text-gray-500" />
+                    <span className="text-sm font-medium text-gray-700">Lingua / Language</span>
+                  </div>
+                  <div className="flex bg-gray-100 rounded-lg p-1">
+                    <button
+                      onClick={() => changeLanguage('it')}
+                      className={`flex-1 px-3 py-2 text-sm font-medium rounded transition-all ${
+                        currentLanguage === 'it'
+                          ? 'bg-deep-sea-blue text-white shadow-sm'
+                          : 'text-gray-600 hover:text-gray-800'
+                      }`}
+                    >
+                      🇮🇹 Italiano
+                    </button>
+                    <button
+                      onClick={() => changeLanguage('en')}
+                      className={`flex-1 px-3 py-2 text-sm font-medium rounded transition-all ${
+                        currentLanguage === 'en'
+                          ? 'bg-deep-sea-blue text-white shadow-sm'
+                          : 'text-gray-600 hover:text-gray-800'
+                      }`}
+                    >
+                      🇬🇧 English
+                    </button>
+                  </div>
+                </div>
+                
                 <button
                   onClick={handleLogout}
                   className="flex items-center space-x-2 px-4 py-3 text-red-500 hover:bg-red-50 rounded-lg w-full text-left transition-colors"
                 >
                   <LogOut size={20} />
-                  <span className="font-medium">Logout</span>
+                  <span className="font-medium">{t('logout')}</span>
                 </button>
               </div>
             </div>
