@@ -453,7 +453,7 @@ def process_avatar_image(image_data: bytes) -> str:
     try:
         img = Image.open(BytesIO(image_data))
         img = img.convert('RGB')
-        img = img.resize((400, 400), Image.Resampling.LANCZOS)
+        img = img.resize((400, 400), Image.LANCZOS)
         
         buffer = BytesIO()
         img.save(buffer, format='JPEG', quality=85)
