@@ -529,20 +529,40 @@ const AdminPanel = () => {
           {/* Quick Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-white rounded-[20px] p-4 mediterranean-shadow text-center">
-              <div className="text-2xl font-bold text-blue-600">{data.stats.totalUsers}</div>
+              <div className="text-2xl font-bold text-blue-600">{data.stats?.totalUsers || 0}</div>
+              <div className="text-sm text-gray-600">Utenti registrati</div>
+            </div>
+            <div className="bg-white rounded-[20px] p-4 mediterranean-shadow text-center">
+              <div className="text-2xl font-bold text-green-600">{data.stats?.activeUsers || 0}</div>
               <div className="text-sm text-gray-600">Utenti attivi</div>
             </div>
             <div className="bg-white rounded-[20px] p-4 mediterranean-shadow text-center">
-              <div className="text-2xl font-bold text-green-600">{data.stats.totalActions}</div>
-              <div className="text-sm text-gray-600">Azioni totali</div>
+              <div className="text-2xl font-bold text-yellow-600">{data.stats?.pendingSubmissions || 0}</div>
+              <div className="text-sm text-gray-600">Missioni in attesa</div>
             </div>
             <div className="bg-white rounded-[20px] p-4 mediterranean-shadow text-center">
-              <div className="text-2xl font-bold text-yellow-600">{data.stats.pendingActions}</div>
-              <div className="text-sm text-gray-600">In attesa</div>
+              <div className="text-2xl font-bold text-matte-gold">{data.stats?.monthlyPoints || 0}</div>
+              <div className="text-sm text-gray-600">Punti totali mese</div>
+            </div>
+          </div>
+
+          {/* Additional Stats Row */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+            <div className="bg-white rounded-[20px] p-4 mediterranean-shadow text-center">
+              <div className="text-2xl font-bold text-purple-600">{data.stats?.totalMissions || 0}</div>
+              <div className="text-sm text-gray-600">Missioni create</div>
             </div>
             <div className="bg-white rounded-[20px] p-4 mediterranean-shadow text-center">
-              <div className="text-2xl font-bold text-matte-gold">{data.stats.monthlyPoints}</div>
-              <div className="text-sm text-gray-600">Punti mese</div>
+              <div className="text-2xl font-bold text-indigo-600">{data.stats?.activeMissions || 0}</div>
+              <div className="text-sm text-gray-600">Missioni attive</div>
+            </div>
+            <div className="bg-white rounded-[20px] p-4 mediterranean-shadow text-center">
+              <div className="text-2xl font-bold text-teal-600">{data.stats?.averagePoints || 0}</div>
+              <div className="text-sm text-gray-600">Media punti utente</div>
+            </div>
+            <div className="bg-white rounded-[20px] p-4 mediterranean-shadow text-center">
+              <div className="text-lg font-bold text-orange-600">{data.stats?.topUser || 'N/A'}</div>
+              <div className="text-sm text-gray-600">Leader attuale</div>
             </div>
           </div>
         </div>
