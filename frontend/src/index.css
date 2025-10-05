@@ -133,7 +133,7 @@ code {
 }
 
 .btn-primary {
-    @apply bg-brand-dark hover:bg-brand-secondary text-white font-semibold py-3 px-6 rounded-[20px] transition-all duration-200 brand-shadow hover:shadow-lg;
+    @apply bg-brand-dark hover:bg-opacity-90 text-white font-semibold py-3 px-6 rounded-[20px] transition-all duration-200 brand-shadow hover:shadow-lg;
 }
 
 .btn-secondary {
