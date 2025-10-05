@@ -40,6 +40,45 @@ app = FastAPI(title="Desideri di Puglia Club API")
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
+# === EMAIL FUNCTIONS ===
+
+async def send_email(to_email: str, subject: str, body: str) -> bool:
+    """Send email using Gmail SMTP"""
+    try:
+        # Get SMTP settings from environment
+        smtp_server = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
+        smtp_port = int(os.environ.get('SMTP_PORT', 465))
+        smtp_email = os.environ.get('SMTP_EMAIL', 'desideridipuglia@gmail.com')
+        smtp_password = os.environ.get('SMTP_PASSWORD', '')
+        
+        if not smtp_password:
+            logging.warning(f"SMTP password not configured for {smtp_email}")
+            return False
+        
+        # Create message
+        msg = MimeMultipart()
+        msg['From'] = smtp_email
+        msg['To'] = to_email
+        msg['Subject'] = subject
+        
+        # Add body to email
+        msg.attach(MimeText(body, 'html'))
+        
+        # Gmail SMTP server setup
+        server = smtplib.SMTP_SSL(smtp_server, smtp_port)
+        server.login(smtp_email, smtp_password)
+        
+        # Send email
+        server.sendmail(smtp_email, to_email, msg.as_string())
+        server.quit()
+        
+        logging.info(f"Email sent successfully to {to_email}")
+        return True
+        
+    except Exception as e:
+        logging.error(f"Failed to send email to {to_email}: {str(e)}")
+        return False
+
 # === MODELS ===
 
 class User(BaseModel):
