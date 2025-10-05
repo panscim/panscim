@@ -1035,6 +1035,166 @@ const AdminPanel = () => {
           </div>
         )}
 
+        {activeTab === 'prizes' && (
+          <div className="space-y-6">
+            <div className="bg-white rounded-[20px] p-6 mediterranean-shadow">
+              <h3 className="text-lg font-semibold text-deep-sea-blue mb-4 flex items-center">
+                <Gift className="mr-2" size={20} />
+                🎁 Premi del Mese
+              </h3>
+              <p className="text-gray-600 text-sm mb-6">
+                ⚙️ Le modifiche si riflettono in tempo reale nella sezione visibile agli utenti.
+              </p>
+              
+              <div className="space-y-6">
+                {prizes.map((prize) => (
+                  <div key={prize.position} className="border border-gray-200 rounded-lg p-6">
+                    {editingPrize === prize.position ? (
+                      // Edit mode
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between mb-4">
+                          <h4 className="text-lg font-medium text-gray-900">
+                            {prize.position === 1 ? '🥇 1° Posto' : 
+                             prize.position === 2 ? '🥈 2° Posto' : 
+                             '🥉 3° Posto'}
+                          </h4>
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => {
+                                const title = document.getElementById(`prize-title-${prize.position}`).value;
+                                const description = document.getElementById(`prize-description-${prize.position}`).value;
+                                updatePrize(prize.position, { title, description });
+                              }}
+                              disabled={prizeLoading}
+                              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 flex items-center space-x-1"
+                            >
+                              <CheckCircle size={16} />
+                              <span>Salva</span>
+                            </button>
+                            <button
+                              onClick={() => setEditingPrize(null)}
+                              className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 flex items-center space-x-1"
+                            >
+                              <XCircle size={16} />
+                              <span>Annulla</span>
+                            </button>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Titolo Premio</label>
+                          <input
+                            type="text"
+                            id={`prize-title-${prize.position}`}
+                            defaultValue={prize.title}
+                            placeholder="Nome del premio"
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-deep-sea-blue focus:border-transparent"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Descrizione</label>
+                          <textarea
+                            id={`prize-description-${prize.position}`}
+                            defaultValue={prize.description}
+                            placeholder="Descrizione dettagliata del premio"
+                            rows={3}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-deep-sea-blue focus:border-transparent"
+                          />
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">Immagine (opzionale)</label>
+                          <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={async (e) => {
+                                const file = e.target.files[0];
+                                if (file) {
+                                  const imageUrl = await uploadPrizeImage(file);
+                                  if (imageUrl) {
+                                    updatePrize(prize.position, { 
+                                      title: document.getElementById(`prize-title-${prize.position}`).value,
+                                      description: document.getElementById(`prize-description-${prize.position}`).value,
+                                      image_url: imageUrl 
+                                    });
+                                  }
+                                }
+                              }}
+                              className="hidden"
+                              id={`prize-image-${prize.position}`}
+                            />
+                            <label
+                              htmlFor={`prize-image-${prize.position}`}
+                              className="cursor-pointer flex flex-col items-center space-y-2"
+                            >
+                              <Upload className="text-gray-400" size={24} />
+                              <span className="text-sm text-gray-600">Clicca per caricare immagine</span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      // View mode
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-3 mb-3">
+                            <h4 className="text-lg font-semibold text-gray-900">
+                              {prize.position === 1 ? '🥇 1° Posto' : 
+                               prize.position === 2 ? '🥈 2° Posto' : 
+                               '🥉 3° Posto'}
+                            </h4>
+                            {prize.is_custom && (
+                              <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                                Personalizzato
+                              </span>
+                            )}
+                          </div>
+                          
+                          <h5 className="font-medium text-deep-sea-blue mb-2">{prize.title}</h5>
+                          <p className="text-gray-600 text-sm mb-3">{prize.description}</p>
+                          
+                          {prize.image_url && (
+                            <div className="mb-3">
+                              <img 
+                                src={`data:image/jpeg;base64,${prize.image_url}`}
+                                alt="Prize"
+                                className="w-24 h-18 object-cover rounded border"
+                              />
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="flex flex-col space-y-2 ml-4">
+                          <button
+                            onClick={() => setEditingPrize(prize.position)}
+                            className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm flex items-center space-x-1"
+                          >
+                            <Edit3 size={14} />
+                            <span>Modifica</span>
+                          </button>
+                          
+                          {prize.is_custom && (
+                            <button
+                              onClick={() => restoreDefaultPrize(prize.position)}
+                              disabled={prizeLoading}
+                              className="px-3 py-1 bg-orange-600 text-white rounded hover:bg-orange-700 disabled:opacity-50 text-sm flex items-center space-x-1"
+                            >
+                              <RotateCcw size={14} />
+                              <span>Ripristina</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeTab === 'settings' && (
           <div className="space-y-6">
             <div className="bg-white rounded-[20px] p-6 mediterranean-shadow">
