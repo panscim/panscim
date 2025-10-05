@@ -36,7 +36,10 @@ const Profile = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [activeTab, setActiveTab] = useState('profile');
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupUserId, setPopupUserId] = useState(null);
   const fileInputRef = useRef(null);
+  const [searchParams] = useSearchParams();
 
   const countries = [
     { code: 'IT', name: 'Italia', flag: '🇮🇹' },
