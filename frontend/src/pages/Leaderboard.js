@@ -113,7 +113,7 @@ const Leaderboard = () => {
                 {userPosition > 0 && (
                   <div className="flex items-center space-x-2">
                     <Star size={16} className="text-matte-gold" />
-                    <span>La tua posizione: <strong>#{userPosition}</strong></span>
+                    <span>{t('your_position')}: <strong>#{userPosition}</strong></span>
                   </div>
                 )}
               </div>
