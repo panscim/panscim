@@ -268,7 +268,7 @@ const Prizes = () => {
         {/* How Prizes Work */}
         <div className="bg-white rounded-[20px] p-8 mediterranean-shadow">
           <h3 className="text-xl font-cormorant font-bold text-deep-sea-blue mb-6 text-center">
-            {t('how_prizes_work')}
+            Come Funzionano i Premi
           </h3>
           
           <div className="grid md:grid-cols-2 gap-8">
