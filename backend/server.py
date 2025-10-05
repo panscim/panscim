@@ -1118,6 +1118,61 @@ async def get_email_logs(
     
     return clean_logs
 
+@api_router.post("/admin/email/test")
+async def test_email_config(
+    test_email: str,
+    credentials: HTTPAuthorizationCredentials = security
+):
+    """Test email configuration by sending a test email"""
+    current_user = await get_current_user(credentials)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    subject = "🌿 Test Email - Desideri di Puglia Club"
+    body = """
+    <html>
+    <body style="font-family: Arial, sans-serif; color: #333;">
+        <h2 style="color: #d4af37;">Desideri di Puglia Club</h2>
+        <p>Questo è un test di configurazione email.</p>
+        <p>Se ricevi questo messaggio, l'integrazione SMTP è funzionante! 🌿</p>
+        <p style="color: #8b7355; font-style: italic;">- Team Desideri di Puglia</p>
+    </body>
+    </html>
+    """
+    
+    success = await send_email(test_email, subject, body)
+    
+    if success:
+        return {"message": f"📩 Email di test inviata con successo a {test_email}"}
+    else:
+        raise HTTPException(status_code=500, detail="Invio email fallito. Controlla la configurazione SMTP.")
+
+@api_router.get("/admin/users/list")
+async def get_users_for_email(
+    credentials: HTTPAuthorizationCredentials = security
+):
+    """Get list of users for email selection"""
+    current_user = await get_current_user(credentials)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    users = await db.users.find(
+        {}, 
+        {"id": 1, "name": 1, "email": 1, "current_points": 1, "level": 1}
+    ).to_list(length=None)
+    
+    user_list = []
+    for user in users:
+        user_list.append({
+            "id": user["id"],
+            "name": user["name"],
+            "email": user["email"],
+            "current_points": user.get("current_points", 0),
+            "level": user.get("level", "Novizio")
+        })
+    
+    return user_list
+
 # === MISSIONS API ===
 
 @api_router.post("/admin/missions")
