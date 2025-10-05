@@ -184,24 +184,26 @@ const Register = () => {
                 Paese
               </label>
               <div className="relative">
-                <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10" size={18} />
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10 pointer-events-none">
+                  <Globe size={16} />
+                </div>
                 <select
                   id="country"
                   name="country"
                   required
                   value={formData.country}
                   onChange={handleChange}
-                  className="pl-12 pr-4 w-full py-3 border border-gray-200 rounded-[20px] focus:ring-2 focus:ring-matte-gold focus:border-transparent transition-colors appearance-none bg-white"
+                  className="pl-10 pr-8 w-full py-3 border border-gray-200 rounded-[20px] focus:ring-2 focus:ring-matte-gold focus:border-transparent transition-colors appearance-none bg-white text-gray-700"
                   style={{ 
                     backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                    backgroundPosition: 'right 8px center',
+                    backgroundPosition: 'right 12px center',
                     backgroundRepeat: 'no-repeat',
-                    backgroundSize: '16px'
+                    backgroundSize: '14px'
                   }}
                 >
-                  <option value="">Seleziona il tuo paese</option>
+                  <option value="" disabled className="text-gray-400">Seleziona il tuo paese</option>
                   {countries.map((country) => (
-                    <option key={country.code} value={country.code}>
+                    <option key={country.code} value={country.code} className="text-gray-700">
                       {country.name}
                     </option>
                   ))}
