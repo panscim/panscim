@@ -168,7 +168,7 @@ class EmailLog(BaseModel):
     subject: str
     body: str
     sent_at: datetime = Field(default_factory=datetime.utcnow)
-    status: str = "sent"  # sent, failed
+    status: str = "sent"  # sent, partial, failed
     admin_id: str
 
 class UserMission(BaseModel):
