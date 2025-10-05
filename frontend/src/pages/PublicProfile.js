@@ -76,7 +76,7 @@ const PublicProfile = () => {
               <h1 className="text-2xl font-bold text-deep-sea-blue" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
                 Desideri di Puglia Club
               </h1>
-              <p className="text-sm text-gray-600">Profilo Pubblico</p>
+              <p className="text-sm text-gray-600">{t('public_profile')}</p>
             </div>
           </div>
         </div>
