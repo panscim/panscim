@@ -232,10 +232,8 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Mission Management Backend Implementation"
     - "Mission Management Frontend UI"
     - "User Mission Dashboard Integration"
-    - "Mission Statistics for Admin"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
