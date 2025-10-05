@@ -1024,9 +1024,7 @@ async def verify_action(
 
 @api_router.post("/admin/email/send")
 async def send_admin_email(
-    recipients: List[str],
-    subject: str,
-    body: str,
+    email_request: EmailRequest,
     credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     current_user = await get_current_user(credentials)
