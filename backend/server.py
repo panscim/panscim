@@ -433,7 +433,7 @@ async def submit_action(
     action_type_id: str = Form(...),
     description: str = Form(...),
     submission_url: Optional[str] = Form(None),
-    credentials: HTTPAuthorizationCredentials = security
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     current_user = await get_current_user(credentials)
     month_year = get_current_month_year()
