@@ -239,7 +239,7 @@ Vivi la Puglia autentica con noi!`;
                   ref={fileInputRef}
                   type="file"
                   accept="image/*"
-                  onChange={handleAvatarUpload}
+                  onChange={handleAvatarFileSelect}
                   className="hidden"
                 />
                 
