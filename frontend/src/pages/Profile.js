@@ -41,6 +41,15 @@ const Profile = () => {
   const fileInputRef = useRef(null);
   const [searchParams] = useSearchParams();
 
+  // Check for popup parameter from QR scan
+  useEffect(() => {
+    const popupParam = searchParams.get('popup');
+    if (popupParam) {
+      setPopupUserId(popupParam);
+      setShowPopup(true);
+    }
+  }, [searchParams]);
+
   const countries = [
     { code: 'IT', name: 'Italia', flag: '🇮🇹' },
     { code: 'US', name: 'Stati Uniti', flag: '🇺🇸' },
