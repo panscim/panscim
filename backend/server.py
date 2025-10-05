@@ -1472,6 +1472,82 @@ async def update_mission(
     await db.missions.update_one({"id": mission_id}, {"$set": update_data})
     return {"message": "Missione aggiornata con successo!"}
 
+@api_router.get("/admin/missions/statistics")
+async def get_mission_statistics(
+    month_year: Optional[str] = None,
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    """Get detailed mission statistics for admin dashboard"""
+    current_user = await get_current_user(credentials)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    if not month_year:
+        month_year = get_current_month_year()
+    
+    # Get all missions for the specified month
+    missions = await db.missions.find({"month_year": month_year}).to_list(None)
+    
+    statistics = []
+    total_completions = 0
+    total_points_awarded = 0
+    
+    for mission in missions:
+        mission_id = mission["id"]
+        
+        # Count total completions for this mission
+        completions = await db.user_missions.count_documents({"mission_id": mission_id})
+        
+        # Count unique users who completed this mission
+        unique_completers = len(await db.user_missions.distinct("user_id", {"mission_id": mission_id}))
+        
+        # Calculate total points awarded for this mission
+        points_awarded = completions * mission["points"]
+        
+        # Get recent completions (last 7 days)
+        recent_completions = await db.user_missions.count_documents({
+            "mission_id": mission_id,
+            "completed_at": {"$gte": datetime.utcnow() - timedelta(days=7)}
+        })
+        
+        total_completions += completions
+        total_points_awarded += points_awarded
+        
+        mission_stats = {
+            "mission_id": mission_id,
+            "title": mission["title"],
+            "description": mission["description"],
+            "points": mission["points"],
+            "frequency": mission.get("frequency", "one-time"),
+            "is_active": mission["is_active"],
+            "total_completions": completions,
+            "unique_completers": unique_completers,
+            "points_awarded": points_awarded,
+            "recent_completions": recent_completions,
+            "created_at": mission["created_at"].isoformat() if "created_at" in mission else None
+        }
+        
+        statistics.append(mission_stats)
+    
+    # Sort by total completions (most popular first)
+    statistics.sort(key=lambda x: x["total_completions"], reverse=True)
+    
+    # Get overall statistics
+    total_missions = len(missions)
+    active_missions = len([m for m in missions if m["is_active"]])
+    
+    return {
+        "month_year": month_year,
+        "overview": {
+            "total_missions": total_missions,
+            "active_missions": active_missions,
+            "total_completions": total_completions,
+            "total_points_awarded": total_points_awarded,
+            "average_completions_per_mission": round(total_completions / total_missions, 2) if total_missions > 0 else 0
+        },
+        "missions": statistics
+    }
+
 # === WEEKLY QUIZ API ===
 
 @api_router.post("/admin/quiz")
