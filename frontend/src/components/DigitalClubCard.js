@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { QrCode, Download, Copy, Calendar, Star } from 'lucide-react';
+import { t } from '../utils/translations';
 
 const DigitalClubCard = () => {
   const [cardData, setCardData] = useState(null);
