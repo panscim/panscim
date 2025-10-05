@@ -660,14 +660,32 @@ async def get_pending_actions(credentials: HTTPAuthorizationCredentials = Depend
         {"verification_status": "pending"}
     ).sort("created_at", -1).to_list(100)
     
-    # Get user details for each action
+    # Convert to proper format and get user details
+    result = []
     for action in actions:
+        # Convert ObjectId to string and clean up the action
+        clean_action = {
+            "id": action["id"],
+            "user_id": action["user_id"],
+            "action_type_id": action["action_type_id"],
+            "action_name": action["action_name"],
+            "points_earned": action["points_earned"],
+            "description": action["description"],
+            "verification_status": action["verification_status"],
+            "submission_url": action.get("submission_url"),
+            "created_at": action["created_at"].isoformat() if "created_at" in action else None,
+            "month_year": action["month_year"]
+        }
+        
+        # Get user details
         user_doc = await db.users.find_one({"id": action["user_id"]})
         if user_doc:
-            action["user_name"] = user_doc["name"]
-            action["username"] = user_doc["username"]
+            clean_action["user_name"] = user_doc["name"]
+            clean_action["username"] = user_doc["username"]
+        
+        result.append(clean_action)
     
-    return actions
+    return result
 
 @api_router.put("/admin/actions/{action_id}/verify")
 async def verify_action(
