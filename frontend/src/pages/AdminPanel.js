@@ -394,6 +394,66 @@ const AdminPanel = () => {
     }
   };
 
+  // Helper functions for user management
+  const getUserLevelInfo = (totalPoints) => {
+    if (totalPoints >= 2000) return { level: 'Legend', icon: '🏆', color: 'bg-purple-500' };
+    if (totalPoints >= 1000) return { level: 'Master', icon: '👑', color: 'bg-terracotta' };
+    if (totalPoints >= 500) return { level: 'Adventurer', icon: '🗺️', color: 'bg-deep-sea-blue' };
+    if (totalPoints >= 100) return { level: 'Explorer', icon: '🌱', color: 'bg-matte-gold' };
+    return { level: 'Novizio', icon: '🌿', color: 'bg-gray-400' };
+  };
+
+  const getFilteredUsers = () => {
+    if (!data.users) return [];
+    
+    return data.users.filter(user => {
+      const matchesSearch = !userSearchFilter || 
+        user.name?.toLowerCase().includes(userSearchFilter.toLowerCase()) ||
+        user.email?.toLowerCase().includes(userSearchFilter.toLowerCase()) ||
+        user.username?.toLowerCase().includes(userSearchFilter.toLowerCase());
+      
+      const matchesLevel = !userLevelFilter || 
+        getUserLevelInfo(user.total_points).level === userLevelFilter;
+      
+      return matchesSearch && matchesLevel;
+    });
+  };
+
+  const handleViewUserDetails = (user) => {
+    alert(`Dettagli Utente:\n\nNome: ${user.name}\nEmail: ${user.email}\nUsername: ${user.username}\nPunti Totali: ${user.total_points}\nPunti Mese: ${user.current_points}\nLivello: ${getUserLevelInfo(user.total_points).level}\nRegistrato: ${user.join_date ? new Date(user.join_date).toLocaleDateString('it-IT') : 'N/A'}`);
+  };
+
+  const handleResetUserPoints = async (user) => {
+    if (window.confirm(`Sei sicuro di voler resettare i punti mensili di ${user.name}?`)) {
+      try {
+        const token = localStorage.getItem('token');
+        await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/admin/users/${user.id}/reset-monthly-points`, {}, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        alert('Punti mensili resettati con successo!');
+        fetchAdminData(); // Refresh data
+      } catch (error) {
+        alert('Errore nel reset dei punti: ' + error.response?.data?.detail || error.message);
+      }
+    }
+  };
+
+  const handleToggleUserStatus = async (user) => {
+    const action = user.active ? 'disattivare' : 'attivare';
+    if (window.confirm(`Sei sicuro di voler ${action} l'utente ${user.name}?`)) {
+      try {
+        const token = localStorage.getItem('token');
+        await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/admin/users/${user.id}/toggle-status`, {}, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        alert(`Utente ${user.active ? 'disattivato' : 'attivato'} con successo!`);
+        fetchAdminData(); // Refresh data
+      } catch (error) {
+        alert('Errore nel cambiamento stato: ' + error.response?.data?.detail || error.message);
+      }
+    }
+  };
+
   const fetchPrizeHistory = async () => {
     try {
       const token = localStorage.getItem('token');
