@@ -1081,8 +1081,8 @@ async def send_admin_email(
     # Log email
     email_log = EmailLog(
         recipients=[r["email"] for r in processed_recipients],
-        subject=subject,
-        body=body,
+        subject=email_request.subject,
+        body=email_request.body,
         admin_id=current_user.id,
         status=email_status
     )
