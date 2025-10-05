@@ -1518,10 +1518,10 @@ async def get_admin_translations(
 
 @api_router.post("/admin/translations")
 async def create_translation(
-    key: str,
-    italian: str,
-    english: str,
-    category: str = "general",
+    key: str = Query(...),
+    italian: str = Query(...),
+    english: str = Query(...),
+    category: str = Query("general"),
     credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     """Create or update translation"""
