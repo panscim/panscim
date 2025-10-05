@@ -1409,7 +1409,12 @@ async def create_mission(
         is_active=mission_request.is_active,
         daily_limit=mission_request.daily_limit,
         weekly_limit=mission_request.weekly_limit,
-        requirements=requirements
+        requirements=requirements,
+        requires_description=mission_request.requires_description,
+        requires_photo=mission_request.requires_photo,
+        photo_source=mission_request.photo_source,
+        requires_link=mission_request.requires_link,
+        requires_approval=mission_request.requires_approval
     )
     
     await db.missions.insert_one(mission.dict())
