@@ -297,7 +297,7 @@ Vivi la Puglia autentica con noi!`;
                     </div>
                     <div className="flex items-center justify-center md:justify-start space-x-2">
                       <Calendar size={16} />
-                      <span>Membro dal {new Date(user?.created_at).toLocaleDateString('it-IT', { month: 'long', year: 'numeric' })}</span>
+                      <span>Membro dal {user?.created_at ? new Date(user.created_at).toLocaleDateString('it-IT', { month: 'long', year: 'numeric' }) : 'Recentemente'}</span>
                     </div>
                   </div>
                   
