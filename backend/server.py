@@ -673,7 +673,7 @@ async def get_pending_actions(credentials: HTTPAuthorizationCredentials = Depend
 async def verify_action(
     action_id: str,
     status: str,  # approved or rejected
-    credentials: HTTPAuthorizationCredentials = security
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     current_user = await get_current_user(credentials)
     if not current_user.is_admin:
