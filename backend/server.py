@@ -104,6 +104,9 @@ class User(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     last_reset: datetime = Field(default_factory=datetime.utcnow)
     is_admin: bool = False
+    # Digital Club Card fields
+    join_date: Optional[datetime] = None
+    preferred_language: str = "it"  # it or en
 
 class UserCreate(BaseModel):
     name: str
