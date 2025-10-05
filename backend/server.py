@@ -1839,6 +1839,14 @@ class PrizeUpdateRequest(BaseModel):
     description: Optional[str] = None
     image_url: Optional[str] = None
 
+class Translation(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    key: str  # Translation key (e.g., "mission_completed")
+    italian: str
+    english: str
+    category: str = "general"  # general, admin, missions, etc.
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
 @api_router.put("/admin/missions/{mission_id}")
 async def update_mission(
     mission_id: str,
