@@ -124,7 +124,7 @@ const DigitalClubCard = () => {
                 Desideri di Puglia Club
               </h1>
               <div className="h-px bg-gradient-to-r from-transparent via-matte-gold to-transparent mx-8"></div>
-              <p className="text-xs text-deep-sea-blue mt-1 opacity-70">Official Member Card</p>
+              <p className="text-xs text-deep-sea-blue mt-1 opacity-70">{t('official_member_card')}</p>
             </div>
 
             {/* Main Content Area */}
