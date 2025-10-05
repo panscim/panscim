@@ -1192,23 +1192,35 @@ async def get_users_for_email(
 
 @api_router.post("/admin/missions")
 async def create_mission(
-    title: str,
-    description: str,
-    points: int,
-    daily_limit: int = 0,
-    weekly_limit: int = 0,
+    mission_request: MissionRequest,
     credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     current_user = await get_current_user(credentials)
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin access required")
     
+    # Build requirements based on frequency and limits
+    requirements = []
+    if mission_request.frequency == "daily" and mission_request.daily_limit > 0:
+        requirements.append(f"Limite giornaliero: {mission_request.daily_limit}")
+    elif mission_request.frequency == "weekly" and mission_request.weekly_limit > 0:
+        requirements.append(f"Limite settimanale: {mission_request.weekly_limit}")
+    elif mission_request.frequency == "one-time":
+        requirements.append("Completabile una volta sola")
+    
+    if not requirements:
+        requirements.append("Nessun limite")
+    
     mission = Mission(
-        title=title,
-        description=description,
-        points=points,
+        title=mission_request.title,
+        description=mission_request.description,
+        points=mission_request.points,
+        frequency=mission_request.frequency,
         month_year=get_current_month_year(),
-        requirements=[f"Limite giornaliero: {daily_limit}" if daily_limit > 0 else "Nessun limite giornaliero"]
+        is_active=mission_request.is_active,
+        daily_limit=mission_request.daily_limit,
+        weekly_limit=mission_request.weekly_limit,
+        requirements=requirements
     )
     
     await db.missions.insert_one(mission.dict())
