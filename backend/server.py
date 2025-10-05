@@ -1434,6 +1434,162 @@ async def get_user_profile_by_qr(user_id: str):
         "club_member": True
     }
 
+# === TRANSLATION ENDPOINTS ===
+
+@api_router.get("/translations")
+async def get_translations(language: str = "it"):
+    """Get all translations for specified language"""
+    if language not in ["it", "en"]:
+        language = "it"
+    
+    translations = await db.translations.find({}).to_list(None)
+    
+    result = {}
+    for translation in translations:
+        key = translation["key"]
+        if language == "it":
+            result[key] = translation["italian"]
+        else:
+            result[key] = translation["english"]
+    
+    # If no translations found, return default Italian translations
+    if not result:
+        result = get_default_translations(language)
+    
+    return result
+
+@api_router.put("/user/language")
+async def update_user_language(
+    language: str,
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    """Update user's preferred language"""
+    current_user = await get_current_user(credentials)
+    
+    if language not in ["it", "en"]:
+        raise HTTPException(status_code=400, detail="Language must be 'it' or 'en'")
+    
+    await db.users.update_one(
+        {"id": current_user.id},
+        {"$set": {"preferred_language": language}}
+    )
+    
+    return {"message": f"🌿 Lingua aggiornata: {'Italiano' if language == 'it' else 'English'}"}
+
+@api_router.get("/admin/translations")
+async def get_admin_translations(
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    """Get all translations for admin management"""
+    current_user = await get_current_user(credentials)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    translations = await db.translations.find({}).to_list(None)
+    
+    return translations
+
+@api_router.post("/admin/translations")
+async def create_translation(
+    key: str,
+    italian: str,
+    english: str,
+    category: str = "general",
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    """Create or update translation"""
+    current_user = await get_current_user(credentials)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    # Check if translation key already exists
+    existing = await db.translations.find_one({"key": key})
+    
+    if existing:
+        # Update existing translation
+        await db.translations.update_one(
+            {"key": key},
+            {"$set": {
+                "italian": italian,
+                "english": english,
+                "category": category
+            }}
+        )
+    else:
+        # Create new translation
+        translation = Translation(
+            key=key,
+            italian=italian,
+            english=english,
+            category=category
+        )
+        await db.translations.insert_one(translation.dict())
+    
+    return {"message": "Traduzione salvata con successo!"}
+
+def get_default_translations(language: str = "it") -> dict:
+    """Get default translations"""
+    if language == "en":
+        return {
+            # Navigation
+            "home": "Home",
+            "leaderboard": "Leaderboard", 
+            "prizes": "Prizes",
+            "missions": "Missions",
+            "profile": "Profile",
+            "admin_panel": "Admin Panel",
+            
+            # Common
+            "welcome": "Welcome",
+            "points": "points",
+            "level": "Level",
+            "loading": "Loading...",
+            "save": "Save",
+            "cancel": "Cancel",
+            "confirm": "Confirm",
+            "delete": "Delete",
+            
+            # Missions
+            "mission_completed": "Mission accomplished 🌿",
+            "monthly_rewards": "Monthly Rewards",
+            "my_club_card": "My Club Card",
+            "join_club": "Join the Club",
+            
+            # Messages
+            "language_updated_en": "🌿 Language updated: English",
+            "language_updated_it": "🌿 Lingua aggiornata: Italiano"
+        }
+    else:
+        return {
+            # Navigation
+            "home": "Home",
+            "leaderboard": "Classifica",
+            "prizes": "Premi", 
+            "missions": "Missioni",
+            "profile": "Profilo",
+            "admin_panel": "Pannello Admin",
+            
+            # Common
+            "welcome": "Benvenuto",
+            "points": "punti",
+            "level": "Livello",
+            "loading": "Caricamento...",
+            "save": "Salva",
+            "cancel": "Annulla", 
+            "confirm": "Conferma",
+            "delete": "Elimina",
+            
+            # Missions
+            "mission_completed": "Missione completata 🌿",
+            "monthly_rewards": "Premi del mese",
+            "my_club_card": "La mia Card",
+            "join_club": "Accedi al Club",
+            
+            # Messages
+            "language_updated_en": "🌿 Language updated: English", 
+            "language_updated_it": "🌿 Lingua aggiornata: Italiano"
+        }
+
 # === NOTIFICATIONS ENDPOINTS ===
 
 @api_router.get("/notifications")
