@@ -1022,7 +1022,7 @@ async def send_admin_email(
     recipients: List[str],
     subject: str,
     body: str,
-    credentials: HTTPAuthorizationCredentials = security
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     current_user = await get_current_user(credentials)
     if not current_user.is_admin:
