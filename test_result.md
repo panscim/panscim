@@ -385,7 +385,7 @@ backend:
     working: true
     file: "/app/backend/server.py"
     stuck_count: 0
-    priority: "high"
+    priority: "completed"
     needs_retesting: false
     status_history:
       - working: false
@@ -397,6 +397,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "COMPREHENSIVE TESTING COMPLETED ✅ Digital Club Card Generation fully functional! All 3 backend tests passed (100% success rate). PRIORITY VALIDATION CONFIRMED: 1) GET /api/club-card (user's digital club card data with DP-XXXX code format validation) ✅ 2) GET /api/club-card/qr/{user_id} (legacy QR endpoint redirecting to public profile) ✅ 3) Club card field initialization (club_card_code, club_card_qr_url, join_date, level, total_points) ✅ Auto-initialization working correctly for existing users. Club card system operational with proper DP-XXXX code generation."
+      - working: true
+        agent: "testing"
+        comment: "QR CODE URL UPDATE FINAL VERIFICATION ✅ All QR code corrections confirmed working! QR URL format successfully updated from old 'desideridipuglia.com' to new popup format 'https://puglia-club.preview.emergentagent.com/profile?popup={user_id}'. Automatic update mechanism functional - old QR URLs updated on first GET /api/club-card call. Club card code generation (DP-XXXX format) working correctly. User: Marco Pugliese, Club Code: DP-5260, QR URL verified pointing to correct popup endpoint. Digital club card system fully operational with updated QR functionality."
 
   - task: "Multilingual Backend Support"
     implemented: true
