@@ -5,17 +5,17 @@
     min-height: 100vh;
 }
 
-/* Additional Puglia-themed utilities */
-.shadow-puglia {
-    box-shadow: 0 10px 25px rgba(46, 74, 92, 0.1), 0 4px 10px rgba(197, 126, 87, 0.05);
+/* Brand-themed utilities */
+.shadow-brand {
+    box-shadow: 0 10px 25px rgba(26, 26, 26, 0.1), 0 4px 10px rgba(212, 175, 55, 0.05);
 }
 
-.gradient-puglia {
-    background: linear-gradient(135deg, #2E4A5C 0%, #4A6B7C 50%, #CFAE6C 100%);
+.gradient-brand {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 50%, #d4af37 100%);
 }
 
-.text-gradient-gold {
-    background: linear-gradient(135deg, #CFAE6C 0%, #D4B76F 100%);
+.text-gradient-accent {
+    background: linear-gradient(135deg, #d4af37 0%, #f0c35a 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
