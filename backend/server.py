@@ -46,12 +46,19 @@ class User(BaseModel):
     email: EmailStr
     password_hash: str
     country: str
+    phone: Optional[str] = None
     avatar_url: Optional[str] = None
     current_points: int = 0
     total_points: int = 0
     level: str = "Explorer"  # Explorer, Local Friend, Ambassador, Legend
     badges: List[str] = Field(default_factory=list)
     position: int = 0
+    preferred_lang: str = "IT"  # IT, EN
+    club_card_code: Optional[str] = None
+    club_card_qr_url: Optional[str] = None
+    otp_method: str = "email"  # email, sms
+    email_verified: bool = False
+    phone_verified: bool = False
     created_at: datetime = Field(default_factory=datetime.utcnow)
     last_reset: datetime = Field(default_factory=datetime.utcnow)
     is_admin: bool = False
