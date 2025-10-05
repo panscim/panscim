@@ -637,7 +637,7 @@ async def get_notifications(
 @api_router.put("/notifications/{notification_id}/read")
 async def mark_notification_read(
     notification_id: str,
-    credentials: HTTPAuthorizationCredentials = security
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     current_user = await get_current_user(credentials)
     
