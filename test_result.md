@@ -400,11 +400,11 @@ backend:
 
   - task: "Multilingual Backend Support"
     implemented: true
-    working: false
+    working: true
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "main"
@@ -415,6 +415,9 @@ backend:
       - working: false
         agent: "main"
         comment: "ENHANCED: Translation system updated with expanded translations.js integration. User model updated with preferred_language field. Ready for comprehensive backend testing of all translation endpoints."
+      - working: true
+        agent: "testing"
+        comment: "COMPREHENSIVE TESTING COMPLETED ✅ Multilingual Backend Support fully functional! All 6 backend tests passed (100% success rate). PRIORITY VALIDATION CONFIRMED: 1) GET /api/translations (retrieve all translations for IT/EN with 20 keys each) ✅ 2) PUT /api/user/language (update user language preference with validation) ✅ 3) GET /api/admin/translations (admin translation management) ✅ 4) POST /api/admin/translations (add new translations) ✅ 5) Invalid language code rejection (fr properly rejected) ✅ 6) Default translations fallback working ✅ Complete multilingual system operational with IT/EN support and admin management."
 
   - task: "Enhanced Club Card Design"
     implemented: false
