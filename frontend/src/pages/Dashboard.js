@@ -208,7 +208,7 @@ const Dashboard = () => {
             <div className="mt-4 bg-white rounded-[20px] p-4 mediterranean-shadow">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-deep-sea-blue">{t('next_level')}</span>
-                <span className="text-sm text-matte-gold font-medium">+{pointsToNext} punti</span>
+                <span className="text-sm text-matte-gold font-medium">+{pointsToNext} {t('points')}</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div 
