@@ -224,11 +224,11 @@ const Dashboard = () => {
         <div className="mb-8">
           <div className="flex space-x-1 bg-white rounded-[20px] p-2 mediterranean-shadow overflow-x-auto">
             {[
-              { id: 'missioni', label: 'Missioni', icon: Target },
-              { id: 'classifica', label: 'Classifica', icon: Trophy },
-              { id: 'premi', label: 'Premi', icon: Gift },
-              { id: 'attivita', label: 'Attività', icon: Activity },
-              { id: 'notifiche', label: 'Notifiche', icon: Bell }
+              { id: 'missioni', label: t('missions'), icon: Target },
+              { id: 'classifica', label: t('leaderboard'), icon: Trophy },
+              { id: 'premi', label: t('prizes'), icon: Gift },
+              { id: 'attivita', label: t('activity'), icon: Activity },
+              { id: 'notifiche', label: t('notifications'), icon: Bell }
             ].map((tab) => {
               const Icon = tab.icon;
               return (
