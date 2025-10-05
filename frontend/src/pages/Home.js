@@ -4,16 +4,16 @@ import { ArrowRight, Users, Trophy, Gift, MapPin } from 'lucide-react';
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-sand-white">
+    <div className="min-h-screen bg-brand-light">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Video Background */}
+        {/* Background with better contrast */}
         <div className="absolute inset-0 z-0">
-          <div className="w-full h-full brand-gradient-dark opacity-95">
+          <div className="w-full h-full bg-gradient-to-br from-brand-dark via-brand-secondary to-brand-dark">
             {/* Animated Wave Effect */}
-            <div className="absolute inset-0">
+            <div className="absolute inset-0 opacity-20">
               <svg className="absolute bottom-0 left-0 w-full h-32" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                <path d="M0,60 C300,90 900,30 1200,60 L1200,120 L0,120 Z" fill="rgba(244, 239, 234, 0.1)" className="animate-pulse"/>
+                <path d="M0,60 C300,90 900,30 1200,60 L1200,120 L0,120 Z" fill="rgba(212, 175, 55, 0.3)" className="animate-pulse"/>
               </svg>
             </div>
           </div>
