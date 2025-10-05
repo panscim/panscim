@@ -94,23 +94,29 @@ class MissionVerificationTester:
         
         return True
     
-    def test_create_one_time_mission(self):
-        """Test creating a one-time mission"""
-        print("\n🎯 Testing One-Time Mission Creation...")
+    def test_create_mission_with_verification_settings(self):
+        """Test creating a mission with verification requirements"""
+        print("\n🎯 Testing Mission Creation with Verification Settings...")
         
         if not self.admin_token:
-            self.log_result("Create One-Time Mission", False, "No admin token available")
+            self.log_result("Create Mission with Verification", False, "No admin token available")
             return
         
         headers = {"Authorization": f"Bearer {self.admin_token}"}
         mission_data = {
-            "title": "Visita il Centro Storico di Lecce",
-            "description": "Esplora le meraviglie barocche del centro storico di Lecce e condividi una foto sui social taggando @desideridipuglia",
-            "points": 50,
+            "title": "Visita Castello di Lecce con Foto",
+            "description": "Visita il Castello di Lecce, scatta una foto e condividi il link della tua esperienza",
+            "points": 75,
             "frequency": "one-time",
             "daily_limit": 0,
             "weekly_limit": 0,
-            "is_active": True
+            "is_active": True,
+            # Verification requirements as specified in review request
+            "requires_description": True,
+            "requires_photo": True,
+            "photo_source": "camera",
+            "requires_link": True,
+            "requires_approval": True
         }
         
         try:
@@ -126,34 +132,95 @@ class MissionVerificationTester:
                 if mission_id:
                     self.created_mission_ids.append(mission_id)
                     self.log_result(
-                        "Create One-Time Mission", 
+                        "Create Mission with Verification", 
                         True, 
-                        f"One-time mission created successfully: {data.get('message', 'Mission created')}"
+                        f"Mission with verification requirements created successfully: {mission_data['title']}"
                     )
+                    
+                    # Verify the mission was created with correct verification settings
+                    self.verify_mission_verification_settings(mission_id)
                 else:
                     self.log_result(
-                        "Create One-Time Mission", 
+                        "Create Mission with Verification", 
                         False, 
                         "Mission created but no mission_id returned",
                         f"Response: {data}"
                     )
             elif response.status_code == 403:
                 self.log_result(
-                    "Create One-Time Mission", 
+                    "Create Mission with Verification", 
                     False, 
                     "Access denied - user may not have admin privileges",
                     f"Response: {response.text}"
                 )
             else:
                 self.log_result(
-                    "Create One-Time Mission", 
+                    "Create Mission with Verification", 
                     False, 
                     f"Unexpected response status: {response.status_code}",
                     f"Response: {response.text}"
                 )
         except Exception as e:
             self.log_result(
-                "Create One-Time Mission", 
+                "Create Mission with Verification", 
+                False, 
+                f"Request failed: {str(e)}"
+            )
+    
+    def verify_mission_verification_settings(self, mission_id: str):
+        """Verify that mission was created with correct verification settings"""
+        print("\n🔍 Verifying Mission Verification Settings...")
+        
+        headers = {"Authorization": f"Bearer {self.admin_token}"}
+        
+        try:
+            response = requests.get(f"{API_BASE}/admin/missions", headers=headers)
+            
+            if response.status_code == 200:
+                missions = response.json()
+                mission = next((m for m in missions if m["id"] == mission_id), None)
+                
+                if mission:
+                    verification_fields = {
+                        "requires_description": True,
+                        "requires_photo": True,
+                        "photo_source": "camera",
+                        "requires_link": True,
+                        "requires_approval": True
+                    }
+                    
+                    all_correct = True
+                    for field, expected_value in verification_fields.items():
+                        actual_value = mission.get(field)
+                        if actual_value != expected_value:
+                            all_correct = False
+                            self.log_result(
+                                "Verify Mission Settings", 
+                                False, 
+                                f"Field {field}: expected {expected_value}, got {actual_value}"
+                            )
+                    
+                    if all_correct:
+                        self.log_result(
+                            "Verify Mission Settings", 
+                            True, 
+                            "All verification settings correctly saved and retrieved"
+                        )
+                else:
+                    self.log_result(
+                        "Verify Mission Settings", 
+                        False, 
+                        "Created mission not found in admin missions list"
+                    )
+            else:
+                self.log_result(
+                    "Verify Mission Settings", 
+                    False, 
+                    f"Failed to retrieve admin missions: {response.status_code}"
+                )
+        except Exception as e:
+            self.log_result(
+                "Verify Mission Settings", 
                 False, 
                 f"Request failed: {str(e)}"
             )
