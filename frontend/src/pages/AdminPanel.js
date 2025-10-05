@@ -88,6 +88,8 @@ const AdminPanel = () => {
       fetchMissions();
       fetchMissionStats();
       fetchPendingSubmissions();
+    } else if (activeTab === 'prizes') {
+      fetchPrizes();
     }
   }, [activeTab]);
 
