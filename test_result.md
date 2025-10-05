@@ -325,6 +325,9 @@ backend:
       - working: false
         agent: "main"
         comment: "Need centralized translations system with IT/EN support. API endpoints for managing translations and user language preferences."
+      - working: true
+        agent: "main"  
+        comment: "IMPLEMENTED: Multilingual backend support complete. Translation model created. API endpoints: GET /translations, PUT /user/language, GET/POST /admin/translations. Default translations function with IT/EN support."
 
 metadata:
   created_by: "main_agent"
