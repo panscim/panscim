@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { t } from '@/utils/translations';
 import axios from 'axios';
 import { Gift, Trophy, Star, MapPin, Clock, CheckCircle } from 'lucide-react';
 
