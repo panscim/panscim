@@ -26,6 +26,7 @@ class MissionVerificationTester:
         self.admin_user_id = None
         self.test_user_id = None
         self.created_mission_ids = []  # Track created missions for cleanup
+        self.created_submission_ids = []  # Track submissions for testing
         
     def log_result(self, test_name: str, success: bool, message: str, details: str = ""):
         """Log test result"""
