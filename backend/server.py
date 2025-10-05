@@ -264,7 +264,7 @@ async def login_user(user_data: UserLogin):
 @api_router.post("/auth/upload-avatar")
 async def upload_avatar(
     file: UploadFile = File(...),
-    credentials: HTTPAuthorizationCredentials = security
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     current_user = await get_current_user(credentials)
     
