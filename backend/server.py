@@ -992,7 +992,8 @@ async def complete_mission(
     # Create notification
     notification = Notification(
         user_id=current_user.id,
-        message=f"🎯 Missione completata: '{mission['title']}' (+{mission['points']} punti)",
+        title="🎯 Missione Completata!",
+        message=f"Missione completata: '{mission['title']}' (+{mission['points']} punti)",
         type="success"
     )
     await db.notifications.insert_one(notification.dict())
