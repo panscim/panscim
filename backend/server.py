@@ -1164,6 +1164,179 @@ async def get_prizes(month_year: Optional[str] = None):
     
     return prizes
 
+@api_router.get("/admin/prizes")
+async def get_admin_prizes(
+    month_year: Optional[str] = None,
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    """Get prizes with admin info for current month"""
+    current_user = await get_current_user(credentials)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    if not month_year:
+        month_year = get_current_month_year()
+    
+    # Default prizes template
+    default_prizes = [
+        {
+            "position": 1,
+            "title": "🥇 Notte per 2 persone",
+            "description": "Una notte gratuita nel nostro B&B per 2 persone con colazione inclusa",
+            "image_url": None,
+            "month_year": month_year,
+            "is_custom": False
+        },
+        {
+            "position": 2,
+            "title": "🥈 Cena o degustazione per 2",
+            "description": "Esperienza culinaria presso un partner selezionato per 2 persone",
+            "image_url": None,
+            "month_year": month_year,
+            "is_custom": False
+        },
+        {
+            "position": 3,
+            "title": "🥉 Drink Experience per 2",
+            "description": "Aperitivo o drink speciale presso un partner per 2 persone",
+            "image_url": None,
+            "month_year": month_year,
+            "is_custom": False
+        }
+    ]
+    
+    # Get custom prizes from database
+    custom_prizes = await db.prizes.find({"month_year": month_year}).to_list(10)
+    
+    # Create a map of custom prizes by position
+    custom_prize_map = {prize["position"]: prize for prize in custom_prizes}
+    
+    # Merge custom prizes with defaults
+    result_prizes = []
+    for default_prize in default_prizes:
+        position = default_prize["position"]
+        if position in custom_prize_map:
+            custom_prize = custom_prize_map[position]
+            result_prizes.append({
+                "id": custom_prize.get("id"),
+                "position": position,
+                "title": custom_prize["title"],
+                "description": custom_prize["description"],
+                "image_url": custom_prize.get("image_url"),
+                "month_year": month_year,
+                "is_custom": True
+            })
+        else:
+            result_prizes.append(default_prize)
+    
+    return result_prizes
+
+@api_router.put("/admin/prizes/{position}")
+async def update_prize(
+    position: int,
+    update_request: PrizeUpdateRequest,
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    """Update or create custom prize for specific position"""
+    current_user = await get_current_user(credentials)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    if position not in [1, 2, 3]:
+        raise HTTPException(status_code=400, detail="Position must be 1, 2, or 3")
+    
+    month_year = get_current_month_year()
+    
+    # Check if custom prize already exists
+    existing_prize = await db.prizes.find_one({
+        "position": position,
+        "month_year": month_year
+    })
+    
+    if existing_prize:
+        # Update existing custom prize
+        update_data = {}
+        if update_request.title: update_data["title"] = update_request.title
+        if update_request.description: update_data["description"] = update_request.description  
+        if update_request.image_url is not None: update_data["image_url"] = update_request.image_url
+        
+        await db.prizes.update_one(
+            {"id": existing_prize["id"]},
+            {"$set": update_data}
+        )
+    else:
+        # Create new custom prize
+        prize = Prize(
+            position=position,
+            title=update_request.title or f"Premio {position}° posto",
+            description=update_request.description or "Descrizione premio personalizzato",
+            image_url=update_request.image_url,
+            month_year=month_year
+        )
+        await db.prizes.insert_one(prize.dict())
+    
+    return {"message": f"🌿 Premio {position}° posto aggiornato con successo!"}
+
+@api_router.delete("/admin/prizes/{position}")
+async def restore_default_prize(
+    position: int,
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    """Restore prize to default values"""
+    current_user = await get_current_user(credentials)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    if position not in [1, 2, 3]:
+        raise HTTPException(status_code=400, detail="Position must be 1, 2, or 3")
+    
+    month_year = get_current_month_year()
+    
+    # Remove custom prize to fall back to default
+    await db.prizes.delete_one({
+        "position": position,
+        "month_year": month_year
+    })
+    
+    return {"message": f"⚙️ Premio {position}° posto ripristinato ai valori predefiniti!"}
+
+@api_router.post("/admin/prizes/upload-image")
+async def upload_prize_image(
+    photo: UploadFile = File(...),
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    """Upload image for prize"""
+    current_user = await get_current_user(credentials)
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    try:
+        # Process image similar to avatar upload
+        image_data = await photo.read()
+        image = Image.open(BytesIO(image_data))
+        
+        # Resize to appropriate size for prizes
+        max_size = (400, 300)
+        image.thumbnail(max_size, Image.LANCZOS)
+        
+        # Convert to RGB if necessary
+        if image.mode in ('RGBA', 'LA', 'P'):
+            background = Image.new('RGB', image.size, (255, 255, 255))
+            if image.mode == 'P':
+                image = image.convert('RGBA')
+            background.paste(image, mask=image.split()[-1] if image.mode == 'RGBA' else None)
+            image = background
+        
+        # Save as base64
+        output = BytesIO()
+        image.save(output, format='JPEG', quality=90)
+        image_url = base64.b64encode(output.getvalue()).decode()
+        
+        return {"image_url": image_url, "message": "Immagine caricata con successo!"}
+        
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Errore nel caricamento dell'immagine: {str(e)}")
+
 # === NOTIFICATIONS ENDPOINTS ===
 
 @api_router.get("/notifications")
