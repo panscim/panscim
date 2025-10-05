@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
 import ImageCropper from '@/components/ImageCropper';
+import DigitalClubCard from '@/components/DigitalClubCard';
 import { 
   User, 
   Camera, 
@@ -15,7 +16,8 @@ import {
   Mail,
   Shield,
   Download,
-  Share2
+  Share2,
+  CreditCard
 } from 'lucide-react';
 
 const Profile = () => {
