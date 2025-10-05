@@ -161,7 +161,7 @@ def get_user_level(total_points: int) -> str:
     else:
         return "Explorer"
 
-async def get_current_user(credentials: HTTPAuthorizationCredentials):
+async def get_current_user(credentials: HTTPAuthorizationCredentials = security):
     try:
         token = credentials.credentials
         payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
