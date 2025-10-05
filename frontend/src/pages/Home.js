@@ -22,7 +22,7 @@ const Home = () => {
         {/* Content */}
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
           <div className="mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-matte-gold rounded-full mb-6 animate-float">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-brand-accent rounded-full mb-6 animate-float">
               <span className="text-4xl">🌿</span>
             </div>
             <h1 className="text-5xl md:text-7xl font-cormorant font-bold text-white mb-6">
