@@ -202,66 +202,60 @@ const PublicProfile = () => {
         </div>
 
         {/* Prizes Section */}
-        {(prizes.current_month_winner || prizes.has_won_before) && (
-          <div className="bg-white rounded-[20px] p-8 shadow-lg border border-matte-gold">
-            <h3 className="text-xl font-bold text-deep-sea-blue mb-6 flex items-center">
-              <Gift className="mr-3" size={24} />
-              🏅 Premi e Riconoscimenti
-            </h3>
+        <div className="bg-white rounded-[20px] p-8 shadow-lg border border-matte-gold">
+          <h3 className="text-xl font-bold text-deep-sea-blue mb-6 flex items-center">
+            <Gift className="mr-3" size={24} />
+            🏅 Premi e Riconoscimenti
+          </h3>
 
-            {/* Current Month Prize */}
-            {prizes.current_month_winner && prizes.current_prize && (
-              <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                <h4 className="font-semibold text-orange-800 mb-2">
-                  🏆 Premio del Mese Corrente - {prizes.current_prize.place} Posto
-                </h4>
-                <p className="text-orange-700">{prizes.current_prize.prize_name}</p>
-                {prizes.current_prize.win_date && (
-                  <p className="text-sm text-orange-600 mt-1">
-                    Vinto il {prizes.current_prize.win_date}
-                  </p>
-                )}
-              </div>
-            )}
-
-            {/* Past Prizes */}
-            {prizes.past_prizes.length > 0 && (
-              <div>
-                <h4 className="font-semibold text-deep-sea-blue mb-4">🏅 Premi Precedenti</h4>
-                <div className="space-y-3">
-                  {prizes.past_prizes.map((prize, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
-                      <div className="flex-1">
-                        <div className="font-medium text-gray-900">
-                          {prize.prize_name} - {prize.place} Posto
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          {prize.month_name} • Vinto il {prize.win_date}
-                        </div>
-                      </div>
-                      {prize.use_date && (
-                        <div className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded">
-                          Utilizzato il {prize.use_date}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* No Prizes Yet */}
-        {!prizes.current_month_winner && !prizes.has_won_before && (
-          <div className="bg-white rounded-[20px] p-8 shadow-lg border border-matte-gold text-center">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Gift className="text-gray-400" size={32} />
+          {/* Current Month Prize */}
+          {prizes.current_month_winner && prizes.current_prize && (
+            <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-4 mb-6">
+              <h4 className="font-semibold text-orange-800 mb-2">
+                🏆 Premio del Mese Corrente - {prizes.current_prize.place} Posto
+              </h4>
+              <p className="text-orange-700">{prizes.current_prize.prize_name}</p>
+              {prizes.current_prize.win_date && (
+                <p className="text-sm text-orange-600 mt-1">
+                  Vinto il {prizes.current_prize.win_date}
+                </p>
+              )}
             </div>
-            <h3 className="text-lg font-medium text-gray-700 mb-2">🌿 Nessun premio ancora</h3>
-            <p className="text-gray-600">Continua a giocare per vincere fantastici premi!</p>
-          </div>
-        )}
+          )}
+
+          {/* Past Prizes */}
+          {prizes.past_prizes && prizes.past_prizes.length > 0 && (
+            <div className="mb-6">
+              <h4 className="font-semibold text-deep-sea-blue mb-4">🏅 Premi precedenti</h4>
+              <div className="space-y-3">
+                {prizes.past_prizes.map((prize, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-900">
+                        • {prize.prize_name}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        vinto il {prize.win_date}
+                        {prize.use_date && ` — utilizzato il ${prize.use_date}`}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* No Prizes Message */}
+          {(!prizes.current_month_winner && (!prizes.past_prizes || prizes.past_prizes.length === 0)) && (
+            <div className="text-center py-6">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Gift className="text-gray-400" size={32} />
+              </div>
+              <h4 className="text-lg font-medium text-gray-700 mb-2">🌿 Nessun premio ancora — continua a giocare!</h4>
+              <p className="text-gray-600">Partecipa alle missioni mensili per vincere fantastici premi!</p>
+            </div>
+          )}
+        </div>
 
         {/* Footer */}
         <div className="text-center mt-8 py-6">
