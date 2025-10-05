@@ -301,7 +301,7 @@ const Leaderboard = () => {
                       {/* Points */}
                       <div className="text-right">
                         <div className="text-xl font-bold text-matte-gold">{participant.points}</div>
-                        <div className="text-sm text-gray-500">{t('points')}</div>
+                        <div className="text-sm text-gray-500">punti</div>
                         {index < 3 && (
                           <div className="text-xs text-green-600 font-medium mt-1">
                             🏆 Premio garantito
