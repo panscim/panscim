@@ -129,7 +129,8 @@ const Prizes = () => {
           <div className="grid md:grid-cols-3 gap-6">
             {prizes.map((prize) => {
               const prizeStyle = getPrizeIcon(prize.position);
-              const hasWon = isInTop3 && userPosition === prize.position;
+              // User has won only if month is concluded AND they're in the winning position
+              const hasWon = isMonthConcluded && isInTop3 && userPosition === prize.position;
               
               return (
                 <div 
