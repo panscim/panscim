@@ -162,8 +162,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Fix SMTP Integration and Complete Email Admin"
-    - "Email Admin UI"
+    - "Manual Frontend Testing - Email Admin UI"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
