@@ -475,7 +475,7 @@ Vivi la Puglia autentica con noi!`;
                   <Trophy className="text-white" size={24} />
                 </div>
                 <div className="text-2xl font-bold text-deep-sea-blue mb-1">{user?.total_points}</div>
-                <div className="text-sm text-gray-600">Punti totali</div>
+                <div className="text-sm text-gray-600">{t('total_points')}</div>
               </div>
 
               {/* Level Progress */}
