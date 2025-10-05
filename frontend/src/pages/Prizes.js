@@ -251,6 +251,19 @@ const Prizes = () => {
           </div>
         </div>
 
+        {/* Next Month Message */}
+        <div className="bg-gradient-to-r from-sand-light to-sand-medium rounded-[20px] p-8 mediterranean-shadow text-center">
+          <h3 className="text-xl font-cormorant font-bold text-black mb-4">
+            Il Prossimo Mese Ti Aspetta! 🌿
+          </h3>
+          <p className="text-black mb-4 leading-relaxed">
+            Ogni mese nuovi premi, nuove sfide, nuove opportunità di vivere la Puglia autentica.
+          </p>
+          <div className="inline-flex items-center bg-white bg-opacity-50 rounded-lg px-4 py-2">
+            <span className="text-black font-semibold">Reset: 1° Novembre</span>
+          </div>
+        </div>
+
         {/* How Prizes Work */}
         <div className="bg-white rounded-[20px] p-8 mediterranean-shadow">
           <h3 className="text-xl font-cormorant font-bold text-deep-sea-blue mb-6 text-center">
