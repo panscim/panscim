@@ -497,7 +497,7 @@ Vivi la Puglia autentica con noi!`;
                 <div className="text-2xl font-bold text-deep-sea-blue mb-1">
                   {currentPosition && currentPosition !== '-' ? `#${currentPosition}` : '-'}
                 </div>
-                <div className="text-sm text-gray-600">Posizione attuale</div>
+                <div className="text-sm text-gray-600">{t('current_rank')}</div>
               </div>
             </div>
           </>
