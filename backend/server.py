@@ -318,7 +318,8 @@ async def get_user_profile(credentials: HTTPAuthorizationCredentials = Depends(s
         "avatar_url": current_user.avatar_url,
         "position": position,
         "badges": current_user.badges,
-        "unread_notifications": len(notifications)
+        "unread_notifications": len(notifications),
+        "is_admin": current_user.is_admin
     }
 
 @api_router.put("/user/profile")
