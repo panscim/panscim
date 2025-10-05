@@ -49,8 +49,8 @@ def generate_club_card_code() -> str:
     return f"DP-{code_number}"
 
 def generate_club_card_qr_url(user_id: str) -> str:
-    """Generate QR code URL for club card"""
-    return f"https://desideridipuglia.com/club/user/{user_id}"
+    """Generate QR code URL for club card - opens popup"""
+    return f"https://puglia-club.preview.emergentagent.com/profile?popup={user_id}"
 
 async def initialize_club_card(user_id: str):
     """Initialize club card data for new user"""
