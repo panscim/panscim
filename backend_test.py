@@ -175,64 +175,66 @@ class MissionManagementTester:
                 f"Request failed: {str(e)}"
             )
     
-    def test_get_users_list(self):
-        """Test getting users list for email selection"""
-        print("\n👥 Testing Users List Retrieval...")
+    def test_create_daily_mission(self):
+        """Test creating a daily mission with limits"""
+        print("\n📅 Testing Daily Mission Creation...")
         
         if not self.admin_token:
-            self.log_result("Users List Test", False, "No admin token available")
+            self.log_result("Create Daily Mission", False, "No admin token available")
             return
         
         headers = {"Authorization": f"Bearer {self.admin_token}"}
+        mission_data = {
+            "title": "Condividi Storia Instagram",
+            "description": "Condividi una storia su Instagram taggando @desideridipuglia e usando #DesideridiPugliaClub",
+            "points": 15,
+            "frequency": "daily",
+            "daily_limit": 3,
+            "weekly_limit": 0,
+            "is_active": True
+        }
         
         try:
-            response = requests.get(f"{API_BASE}/admin/users/list", headers=headers)
+            response = requests.post(
+                f"{API_BASE}/admin/missions",
+                json=mission_data,
+                headers=headers
+            )
             
             if response.status_code == 200:
                 data = response.json()
-                if isinstance(data, list) and len(data) > 0:
-                    # Check if users have required fields
-                    user = data[0]
-                    required_fields = ["id", "name", "email", "current_points", "level"]
-                    missing_fields = [field for field in required_fields if field not in user]
-                    
-                    if not missing_fields:
-                        self.log_result(
-                            "Users List Test", 
-                            True, 
-                            f"Successfully retrieved {len(data)} users with all required fields"
-                        )
-                    else:
-                        self.log_result(
-                            "Users List Test", 
-                            False, 
-                            f"Users missing required fields: {missing_fields}",
-                            f"Sample user: {user}"
-                        )
+                mission_id = data.get("mission_id")
+                if mission_id:
+                    self.created_mission_ids.append(mission_id)
+                    self.log_result(
+                        "Create Daily Mission", 
+                        True, 
+                        f"Daily mission created successfully with limit 3/day: {data.get('message', 'Mission created')}"
+                    )
                 else:
                     self.log_result(
-                        "Users List Test", 
+                        "Create Daily Mission", 
                         False, 
-                        "No users returned or invalid format",
+                        "Mission created but no mission_id returned",
                         f"Response: {data}"
                     )
             elif response.status_code == 403:
                 self.log_result(
-                    "Users List Test", 
+                    "Create Daily Mission", 
                     False, 
                     "Access denied - user may not have admin privileges",
                     f"Response: {response.text}"
                 )
             else:
                 self.log_result(
-                    "Users List Test", 
+                    "Create Daily Mission", 
                     False, 
                     f"Unexpected response status: {response.status_code}",
                     f"Response: {response.text}"
                 )
         except Exception as e:
             self.log_result(
-                "Users List Test", 
+                "Create Daily Mission", 
                 False, 
                 f"Request failed: {str(e)}"
             )
