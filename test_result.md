@@ -248,6 +248,42 @@ backend:
         agent: "testing"
         comment: "VERIFICATION SUBMISSION SYSTEM TESTED ✅ Mission submission with FormData validation working perfectly! POST /api/missions/{id}/submit accepts description, photo upload, and links. MissionSubmission records created with pending status. Admin approval workflow (GET /api/admin/missions/submissions/pending, PUT /api/admin/missions/submissions/{id}/verify) functional. Point awarding after approval confirmed (75 points awarded correctly). Complete verification workflow from submission to approval operational."
 
+  - task: "Admin Prize Editor System"
+    implemented: false
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Need to implement CRUD operations for monthly prizes. Admin should be able to edit existing prizes (title, description, image, value) with save/restore functionality."
+
+  - task: "Digital Club Card Generation"
+    implemented: false
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Need to generate personal club cards with QR code, unique DP-XXXX code, join date, level. QR links to https://desideridipuglia.com/club/user/[user_id]. User model enhancement required."
+
+  - task: "Multilingual Backend Support"
+    implemented: false
+    working: false
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "main"
+        comment: "Need centralized translations system with IT/EN support. API endpoints for managing translations and user language preferences."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
