@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
 import { 
   Home, 
   Trophy, 
@@ -9,7 +10,8 @@ import {
   Settings,
   LogOut,
   Menu,
-  X
+  X,
+  Globe
 } from 'lucide-react';
 
 const Navbar = () => {
