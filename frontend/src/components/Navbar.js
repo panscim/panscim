@@ -16,6 +16,7 @@ import {
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const { currentLanguage, changeLanguage, t } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
