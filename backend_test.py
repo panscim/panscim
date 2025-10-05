@@ -845,7 +845,7 @@ class MissionManagementTester:
     def print_summary(self):
         """Print test summary"""
         print("\n" + "=" * 60)
-        print("📊 TEST SUMMARY")
+        print("📊 MISSION MANAGEMENT TEST SUMMARY")
         print("=" * 60)
         
         passed = sum(1 for result in self.test_results if "✅ PASS" in result["status"])
@@ -869,12 +869,16 @@ class MissionManagementTester:
         
         # Overall assessment
         if failed == 0:
-            print("\n🎉 ALL EMAIL ADMIN TESTS PASSED! Email functionality is working correctly.")
+            print("\n🎉 ALL MISSION MANAGEMENT TESTS PASSED! Mission system is working correctly.")
         elif passed > failed:
             print(f"\n⚠️  MOSTLY WORKING: {passed}/{total} tests passed. Some issues need attention.")
         else:
-            print(f"\n🚨 CRITICAL ISSUES: {failed}/{total} tests failed. Email functionality needs fixes.")
+            print(f"\n🚨 CRITICAL ISSUES: {failed}/{total} tests failed. Mission system needs fixes.")
+        
+        # Cleanup created missions
+        if self.created_mission_ids and self.admin_token:
+            print(f"\n🧹 Cleaning up {len(self.created_mission_ids)} test missions...")
 
 if __name__ == "__main__":
-    tester = EmailAdminTester()
+    tester = MissionManagementTester()
     tester.run_all_tests()
