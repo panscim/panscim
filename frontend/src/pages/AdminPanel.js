@@ -149,21 +149,55 @@ const AdminPanel = () => {
 
     } catch (error) {
       console.error('Error fetching admin data:', error);
-      // Set default stats if API fails
-      setData(prev => ({ 
-        ...prev, 
-        stats: {
-          totalUsers: 0,
-          activeUsers: 0,
+      console.error('Error details:', error.response?.data || error.message);
+      
+      // Try fallback: fetch users individually if batch fails
+      try {
+        const token = localStorage.getItem('token');
+        const usersResponse = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/admin/users/list`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        const users = usersResponse.data;
+        const stats = {
+          totalUsers: users.length,
+          activeUsers: users.filter(u => u.current_points > 0).length,
           totalMissions: 0,
           activeMissions: 0,
           pendingSubmissions: 0,
-          monthlyPoints: 0,
-          totalRegistrations: 0,
-          topUser: 'N/A',
-          averagePoints: 0
-        }
-      }));
+          monthlyPoints: users.reduce((sum, u) => sum + (u.current_points || 0), 0),
+          totalRegistrations: users.length,
+          topUser: users.find(u => u.current_points > 0)?.name || 'N/A',
+          averagePoints: users.length > 0 ? Math.round(users.reduce((sum, u) => sum + (u.current_points || 0), 0) / users.length) : 0
+        };
+        
+        setData(prev => ({ 
+          ...prev, 
+          stats,
+          users,
+          leaderboard: users.sort((a, b) => (b.current_points || 0) - (a.current_points || 0))
+        }));
+        
+      } catch (fallbackError) {
+        console.error('Fallback also failed:', fallbackError);
+        // Set default stats if everything fails
+        setData(prev => ({ 
+          ...prev, 
+          stats: {
+            totalUsers: 0,
+            activeUsers: 0,
+            totalMissions: 0,
+            activeMissions: 0,
+            pendingSubmissions: 0,
+            monthlyPoints: 0,
+            totalRegistrations: 0,
+            topUser: 'N/A',
+            averagePoints: 0
+          },
+          users: [],
+          error: 'Impossibile caricare i dati amministrativi. Controlla la connessione.'
+        }));
+      }
     } finally {
       setLoading(false);
     }
