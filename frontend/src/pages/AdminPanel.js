@@ -69,6 +69,9 @@ const AdminPanel = () => {
     if (activeTab === 'email') {
       fetchUsers();
       fetchEmailLogs();
+    } else if (activeTab === 'missions') {
+      fetchMissions();
+      fetchMissionStats();
     }
   }, [activeTab]);
 
