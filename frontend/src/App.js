@@ -69,6 +69,8 @@ function AppContent() {
             path="/admin" 
             element={user && user.is_admin ? <><Navbar /><AdminPanel /></> : <Navigate to="/dashboard" />} 
           />
+          {/* Public Routes */}
+          <Route path="/club/profile/:user_id" element={<PublicProfile />} />
         </Routes>
       </BrowserRouter>
     </div>
