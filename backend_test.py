@@ -44,38 +44,62 @@ class MissionManagementTester:
         """Create or login test users (admin and regular user)"""
         print("\n🔧 Setting up test users...")
         
-        # Try to create admin user
-        admin_data = {
-            "name": "Mission Admin Tester",
-            "username": "mission_admin_test",
-            "email": "mission.admin.test@example.com",
-            "password": "MissionAdmin123!",
-            "country": "Italy"
-        }
+        # Try to login with existing admin user first (from previous tests)
+        existing_admin_credentials = [
+            {"email": "admin.test.email@example.com", "password": "AdminTest123!"},
+            {"email": "admin@example.com", "password": "admin123"},
+            {"email": "test@admin.com", "password": "admin123"},
+        ]
         
-        try:
-            # Try registration first
-            response = requests.post(f"{API_BASE}/auth/register", json=admin_data)
-            if response.status_code == 200:
-                data = response.json()
-                self.admin_token = data["access_token"]
-                self.admin_user_id = data["user"]["id"]
-                print("✅ Admin user created successfully")
-            else:
-                # Try login if user already exists
-                login_data = {"email": admin_data["email"], "password": admin_data["password"]}
-                response = requests.post(f"{API_BASE}/auth/login", json=login_data)
+        admin_found = False
+        for creds in existing_admin_credentials:
+            try:
+                response = requests.post(f"{API_BASE}/auth/login", json=creds)
+                if response.status_code == 200:
+                    data = response.json()
+                    user_data = data.get("user", {})
+                    if user_data.get("is_admin", False):
+                        self.admin_token = data["access_token"]
+                        self.admin_user_id = user_data["id"]
+                        print(f"✅ Found existing admin user: {creds['email']}")
+                        admin_found = True
+                        break
+            except Exception:
+                continue
+        
+        # If no existing admin found, try to create one
+        if not admin_found:
+            admin_data = {
+                "name": "Mission Admin Tester",
+                "username": "mission_admin_test",
+                "email": "mission.admin.test@example.com",
+                "password": "MissionAdmin123!",
+                "country": "Italy"
+            }
+            
+            try:
+                # Try registration first
+                response = requests.post(f"{API_BASE}/auth/register", json=admin_data)
                 if response.status_code == 200:
                     data = response.json()
                     self.admin_token = data["access_token"]
                     self.admin_user_id = data["user"]["id"]
-                    print("✅ Admin user logged in successfully")
+                    print("✅ Admin user created successfully (Note: may need manual admin privilege assignment)")
                 else:
-                    print(f"❌ Failed to create/login admin user: {response.text}")
-                    return False
-        except Exception as e:
-            print(f"❌ Error setting up admin user: {str(e)}")
-            return False
+                    # Try login if user already exists
+                    login_data = {"email": admin_data["email"], "password": admin_data["password"]}
+                    response = requests.post(f"{API_BASE}/auth/login", json=login_data)
+                    if response.status_code == 200:
+                        data = response.json()
+                        self.admin_token = data["access_token"]
+                        self.admin_user_id = data["user"]["id"]
+                        print("✅ Admin user logged in successfully (Note: may need manual admin privilege assignment)")
+                    else:
+                        print(f"❌ Failed to create/login admin user: {response.text}")
+                        return False
+            except Exception as e:
+                print(f"❌ Error setting up admin user: {str(e)}")
+                return False
         
         # Create regular user for testing
         user_data = {
