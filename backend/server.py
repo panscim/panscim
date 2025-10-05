@@ -42,6 +42,48 @@ api_router = APIRouter(prefix="/api")
 
 # === EMAIL FUNCTIONS ===
 
+def generate_club_card_code() -> str:
+    """Generate unique DP-XXXX club card code"""
+    import random
+    code_number = random.randint(1000, 9999)
+    return f"DP-{code_number}"
+
+def generate_club_card_qr_url(user_id: str) -> str:
+    """Generate QR code URL for club card"""
+    return f"https://desideridipuglia.com/club/user/{user_id}"
+
+async def initialize_club_card(user_id: str):
+    """Initialize club card data for new user"""
+    # Check if user already has club card data
+    user_doc = await db.users.find_one({"id": user_id})
+    if not user_doc:
+        return
+    
+    update_data = {}
+    
+    # Generate club card code if not exists
+    if not user_doc.get("club_card_code"):
+        # Generate unique code
+        while True:
+            code = generate_club_card_code()
+            existing = await db.users.find_one({"club_card_code": code})
+            if not existing:
+                update_data["club_card_code"] = code
+                break
+    
+    # Generate QR URL if not exists
+    if not user_doc.get("club_card_qr_url"):
+        update_data["club_card_qr_url"] = generate_club_card_qr_url(user_id)
+    
+    # Set join date if not exists (use created_at as fallback)
+    if not user_doc.get("join_date"):
+        join_date = user_doc.get("created_at", datetime.utcnow())
+        update_data["join_date"] = join_date
+    
+    # Update user if needed
+    if update_data:
+        await db.users.update_one({"id": user_id}, {"$set": update_data})
+
 async def send_email(to_email: str, subject: str, body: str) -> bool:
     """Send email using Gmail SMTP"""
     try:
