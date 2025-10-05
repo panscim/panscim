@@ -39,11 +39,11 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/dashboard" className="flex items-center space-x-2">
+          <Link to="/dashboard" className="flex items-center space-x-3">
             <img 
-              src="https://customer-assets.emergentagent.com/job_idea-showcase-6/artifacts/l5fhones_Progetto%20senza%20titolo%20%285%29.svg" 
+              src="https://customer-assets.emergentagent.com/job_idea-showcase-6/artifacts/xc7s59ph_Progetto_senza_titolo__3_-removebg-preview.png" 
               alt="Desideri di Puglia Logo" 
-              className="w-8 h-8"
+              className="w-10 h-10"
             />
             <span className="font-cormorant text-xl font-semibold text-brand-dark">
               Desideri di Puglia Club
