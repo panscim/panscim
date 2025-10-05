@@ -23,7 +23,8 @@ const Dashboard = () => {
     leaderboard: [],
     notifications: [],
     actionHistory: [],
-    prizes: []
+    prizes: [],
+    missions: []
   });
   const [loading, setLoading] = useState(true);
   const [submissionForm, setSubmissionForm] = useState({
