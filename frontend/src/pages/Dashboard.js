@@ -110,18 +110,54 @@ const Dashboard = () => {
     }
   };
 
-  const completeMission = async (missionId) => {
+  const submitMission = async () => {
+    if (!missionSubmissionForm.mission) return;
+    
+    const mission = missionSubmissionForm.mission;
+    
+    // Validate required fields
+    if (mission.requires_description && !missionSubmissionForm.description.trim()) {
+      alert('Descrizione richiesta per questa missione');
+      return;
+    }
+    
+    if (mission.requires_photo && !missionSubmissionForm.photo) {
+      alert('Foto richiesta per questa missione');
+      return;
+    }
+    
+    if (mission.requires_link && !missionSubmissionForm.submissionUrl.trim()) {
+      alert('Link richiesto per questa missione');
+      return;
+    }
+
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/missions/${missionId}/complete`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
+      const formData = new FormData();
+      
+      formData.append('description', missionSubmissionForm.description);
+      if (missionSubmissionForm.submissionUrl) {
+        formData.append('submission_url', missionSubmissionForm.submissionUrl);
+      }
+      if (missionSubmissionForm.photo) {
+        formData.append('photo', missionSubmissionForm.photo);
+      }
+      
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/missions/${mission.id}/submit`, formData, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
       });
       
       alert(response.data.message);
-      fetchDashboardData(); // Refresh data to update mission availability
-      updateUser(); // Update user points in context
+      setMissionSubmissionForm({ show: false, mission: null, description: '', submissionUrl: '', photo: null });
+      fetchDashboardData(); // Refresh data
+      if (!response.data.requires_approval) {
+        updateUser(); // Update user points if automatically approved
+      }
     } catch (error) {
-      const message = error.response?.data?.detail || 'Errore nel completamento della missione';
+      const message = error.response?.data?.detail || 'Errore nell\'invio della missione';
       alert(message);
     }
   };
