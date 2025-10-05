@@ -53,6 +53,14 @@ code {
     background-color: #1a1a1a;
 }
 
+.hover\:bg-brand-accent:hover {
+    background-color: #d4af37;
+}
+
+.hover\:text-white:hover {
+    color: #ffffff;
+}
+
 .text-brand-dark {
     color: #1a1a1a;
 }
