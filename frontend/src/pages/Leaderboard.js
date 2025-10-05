@@ -238,7 +238,7 @@ const Leaderboard = () => {
               <div className="p-6 border-b border-gray-100">
                 <h3 className="text-lg font-semibold text-deep-sea-blue flex items-center">
                   <Medal className="mr-2" size={20} />
-                  {t('complete_leaderboard')}
+                  Classifica Completa
                 </h3>
               </div>
               
