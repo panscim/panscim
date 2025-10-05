@@ -402,6 +402,7 @@ const AdminPanel = () => {
               { id: 'users', label: 'Utenti', icon: Users },
               { id: 'email', label: 'Email Admin', icon: Mail },
               { id: 'missions', label: 'Missioni', icon: Target },
+              { id: 'prizes', label: 'Premi', icon: Gift },
               { id: 'settings', label: 'Impostazioni', icon: Settings }
             ].map((tab) => {
               const Icon = tab.icon;
