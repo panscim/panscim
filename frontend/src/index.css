@@ -18,7 +18,7 @@ code {
         monospace;
 }
 
-/* Puglia Theme Custom Styles */
+/* Desideri di Puglia Brand Colors - Consistent with Original Site */
 .font-poppins {
     font-family: 'Poppins', sans-serif;
 }
@@ -27,44 +27,74 @@ code {
     font-family: 'Cormorant Garamond', serif;
 }
 
+/* Primary Brand Colors */
+.bg-brand-dark {
+    background-color: #1a1a1a;
+}
+
+.bg-brand-light {
+    background-color: #f8f8f8;
+}
+
+.bg-brand-accent {
+    background-color: #d4af37;
+}
+
+.bg-brand-secondary {
+    background-color: #2a2a2a;
+}
+
+.text-brand-dark {
+    color: #1a1a1a;
+}
+
+.text-brand-light {
+    color: #f8f8f8;
+}
+
+.text-brand-white {
+    color: #ffffff;
+}
+
+.text-brand-accent {
+    color: #d4af37;
+}
+
+.text-brand-muted {
+    color: #888888;
+}
+
+.border-brand-accent {
+    border-color: #d4af37;
+}
+
+.border-brand-light {
+    border-color: #e5e5e5;
+}
+
+/* Legacy color mappings for compatibility */
 .bg-sand-white {
-    background-color: #F4EFEA;
+    background-color: #f8f8f8;
 }
 
 .bg-deep-sea-blue {
-    background-color: #2E4A5C;
+    background-color: #1a1a1a;
 }
 
 .bg-matte-gold {
-    background-color: #CFAE6C;
-}
-
-.bg-terracotta {
-    background-color: #C57E57;
-}
-
-.text-sand-white {
-    color: #F4EFEA;
+    background-color: #d4af37;
 }
 
 .text-deep-sea-blue {
-    color: #2E4A5C;
+    color: #1a1a1a;
 }
 
 .text-matte-gold {
-    color: #CFAE6C;
-}
-
-.text-terracotta {
-    color: #C57E57;
+    color: #d4af37;
 }
 
 .border-matte-gold {
-    border-color: #CFAE6C;
-}
-
-.border-terracotta {
-    border-color: #C57E57;
+    border-color: #d4af37;
 }
 
 .avatar-ring {
