@@ -466,7 +466,7 @@ Vivi la Puglia autentica con noi!`;
                   <Star className="text-white" size={24} />
                 </div>
                 <div className="text-2xl font-bold text-deep-sea-blue mb-1">{user?.current_points}</div>
-                <div className="text-sm text-gray-600">Punti questo mese</div>
+                <div className="text-sm text-gray-600">{t('current_points')}</div>
               </div>
 
               {/* Total Points */}
