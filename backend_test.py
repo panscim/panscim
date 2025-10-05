@@ -15,7 +15,7 @@ import time
 from io import BytesIO
 
 # Get backend URL from environment
-BACKEND_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://puglia-loyalty.preview.emergentagent.com')
+BACKEND_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://puglia-club.preview.emergentagent.com')
 API_BASE = f"{BACKEND_URL}/api"
 
 class MissionVerificationTester:
