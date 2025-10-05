@@ -45,6 +45,13 @@ const AdminPanel = () => {
     fetchAdminData();
   }, []);
 
+  useEffect(() => {
+    if (activeTab === 'email') {
+      fetchUsers();
+      fetchEmailLogs();
+    }
+  }, [activeTab]);
+
   const fetchAdminData = async () => {
     try {
       const response = await axios.get('/admin/actions/pending');
