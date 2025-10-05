@@ -40,12 +40,20 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const [actionTypesRes, leaderboardRes, notificationsRes, historyRes, prizesRes] = await Promise.all([
-        axios.get('/actions/types'),
-        axios.get('/leaderboard'),
-        axios.get('/notifications'),
-        axios.get('/actions/history'),
-        axios.get('/prizes')
+      const token = localStorage.getItem('token');
+      const [actionTypesRes, leaderboardRes, notificationsRes, historyRes, prizesRes, missionsRes] = await Promise.all([
+        axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/actions/types`),
+        axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/leaderboard`),
+        axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/notifications`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/actions/history`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }),
+        axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/prizes`),
+        axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/missions`, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
       ]);
 
       setData({
@@ -53,7 +61,8 @@ const Dashboard = () => {
         leaderboard: leaderboardRes.data.leaderboard,
         notifications: notificationsRes.data,
         actionHistory: historyRes.data,
-        prizes: prizesRes.data
+        prizes: prizesRes.data,
+        missions: missionsRes.data
       });
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
