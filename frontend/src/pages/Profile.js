@@ -22,6 +22,8 @@ const Profile = () => {
   const { user, updateUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [showCropper, setShowCropper] = useState(false);
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
   const [editForm, setEditForm] = useState({
     name: user?.name || '',
     username: user?.username || '',
