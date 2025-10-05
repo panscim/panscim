@@ -1223,6 +1223,101 @@ const AdminPanel = () => {
                   </div>
                 ))}
               </div>
+
+              {/* Prize History Section */}
+              <div className="mt-8">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-deep-sea-blue flex items-center">
+                    <Clock className="mr-2" size={20} />
+                    🕓 Storico Premi
+                  </h3>
+                  <button
+                    onClick={() => setShowPrizeHistory(!showPrizeHistory)}
+                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center space-x-2"
+                  >
+                    {showPrizeHistory ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                    <span>{showPrizeHistory ? 'Nascondi' : 'Mostra'} Storico</span>
+                  </button>
+                </div>
+
+                {showPrizeHistory && (
+                  <div className="bg-gray-50 rounded-lg p-6">
+                    <p className="text-gray-600 text-sm mb-4">
+                      📊 Visualizza mesi precedenti, vincitori e stato consegne
+                    </p>
+
+                    {prizeHistory.length === 0 ? (
+                      <div className="text-center py-8">
+                        <div className="text-gray-400 mb-2">📋</div>
+                        <p className="text-gray-500">Nessuno storico disponibile ancora</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-6">
+                        {prizeHistory.map((monthData, index) => (
+                          <div key={index} className="bg-white rounded-lg border border-gray-200 p-4">
+                            <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
+                              <Calendar className="mr-2" size={16} />
+                              {monthData.month}
+                            </h4>
+
+                            <div className="space-y-3">
+                              {monthData.winners.map((winner, winnerIndex) => (
+                                <div 
+                                  key={winnerIndex} 
+                                  className="flex items-center justify-between p-3 bg-gray-50 rounded border"
+                                >
+                                  <div className="flex-1">
+                                    <div className="flex items-center space-x-3 mb-1">
+                                      <span className="font-medium text-gray-900">
+                                        {winner.position === 1 ? '🥇' : winner.position === 2 ? '🥈' : '🥉'} 
+                                        {winner.position}° Posto
+                                      </span>
+                                      <span className="text-sm text-gray-600">@{winner.username}</span>
+                                    </div>
+                                    <div className="text-sm font-medium text-deep-sea-blue">
+                                      {winner.prize_name}
+                                    </div>
+                                    {winner.delivery_date && (
+                                      <div className="text-xs text-gray-500 mt-1">
+                                        Consegnato il {winner.delivery_date}
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  <div className="ml-4">
+                                    {winner.delivered ? (
+                                      <div className="flex items-center space-x-1 text-green-600 bg-green-100 px-3 py-1 rounded-full text-sm">
+                                        <CheckCircle size={14} />
+                                        <span>Consegnato</span>
+                                      </div>
+                                    ) : (
+                                      <div className="flex items-center space-x-1 text-orange-600 bg-orange-100 px-3 py-1 rounded-full text-sm">
+                                        <Clock size={14} />
+                                        <span>In attesa</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+
+                            <div className="mt-4 pt-3 border-t border-gray-200">
+                              <div className="flex items-center justify-between text-sm text-gray-600">
+                                <span>
+                                  Premi consegnati: {monthData.winners.filter(w => w.delivered).length}/{monthData.winners.length}
+                                </span>
+                                <span>
+                                  Completamento: {Math.round((monthData.winners.filter(w => w.delivered).length / monthData.winners.length) * 100)}%
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
