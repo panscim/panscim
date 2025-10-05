@@ -45,6 +45,21 @@ const AdminPanel = () => {
   const [emailLogs, setEmailLogs] = useState([]);
   const [emailLoading, setEmailLoading] = useState(false);
   const [testEmailAddress, setTestEmailAddress] = useState('');
+  
+  // Mission Management State
+  const [missions, setMissions] = useState([]);
+  const [missionStats, setMissionStats] = useState(null);
+  const [missionForm, setMissionForm] = useState({
+    title: '',
+    description: '',
+    points: 0,
+    frequency: 'one-time',
+    daily_limit: 0,
+    weekly_limit: 0,
+    is_active: true
+  });
+  const [editingMission, setEditingMission] = useState(null);
+  const [missionLoading, setMissionLoading] = useState(false);
 
   useEffect(() => {
     fetchAdminData();
