@@ -106,7 +106,7 @@ const AdminPanel = () => {
       
       // Fetch multiple endpoints for comprehensive stats
       const [usersResponse, leaderboardResponse, missionsResponse, submissionsResponse] = await Promise.all([
-        axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/admin/users`, {
+        axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/admin/users/list`, {
           headers: { Authorization: `Bearer ${token}` }
         }),
         axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/leaderboard`, {
