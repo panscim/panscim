@@ -206,7 +206,7 @@ const PublicProfile = () => {
         <div className="bg-white rounded-[20px] p-8 shadow-lg border border-matte-gold">
           <h3 className="text-xl font-bold text-deep-sea-blue mb-6 flex items-center">
             <Gift className="mr-3" size={24} />
-            🏅 Premi e Riconoscimenti
+            🏅 {t('prizes_and_awards')}
           </h3>
 
           {/* Current Month Prize */}
