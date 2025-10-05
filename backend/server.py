@@ -2016,14 +2016,18 @@ async def test_email_config(
 async def get_users_for_email(
     credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
-    """Get list of users for email selection"""
+    """Get list of users for email selection and admin statistics"""
     current_user = await get_current_user(credentials)
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin access required")
     
     users = await db.users.find(
         {}, 
-        {"id": 1, "name": 1, "email": 1, "current_points": 1, "level": 1}
+        {
+            "id": 1, "name": 1, "email": 1, "username": 1, 
+            "current_points": 1, "total_points": 1, "level": 1, 
+            "join_date": 1, "created_at": 1
+        }
     ).to_list(length=None)
     
     user_list = []
@@ -2032,8 +2036,11 @@ async def get_users_for_email(
             "id": user["id"],
             "name": user["name"],
             "email": user["email"],
+            "username": user.get("username", ""),
             "current_points": user.get("current_points", 0),
-            "level": user.get("level", "Novizio")
+            "total_points": user.get("total_points", 0),
+            "level": user.get("level", "Explorer"),
+            "join_date": user.get("join_date", user.get("created_at")).isoformat() if user.get("join_date") or user.get("created_at") else None
         })
     
     return user_list
