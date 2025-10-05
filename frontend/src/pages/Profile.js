@@ -33,6 +33,7 @@ const Profile = () => {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [activeTab, setActiveTab] = useState('profile');
   const fileInputRef = useRef(null);
 
   const countries = [
