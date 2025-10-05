@@ -646,6 +646,72 @@ const AdminPanel = () => {
                 </div>
               </div>
 
+              {/* Verification Requirements */}
+              <div className="border-t pt-4 mb-4">
+                <h4 className="text-md font-semibold text-gray-700 mb-3">Requisiti di Verifica</h4>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div className="space-y-2">
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={missionForm.requires_description}
+                        onChange={(e) => setMissionForm(prev => ({ ...prev, requires_description: e.target.checked }))}
+                        className="rounded text-deep-sea-blue"
+                      />
+                      <span className="text-sm text-gray-700">Richiede descrizione</span>
+                    </label>
+                    
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={missionForm.requires_photo}
+                        onChange={(e) => setMissionForm(prev => ({ ...prev, requires_photo: e.target.checked }))}
+                        className="rounded text-deep-sea-blue"
+                      />
+                      <span className="text-sm text-gray-700">Richiede foto</span>
+                    </label>
+                    
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={missionForm.requires_link}
+                        onChange={(e) => setMissionForm(prev => ({ ...prev, requires_link: e.target.checked }))}
+                        className="rounded text-deep-sea-blue"
+                      />
+                      <span className="text-sm text-gray-700">Richiede link</span>
+                    </label>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    {missionForm.requires_photo && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Fonte foto</label>
+                        <select
+                          value={missionForm.photo_source}
+                          onChange={(e) => setMissionForm(prev => ({ ...prev, photo_source: e.target.value }))}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-deep-sea-blue focus:border-transparent"
+                        >
+                          <option value="both">Galleria o Camera</option>
+                          <option value="gallery">Solo Galleria</option>
+                          <option value="camera">Solo Camera Live</option>
+                        </select>
+                      </div>
+                    )}
+                    
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={missionForm.requires_approval}
+                        onChange={(e) => setMissionForm(prev => ({ ...prev, requires_approval: e.target.checked }))}
+                        className="rounded text-deep-sea-blue"
+                      />
+                      <span className="text-sm text-gray-700">Richiede approvazione admin</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
               <button
                 onClick={createMission}
                 disabled={missionLoading}
