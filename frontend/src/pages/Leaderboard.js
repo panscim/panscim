@@ -125,7 +125,7 @@ const Leaderboard = () => {
           <div className="text-center py-12">
             <Trophy className="mx-auto text-gray-400 mb-4" size={64} />
             <h3 className="text-xl font-semibold text-gray-600 mb-2">Nessun dato per questo periodo</h3>
-            <p className="text-gray-500">Sii il primo a guadagnare punti questo mese!</p>
+            <p className="text-gray-500">{t('be_first_earn_points')}</p>
           </div>
         ) : (
           <div className="space-y-6">
