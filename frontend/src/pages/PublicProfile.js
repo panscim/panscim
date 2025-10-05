@@ -54,7 +54,7 @@ const PublicProfile = () => {
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <User className="text-red-500" size={32} />
           </div>
-          <h2 className="text-xl font-bold text-deep-sea-blue mb-2">Profilo Non Trovato</h2>
+          <h2 className="text-xl font-bold text-deep-sea-blue mb-2">{t('profile_not_found')}</h2>
           <p className="text-gray-600">{error}</p>
         </div>
       </div>
