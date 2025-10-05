@@ -513,7 +513,25 @@ async def get_action_history(
         {"user_id": current_user.id}
     ).sort("created_at", -1).limit(limit).to_list(limit)
     
-    return actions
+    # Clean actions to avoid ObjectId issues
+    clean_actions = []
+    for action in actions:
+        clean_action = {
+            "id": action["id"],
+            "user_id": action["user_id"],
+            "action_type_id": action["action_type_id"],
+            "action_name": action["action_name"],
+            "points_earned": action["points_earned"],
+            "description": action["description"],
+            "verification_status": action["verification_status"],
+            "submission_url": action.get("submission_url"),
+            "created_at": action["created_at"].isoformat() if "created_at" in action else None,
+            "verified_at": action["verified_at"].isoformat() if action.get("verified_at") else None,
+            "month_year": action["month_year"]
+        }
+        clean_actions.append(clean_action)
+    
+    return clean_actions
 
 # === LEADERBOARD ENDPOINTS ===
 
