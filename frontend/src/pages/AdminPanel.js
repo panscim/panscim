@@ -190,6 +190,86 @@ const AdminPanel = () => {
     }
   };
 
+  // Mission Management Functions
+  const fetchMissions = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/admin/missions`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setMissions(response.data);
+    } catch (error) {
+      console.error('Error fetching missions:', error);
+    }
+  };
+
+  const fetchMissionStats = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/admin/missions/statistics`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setMissionStats(response.data);
+    } catch (error) {
+      console.error('Error fetching mission stats:', error);
+    }
+  };
+
+  const createMission = async () => {
+    if (!missionForm.title.trim() || !missionForm.description.trim() || missionForm.points <= 0) {
+      alert('Compila tutti i campi richiesti');
+      return;
+    }
+
+    setMissionLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/admin/missions`, missionForm, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      alert('🎯 Missione creata con successo!');
+      setMissionForm({
+        title: '',
+        description: '',
+        points: 0,
+        frequency: 'one-time',
+        daily_limit: 0,
+        weekly_limit: 0,
+        is_active: true
+      });
+      fetchMissions();
+      fetchMissionStats();
+    } catch (error) {
+      alert('Errore creazione missione: ' + (error.response?.data?.detail || 'Errore sconosciuto'));
+    } finally {
+      setMissionLoading(false);
+    }
+  };
+
+  const updateMission = async (missionId, updateData) => {
+    setMissionLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      await axios.put(`${process.env.REACT_APP_BACKEND_URL}/api/admin/missions/${missionId}`, updateData, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      alert('✅ Missione aggiornata con successo!');
+      setEditingMission(null);
+      fetchMissions();
+      fetchMissionStats();
+    } catch (error) {
+      alert('Errore aggiornamento: ' + (error.response?.data?.detail || 'Errore sconosciuto'));
+    } finally {
+      setMissionLoading(false);
+    }
+  };
+
+  const toggleMissionStatus = async (missionId, currentStatus) => {
+    await updateMission(missionId, { is_active: !currentStatus });
+  };
+
   const getActionIcon = (actionTypeId) => {
     const icons = {
       'like_post': '👍',
