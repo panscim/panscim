@@ -227,6 +227,9 @@ backend:
         agent: "main"
         comment: "COMPLETED: Mission completion endpoint with frequency checking (one-time/daily/weekly), automatic point awarding, user mission tracking, notifications. Enhanced GET /missions with user completion status."
       - working: true
+        agent: "main"
+        comment: "MISSION SUBMISSION SYSTEM: Replaced simple completion with submission system (/api/missions/{id}/submit). Supports FormData with description, photo upload, links. Validation based on mission requirements. Auto-approval or admin review workflow."
+      - working: true
         agent: "testing"
         comment: "Mission completion system tested and verified: Daily limits (3/3), weekly limits (2/2), one-time missions, point awarding (15 points to user), notifications (16 total, 8 mission-related), user profile updates all functional. Frequency limits properly enforced."
       - working: true
