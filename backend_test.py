@@ -111,55 +111,66 @@ class MissionManagementTester:
         
         return True
     
-    def test_smtp_configuration(self):
-        """Test SMTP configuration with test email"""
-        print("\n📧 Testing SMTP Configuration...")
+    def test_create_one_time_mission(self):
+        """Test creating a one-time mission"""
+        print("\n🎯 Testing One-Time Mission Creation...")
         
         if not self.admin_token:
-            self.log_result("SMTP Configuration Test", False, "No admin token available")
+            self.log_result("Create One-Time Mission", False, "No admin token available")
             return
         
         headers = {"Authorization": f"Bearer {self.admin_token}"}
-        test_email = "test.recipient@example.com"  # Using a test email
+        mission_data = {
+            "title": "Visita il Centro Storico di Lecce",
+            "description": "Esplora le meraviglie barocche del centro storico di Lecce e condividi una foto sui social taggando @desideridipuglia",
+            "points": 50,
+            "frequency": "one-time",
+            "daily_limit": 0,
+            "weekly_limit": 0,
+            "is_active": True
+        }
         
         try:
             response = requests.post(
-                f"{API_BASE}/admin/email/test",
-                params={"test_email": test_email},
+                f"{API_BASE}/admin/missions",
+                json=mission_data,
                 headers=headers
             )
             
             if response.status_code == 200:
                 data = response.json()
-                self.log_result(
-                    "SMTP Configuration Test", 
-                    True, 
-                    f"SMTP test successful: {data.get('message', 'Email sent')}"
-                )
+                mission_id = data.get("mission_id")
+                if mission_id:
+                    self.created_mission_ids.append(mission_id)
+                    self.log_result(
+                        "Create One-Time Mission", 
+                        True, 
+                        f"One-time mission created successfully: {data.get('message', 'Mission created')}"
+                    )
+                else:
+                    self.log_result(
+                        "Create One-Time Mission", 
+                        False, 
+                        "Mission created but no mission_id returned",
+                        f"Response: {data}"
+                    )
             elif response.status_code == 403:
                 self.log_result(
-                    "SMTP Configuration Test", 
+                    "Create One-Time Mission", 
                     False, 
                     "Access denied - user may not have admin privileges",
                     f"Response: {response.text}"
                 )
-            elif response.status_code == 500:
-                self.log_result(
-                    "SMTP Configuration Test", 
-                    False, 
-                    "SMTP configuration error - email sending failed",
-                    f"Response: {response.text}"
-                )
             else:
                 self.log_result(
-                    "SMTP Configuration Test", 
+                    "Create One-Time Mission", 
                     False, 
                     f"Unexpected response status: {response.status_code}",
                     f"Response: {response.text}"
                 )
         except Exception as e:
             self.log_result(
-                "SMTP Configuration Test", 
+                "Create One-Time Mission", 
                 False, 
                 f"Request failed: {str(e)}"
             )
