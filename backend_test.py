@@ -239,73 +239,66 @@ class MissionManagementTester:
                 f"Request failed: {str(e)}"
             )
     
-    def test_send_email_with_templates(self):
-        """Test sending email with template variables"""
-        print("\n📨 Testing Email Sending with Template Variables...")
+    def test_create_weekly_mission(self):
+        """Test creating a weekly mission with limits"""
+        print("\n📆 Testing Weekly Mission Creation...")
         
-        if not self.admin_token or not self.test_user_id:
-            self.log_result("Email Send Test", False, "Missing admin token or test user ID")
+        if not self.admin_token:
+            self.log_result("Create Weekly Mission", False, "No admin token available")
             return
         
         headers = {"Authorization": f"Bearer {self.admin_token}"}
-        
-        # Email with template variables
-        email_data = {
-            "recipients": [self.test_user_id],
-            "subject": "🌿 Test Email with Template Variables",
-            "body": """
-            <html>
-            <body style="font-family: Arial, sans-serif;">
-                <h2>Ciao {{user_name}}!</h2>
-                <p>Hai attualmente <strong>{{user_points}}</strong> punti.</p>
-                <p>Il tuo livello attuale è: <strong>{{user_level}}</strong></p>
-                <p>Tema del mese: {{month_theme}}</p>
-                <p>Punti necessari per entrare nella top 3: {{points_to_top3}}</p>
-                <p>Questo è un test dell'integrazione email! 🌿</p>
-            </body>
-            </html>
-            """
+        mission_data = {
+            "title": "Recensione Partner Locale",
+            "description": "Lascia una recensione dettagliata su Google o TripAdvisor per uno dei nostri partner locali",
+            "points": 75,
+            "frequency": "weekly",
+            "daily_limit": 0,
+            "weekly_limit": 2,
+            "is_active": True
         }
         
         try:
             response = requests.post(
-                f"{API_BASE}/admin/email/send",
-                json=email_data,
+                f"{API_BASE}/admin/missions",
+                json=mission_data,
                 headers=headers
             )
             
             if response.status_code == 200:
                 data = response.json()
-                message = data.get("message", "")
-                if "successo" in message.lower() or "success" in message.lower():
+                mission_id = data.get("mission_id")
+                if mission_id:
+                    self.created_mission_ids.append(mission_id)
                     self.log_result(
-                        "Email Send Test", 
+                        "Create Weekly Mission", 
                         True, 
-                        f"Email sent successfully: {message}"
+                        f"Weekly mission created successfully with limit 2/week: {data.get('message', 'Mission created')}"
                     )
                 else:
                     self.log_result(
-                        "Email Send Test", 
+                        "Create Weekly Mission", 
                         False, 
-                        f"Email sending may have failed: {message}"
+                        "Mission created but no mission_id returned",
+                        f"Response: {data}"
                     )
             elif response.status_code == 403:
                 self.log_result(
-                    "Email Send Test", 
+                    "Create Weekly Mission", 
                     False, 
                     "Access denied - user may not have admin privileges",
                     f"Response: {response.text}"
                 )
             else:
                 self.log_result(
-                    "Email Send Test", 
+                    "Create Weekly Mission", 
                     False, 
                     f"Unexpected response status: {response.status_code}",
                     f"Response: {response.text}"
                 )
         except Exception as e:
             self.log_result(
-                "Email Send Test", 
+                "Create Weekly Mission", 
                 False, 
                 f"Request failed: {str(e)}"
             )
