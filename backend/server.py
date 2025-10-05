@@ -1229,7 +1229,7 @@ async def update_mission(
     description: Optional[str] = None,
     points: Optional[int] = None,
     is_active: Optional[bool] = None,
-    credentials: HTTPAuthorizationCredentials = security
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     current_user = await get_current_user(credentials)
     if not current_user.is_admin:
