@@ -366,46 +366,74 @@ Vivi la Puglia autentica con noi!`;
           </div>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {/* Points */}
-          <div className="puglia-card text-center">
-            <div className="w-12 h-12 bg-matte-gold rounded-full flex items-center justify-center mx-auto mb-3">
-              <Star className="text-white" size={24} />
-            </div>
-            <div className="text-2xl font-bold text-deep-sea-blue mb-1">{user?.current_points}</div>
-            <div className="text-sm text-gray-600">Punti questo mese</div>
-          </div>
-
-          {/* Total Points */}
-          <div className="puglia-card text-center">
-            <div className="w-12 h-12 bg-deep-sea-blue rounded-full flex items-center justify-center mx-auto mb-3">
-              <Trophy className="text-white" size={24} />
-            </div>
-            <div className="text-2xl font-bold text-deep-sea-blue mb-1">{user?.total_points}</div>
-            <div className="text-sm text-gray-600">Punti totali</div>
-          </div>
-
-          {/* Level Progress */}
-          <div className="puglia-card text-center">
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 ${levelInfo.color}`}>
-              <span className="text-xl">{levelInfo.icon}</span>
-            </div>
-            <div className="text-lg font-bold text-deep-sea-blue mb-1">{user?.level}</div>
-            <div className="text-sm text-gray-600">
-              {user?.level !== 'Legend' ? `${pointsToNext} al prossimo` : 'Livello massimo'}
-            </div>
-          </div>
-
-          {/* Position */}
-          <div className="puglia-card text-center">
-            <div className="w-12 h-12 bg-terracotta rounded-full flex items-center justify-center mx-auto mb-3">
-              <span className="text-white font-bold">#</span>
-            </div>
-            <div className="text-2xl font-bold text-deep-sea-blue mb-1">{user?.position || '-'}</div>
-            <div className="text-sm text-gray-600">Posizione attuale</div>
+        {/* Navigation Tabs */}
+        <div className="bg-white rounded-[20px] p-6 mediterranean-shadow mb-8">
+          <div className="flex flex-wrap border-b border-gray-200">
+            {[
+              { id: 'profile', label: 'Il mio Profilo', icon: User },
+              { id: 'card', label: '🎟️ La mia Card', icon: CreditCard }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center space-x-2 px-6 py-3 font-medium text-sm rounded-t-lg transition-colors ${
+                  activeTab === tab.id
+                    ? 'text-deep-sea-blue border-b-2 border-deep-sea-blue bg-blue-50'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                <tab.icon size={18} />
+                <span>{tab.label}</span>
+              </button>
+            ))}
           </div>
         </div>
+
+        {/* Tab Content */}
+        {activeTab === 'profile' && (
+          <>
+            {/* Stats Grid */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              {/* Points */}
+              <div className="puglia-card text-center">
+                <div className="w-12 h-12 bg-matte-gold rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Star className="text-white" size={24} />
+                </div>
+                <div className="text-2xl font-bold text-deep-sea-blue mb-1">{user?.current_points}</div>
+                <div className="text-sm text-gray-600">Punti questo mese</div>
+              </div>
+
+              {/* Total Points */}
+              <div className="puglia-card text-center">
+                <div className="w-12 h-12 bg-deep-sea-blue rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Trophy className="text-white" size={24} />
+                </div>
+                <div className="text-2xl font-bold text-deep-sea-blue mb-1">{user?.total_points}</div>
+                <div className="text-sm text-gray-600">Punti totali</div>
+              </div>
+
+              {/* Level Progress */}
+              <div className="puglia-card text-center">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 ${levelInfo.color}`}>
+                  <span className="text-xl">{levelInfo.icon}</span>
+                </div>
+                <div className="text-lg font-bold text-deep-sea-blue mb-1">{user?.level}</div>
+                <div className="text-sm text-gray-600">
+                  {user?.level !== 'Legend' ? `${pointsToNext} al prossimo` : 'Livello massimo'}
+                </div>
+              </div>
+
+              {/* Position */}
+              <div className="puglia-card text-center">
+                <div className="w-12 h-12 bg-terracotta rounded-full flex items-center justify-center mx-auto mb-3">
+                  <span className="text-white font-bold">#</span>
+                </div>
+                <div className="text-2xl font-bold text-deep-sea-blue mb-1">{user?.position || '-'}</div>
+                <div className="text-sm text-gray-600">Posizione attuale</div>
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Level Progress Bar */}
         {user?.level !== 'Legend' && (
