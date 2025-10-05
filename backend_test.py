@@ -46,10 +46,10 @@ class MissionManagementTester:
         
         # Try to create admin user
         admin_data = {
-            "name": "Admin Tester",
-            "username": "admin_test_email",
-            "email": "admin.test.email@example.com",
-            "password": "AdminTest123!",
+            "name": "Mission Admin Tester",
+            "username": "mission_admin_test",
+            "email": "mission.admin.test@example.com",
+            "password": "MissionAdmin123!",
             "country": "Italy"
         }
         
@@ -60,9 +60,6 @@ class MissionManagementTester:
                 data = response.json()
                 self.admin_token = data["access_token"]
                 self.admin_user_id = data["user"]["id"]
-                
-                # Make user admin in database (this would normally be done manually)
-                # For testing, we'll assume the user is already admin or we'll handle the 403 error
                 print("✅ Admin user created successfully")
             else:
                 # Try login if user already exists
@@ -82,10 +79,10 @@ class MissionManagementTester:
         
         # Create regular user for testing
         user_data = {
-            "name": "Regular User",
-            "username": "regular_test_email",
-            "email": "regular.test.email@example.com", 
-            "password": "RegularTest123!",
+            "name": "Mission User Tester",
+            "username": "mission_user_test",
+            "email": "mission.user.test@example.com", 
+            "password": "MissionUser123!",
             "country": "Italy"
         }
         
