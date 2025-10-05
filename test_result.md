@@ -171,6 +171,9 @@ frontend:
       - working: true
         agent: "main"
         comment: "COMPLETED: Mission Management tab added to AdminPanel with: mission statistics dashboard, create mission form (title, description, points, frequency, limits), missions list with edit/toggle status, completion statistics display."
+      - working: true
+        agent: "main" 
+        comment: "VERIFICATION UI ADDED: Admin mission form enhanced with verification requirements checkboxes (description, photo, link, approval). Photo source selection (gallery/camera/both). Pending submissions section with approve/reject buttons. Submission details modal."
 
   - task: "User Mission Dashboard"
     implemented: true
