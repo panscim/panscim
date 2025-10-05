@@ -39,7 +39,7 @@ const Home = () => {
           <div className="space-y-4 sm:space-y-0 sm:flex sm:space-x-4 justify-center">
             <Link 
               to="/register" 
-              className="inline-flex items-center px-8 py-4 bg-matte-gold hover:bg-opacity-90 text-white font-semibold rounded-[20px] transition-all duration-200 mediterranean-shadow hover:shadow-lg group"
+              className="inline-flex items-center px-8 py-4 bg-brand-accent hover:bg-opacity-90 text-white font-semibold rounded-[20px] transition-all duration-200 brand-shadow hover:shadow-lg group"
             >
               <span>Partecipa alla Sfida</span>
               <span className="ml-2 text-2xl">🌿</span>
