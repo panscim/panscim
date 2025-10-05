@@ -114,83 +114,97 @@ const DigitalClubCard = () => {
             boxShadow: '0 8px 32px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.2)'
           }}
         >
-          {/* Background Texture */}
-          <div 
-            className="absolute inset-0 opacity-10"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.1'%3E%3Ccircle cx='7' cy='7' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            }}
-          />
-          
-          {/* Logo and Title */}
-          <div className="text-center mb-4">
-            <h1 className="text-lg font-bold text-deep-sea-blue" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-              Desideri di Puglia Club
-            </h1>
-            <div className="h-0.5 bg-matte-gold mx-8 mt-1"></div>
-          </div>
+          <div className="p-8 h-full flex flex-col">
+            {/* Header - Club Title */}
+            <div className="text-center mb-6">
+              <h1 
+                className="text-2xl font-bold text-matte-gold mb-1" 
+                style={{ fontFamily: 'Cormorant Garamond, serif' }}
+              >
+                Desideri di Puglia Club
+              </h1>
+              <div className="h-px bg-gradient-to-r from-transparent via-matte-gold to-transparent mx-8"></div>
+              <p className="text-xs text-deep-sea-blue mt-1 opacity-70">Official Member Card</p>
+            </div>
 
-          {/* User Info */}
-          <div className="flex items-center justify-between h-full">
-            {/* Left Side - User Info */}
-            <div className="flex-1">
-              {/* Avatar */}
-              <div className="flex items-center space-x-3 mb-3">
-                {cardData.avatar_url ? (
-                  <img
-                    src={`data:image/jpeg;base64,${cardData.avatar_url}`}
-                    alt="Avatar"
-                    className="w-12 h-12 rounded-full border-2 border-matte-gold object-cover"
-                  />
-                ) : (
-                  <div className="w-12 h-12 bg-matte-gold rounded-full flex items-center justify-center text-deep-sea-blue font-semibold">
-                    {cardData.name?.charAt(0) || '?'}
-                  </div>
-                )}
-                <div>
-                  <h2 className="font-semibold text-deep-sea-blue text-lg">{cardData.name}</h2>
-                  <div className="flex items-center space-x-2 text-xs">
-                    <span className="text-matte-gold font-medium">{cardData.level}</span>
-                    <Star size={12} className="text-matte-gold" />
+            {/* Main Content Area */}
+            <div className="flex-1 flex items-start justify-between">
+              {/* Left Side - User Information */}
+              <div className="flex-1 pr-6">
+                {/* Avatar and Name */}
+                <div className="flex items-center space-x-4 mb-6">
+                  {cardData.avatar_url ? (
+                    <img
+                      src={`data:image/jpeg;base64,${cardData.avatar_url}`}
+                      alt="Avatar"
+                      className="w-20 h-20 rounded-full border-3 border-matte-gold object-cover shadow-md"
+                      style={{ borderWidth: '3px' }}
+                    />
+                  ) : (
+                    <div className="w-20 h-20 bg-gradient-to-br from-matte-gold to-yellow-600 rounded-full flex items-center justify-center text-deep-sea-blue font-bold text-xl shadow-md border-3 border-matte-gold" style={{ borderWidth: '3px' }}>
+                      {cardData.name?.charAt(0) || '?'}
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <h2 className="text-xl font-bold text-deep-sea-blue mb-1" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                      {cardData.name}
+                    </h2>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm font-medium text-matte-gold">{cardData.level}</span>
+                      <Star size={14} className="text-matte-gold fill-current" />
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Bottom Left Info */}
-              <div className="absolute bottom-4 left-6">
-                <div className="text-xs text-deep-sea-blue space-y-1">
-                  <div className="flex items-center space-x-1">
-                    <span className="font-medium">{cardData.club_card_code}</span>
-                    <button onClick={copyCode} className="text-matte-gold hover:text-deep-sea-blue">
-                      <Copy size={10} />
-                    </button>
+              {/* Right Side - QR Code */}
+              <div className="flex flex-col items-center">
+                {qrCodeUrl ? (
+                  <div className="p-2 bg-white rounded-lg shadow-md border border-gray-200">
+                    <img
+                      src={qrCodeUrl}
+                      alt="QR Code"
+                      className="w-24 h-24"
+                    />
                   </div>
-                  <div className="flex items-center space-x-1 text-gray-600">
-                    <Calendar size={10} />
-                    <span>
-                      {cardData.join_date 
-                        ? new Date(cardData.join_date).toLocaleDateString('it-IT')
-                        : 'N/A'}
-                    </span>
+                ) : (
+                  <div className="w-28 h-28 bg-white rounded-lg shadow-md border border-gray-200 flex items-center justify-center">
+                    <QrCode size={48} className="text-gray-400" />
                   </div>
-                </div>
+                )}
+                <p className="text-xs text-gray-600 mt-2 text-center leading-tight">
+                  Scansiona per visualizzare<br />il tuo profilo 🌿
+                </p>
               </div>
             </div>
 
-            {/* Right Side - QR Code */}
-            <div className="flex flex-col items-center">
-              {qrCodeUrl ? (
-                <img
-                  src={qrCodeUrl}
-                  alt="QR Code"
-                  className="w-20 h-20 border border-deep-sea-blue rounded"
-                />
-              ) : (
-                <div className="w-20 h-20 bg-gray-200 rounded flex items-center justify-center">
-                  <QrCode size={40} className="text-gray-500" />
+            {/* Bottom Info Bar */}
+            <div className="flex items-center justify-between pt-4 border-t border-matte-gold border-opacity-30">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-1">
+                  <span className="text-sm font-bold text-deep-sea-blue">{cardData.club_card_code}</span>
+                  <button onClick={copyCode} className="text-matte-gold hover:text-deep-sea-blue transition-colors">
+                    <Copy size={12} />
+                  </button>
                 </div>
-              )}
-              <p className="text-xs text-gray-600 mt-1 text-center">Scansiona per<br />il tuo profilo</p>
+                <div className="flex items-center space-x-1 text-gray-600">
+                  <Calendar size={12} />
+                  <span className="text-xs">
+                    {cardData.join_date 
+                      ? new Date(cardData.join_date).toLocaleDateString('it-IT')
+                      : 'N/A'}
+                  </span>
+                </div>
+              </div>
+              
+              <div className="text-right">
+                <div className="text-xs text-gray-500">Membro dal</div>
+                <div className="text-sm font-medium text-deep-sea-blue">
+                  {cardData.join_date 
+                    ? new Date(cardData.join_date).getFullYear()
+                    : 'N/A'}
+                </div>
+              </div>
             </div>
           </div>
         </div>
