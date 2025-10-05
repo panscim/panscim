@@ -435,80 +435,89 @@ Vivi la Puglia autentica con noi!`;
           </>
         )}
 
-        {/* Level Progress Bar */}
-        {user?.level !== 'Legend' && (
-          <div className="bg-white rounded-[20px] p-6 mediterranean-shadow mb-8">
-            <h3 className="text-lg font-semibold text-deep-sea-blue mb-4 flex items-center">
-              <Star className="mr-2 text-matte-gold" size={20} />
-              Progresso verso il prossimo livello
-            </h3>
-            
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Livello attuale: {user?.level}</span>
-                <span className="text-sm text-matte-gold font-medium">+{pointsToNext} punti necessari</span>
+            {/* Level Progress Bar */}
+            {user?.level !== 'Legend' && (
+              <div className="bg-white rounded-[20px] p-6 mediterranean-shadow mb-8">
+                <h3 className="text-lg font-semibold text-deep-sea-blue mb-4 flex items-center">
+                  <Star className="mr-2 text-matte-gold" size={20} />
+                  Progresso verso il prossimo livello
+                </h3>
+                
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-600">Livello attuale: {user?.level}</span>
+                    <span className="text-sm text-matte-gold font-medium">+{pointsToNext} punti necessari</span>
+                  </div>
+                  
+                  <div className="w-full bg-gray-200 rounded-full h-3">
+                    <div 
+                      className="bg-gradient-to-r from-matte-gold to-yellow-500 h-3 rounded-full transition-all duration-500"
+                      style={{ width: `${Math.min((user?.total_points / nextLevelPoints[user?.level]) * 100, 100)}%` }}
+                    ></div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between text-xs text-gray-500">
+                    <span>0 punti</span>
+                    <span>{nextLevelPoints[user?.level]} punti</span>
+                  </div>
+                </div>
+                
+                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-blue-800 text-sm">
+                    💡 <strong>Suggerimento:</strong> Completa le missioni quotidiane per guadagnare punti più velocemente!
+                  </p>
+                </div>
               </div>
+            )}
+
+            {/* Achievements & Badges */}
+            <div className="bg-white rounded-[20px] p-6 mediterranean-shadow">
+              <h3 className="text-lg font-semibold text-deep-sea-blue mb-4 flex items-center">
+                <Trophy className="mr-2 text-matte-gold" size={20} />
+                Riconoscimenti
+              </h3>
               
-              <div className="w-full bg-gray-200 rounded-full h-3">
-                <div 
-                  className="bg-gradient-to-r from-matte-gold to-yellow-500 h-3 rounded-full transition-all duration-500"
-                  style={{ width: `${Math.min((user?.total_points / nextLevelPoints[user?.level]) * 100, 100)}%` }}
-                ></div>
-              </div>
+              {user?.badges && user.badges.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {user.badges.map((badge, index) => (
+                    <div key={index} className="text-center p-4 bg-gray-50 rounded-[12px]">
+                      <div className="text-2xl mb-2">🏅</div>
+                      <div className="text-sm font-medium text-deep-sea-blue">{badge}</div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="text-4xl mb-3">🌟</div>
+                  <h4 className="font-semibold text-gray-600 mb-2">Nessun badge ancora</h4>
+                  <p className="text-gray-500 text-sm">
+                    Continua a completare le missioni per sbloccare i tuoi primi riconoscimenti!
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Activity Timeline Preview */}
+            <div className="mt-8 bg-white rounded-[20px] p-6 mediterranean-shadow">
+              <h3 className="text-lg font-semibold text-deep-sea-blue mb-4">La Tua Journey Pugliese</h3>
               
-              <div className="flex items-center justify-between text-xs text-gray-500">
-                <span>0 punti</span>
-                <span>{nextLevelPoints[user?.level]} punti</span>
+              <div className="text-center py-8">
+                <Calendar className="mx-auto text-gray-400 mb-3" size={48} />
+                <h4 className="font-semibold text-gray-600 mb-2">Timeline in arrivo</h4>
+                <p className="text-gray-500 text-sm">
+                  Presto potrai vedere la cronologia completa delle tue avventure pugliesi!
+                </p>
               </div>
             </div>
-            
-            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-blue-800 text-sm">
-                💡 <strong>Suggerimento:</strong> Completa le missioni quotidiane per guadagnare punti più velocemente!
-              </p>
-            </div>
-          </div>
+          </>
         )}
 
-        {/* Achievements & Badges */}
-        <div className="bg-white rounded-[20px] p-6 mediterranean-shadow">
-          <h3 className="text-lg font-semibold text-deep-sea-blue mb-4 flex items-center">
-            <Trophy className="mr-2 text-matte-gold" size={20} />
-            Riconoscimenti
-          </h3>
-          
-          {user?.badges && user.badges.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {user.badges.map((badge, index) => (
-                <div key={index} className="text-center p-4 bg-gray-50 rounded-[12px]">
-                  <div className="text-2xl mb-2">🏅</div>
-                  <div className="text-sm font-medium text-deep-sea-blue">{badge}</div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <div className="text-4xl mb-3">🌟</div>
-              <h4 className="font-semibold text-gray-600 mb-2">Nessun badge ancora</h4>
-              <p className="text-gray-500 text-sm">
-                Continua a completare le missioni per sbloccare i tuoi primi riconoscimenti!
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Activity Timeline Preview */}
-        <div className="mt-8 bg-white rounded-[20px] p-6 mediterranean-shadow">
-          <h3 className="text-lg font-semibold text-deep-sea-blue mb-4">La Tua Journey Pugliese</h3>
-          
-          <div className="text-center py-8">
-            <Calendar className="mx-auto text-gray-400 mb-3" size={48} />
-            <h4 className="font-semibold text-gray-600 mb-2">Timeline in arrivo</h4>
-            <p className="text-gray-500 text-sm">
-              Presto potrai vedere la cronologia completa delle tue avventure pugliesi!
-            </p>
+        {/* Card Tab Content */}
+        {activeTab === 'card' && (
+          <div className="bg-white rounded-[20px] p-6 mediterranean-shadow">
+            <DigitalClubCard user={user} />
           </div>
-        </div>
+        )}
         
         {/* Image Cropper Modal */}
         {showCropper && selectedImageFile && (
