@@ -51,18 +51,18 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="space-y-4 sm:space-y-0 sm:flex sm:space-x-4 justify-center">
+          <div className="space-y-6 sm:space-y-0 sm:flex sm:space-x-6 justify-center">
             <Link 
               to="/register" 
-              className="inline-flex items-center px-8 py-4 bg-brand-accent hover:bg-opacity-90 text-white font-semibold rounded-[20px] transition-all duration-200 brand-shadow hover:shadow-lg group"
+              className="inline-flex items-center px-10 py-5 bg-brand-accent hover:bg-yellow-500 text-black font-bold text-lg rounded-[25px] transition-all duration-300 shadow-2xl hover:shadow-3xl hover:scale-105 group border-2 border-brand-accent"
             >
               <span>Partecipa alla Sfida</span>
-              <span className="ml-2 text-2xl">🏆</span>
-              <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={20} />
+              <span className="ml-3 text-3xl">🏆</span>
+              <ArrowRight className="ml-3 group-hover:translate-x-2 transition-transform" size={24} />
             </Link>
             <Link 
               to="/login" 
-              className="inline-flex items-center px-8 py-4 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white font-semibold rounded-[20px] transition-all duration-200 border border-white/20"
+              className="inline-flex items-center px-10 py-5 bg-white hover:bg-gray-100 text-black font-bold text-lg rounded-[25px] transition-all duration-300 shadow-2xl hover:shadow-3xl hover:scale-105 border-2 border-white"
             >
               Accedi al Club
             </Link>
