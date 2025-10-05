@@ -44,12 +44,48 @@ class MissionManagementTester:
         """Create or login test users (admin and regular user)"""
         print("\n🔧 Setting up test users...")
         
-        # Try to login with existing admin user first (from previous tests)
-        existing_admin_credentials = [
-            {"email": "admin.test.email@example.com", "password": "AdminTest123!"},
-            {"email": "admin@example.com", "password": "admin123"},
-            {"email": "test@admin.com", "password": "admin123"},
-        ]
+        # Use specific admin credentials from review request
+        admin_credentials = {"email": "admin@desideridipuglia.com", "password": "admin123"}
+        
+        print(f"🔑 Attempting login with admin credentials: {admin_credentials['email']}")
+        
+        try:
+            response = requests.post(f"{API_BASE}/auth/login", json=admin_credentials)
+            if response.status_code == 200:
+                data = response.json()
+                user_data = data.get("user", {})
+                if user_data.get("is_admin", False):
+                    self.admin_token = data["access_token"]
+                    self.admin_user_id = user_data["id"]
+                    print(f"✅ Successfully logged in as admin: {admin_credentials['email']}")
+                else:
+                    print(f"❌ User {admin_credentials['email']} exists but is not admin")
+                    return False
+            else:
+                print(f"❌ Failed to login admin user: {response.status_code} - {response.text}")
+                return False
+        except Exception as e:
+            print(f"❌ Error logging in admin user: {str(e)}")
+            return False
+        
+        # Use specific regular user credentials from review request
+        user_credentials = {"email": "test@desideridipuglia.com", "password": "test123"}
+        
+        print(f"🔑 Attempting login with regular user credentials: {user_credentials['email']}")
+        
+        try:
+            response = requests.post(f"{API_BASE}/auth/login", json=user_credentials)
+            if response.status_code == 200:
+                data = response.json()
+                self.regular_user_token = data["access_token"]
+                self.test_user_id = data["user"]["id"]
+                print(f"✅ Successfully logged in as regular user: {user_credentials['email']}")
+            else:
+                print(f"❌ Failed to login regular user: {response.status_code} - {response.text}")
+                return False
+        except Exception as e:
+            print(f"❌ Error logging in regular user: {str(e)}")
+            return False
         
         admin_found = False
         for creds in existing_admin_credentials:
