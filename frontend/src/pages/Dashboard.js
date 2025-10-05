@@ -207,7 +207,7 @@ const Dashboard = () => {
           {user.level !== 'Legend' && (
             <div className="mt-4 bg-white rounded-[20px] p-4 mediterranean-shadow">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-deep-sea-blue">Prossimo livello</span>
+                <span className="text-sm font-medium text-deep-sea-blue">{t('next_level')}</span>
                 <span className="text-sm text-matte-gold font-medium">+{pointsToNext} punti</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
