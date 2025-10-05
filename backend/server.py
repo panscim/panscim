@@ -1096,7 +1096,7 @@ async def send_admin_email(
 @api_router.get("/admin/email/logs")
 async def get_email_logs(
     limit: int = 50,
-    credentials: HTTPAuthorizationCredentials = security
+    credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
     current_user = await get_current_user(credentials)
     if not current_user.is_admin:
