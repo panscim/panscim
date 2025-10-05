@@ -1272,7 +1272,7 @@ async def create_weekly_quiz(
     return {"message": "Quiz settimanale creato con successo!", "quiz_id": quiz.id}
 
 @api_router.get("/admin/quiz")
-async def get_admin_quizzes(credentials: HTTPAuthorizationCredentials = security):
+async def get_admin_quizzes(credentials: HTTPAuthorizationCredentials = Depends(security)):
     current_user = await get_current_user(credentials)
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admin access required")
