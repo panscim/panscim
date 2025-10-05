@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
+import ImageCropper from '@/components/ImageCropper';
 import { 
   User, 
   Camera, 
