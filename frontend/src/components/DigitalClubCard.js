@@ -215,17 +215,19 @@ const DigitalClubCard = () => {
       {/* Mobile Card Info - Only on Mobile */}
       <div className="lg:hidden bg-white rounded-lg p-4 border border-gray-200">
         <div className="flex items-center space-x-4 mb-4">
-          {cardData.avatar ? (
-            <img
-              src={`data:image/jpeg;base64,${cardData.avatar}`}
-              alt="Avatar"
-              className="w-16 h-16 rounded-full border-2 border-matte-gold object-cover"
-            />
-          ) : (
-            <div className="w-16 h-16 bg-gradient-to-br from-matte-gold to-yellow-600 rounded-full flex items-center justify-center text-deep-sea-blue font-bold text-lg border-2 border-matte-gold">
-              {cardData.name?.charAt(0) || '?'}
-            </div>
-          )}
+          <div className="w-16 h-16 rounded-full border-2 border-matte-gold flex items-center justify-center text-white font-bold text-lg" style={{ 
+            background: cardData.level === 'Explorer' ? 'linear-gradient(135deg, #CFAE6C, #DAB973)' :
+                       cardData.level === 'Adventurer' ? 'linear-gradient(135deg, #2E4A5C, #3A5A6E)' :
+                       cardData.level === 'Master' ? 'linear-gradient(135deg, #8B4513, #A0522D)' :
+                       cardData.level === 'Legend' ? 'linear-gradient(135deg, #800080, #9932CC)' :
+                       'linear-gradient(135deg, #CFAE6C, #DAB973)'
+          }}>
+            {cardData.level === 'Explorer' ? '🌱' :
+             cardData.level === 'Adventurer' ? '🗺️' :
+             cardData.level === 'Master' ? '👑' :
+             cardData.level === 'Legend' ? '🏆' :
+             '🌱'}
+          </div>
           <div>
             <h3 className="text-lg font-bold text-deep-sea-blue">{cardData.name}</h3>
             <div className="flex items-center space-x-2">
