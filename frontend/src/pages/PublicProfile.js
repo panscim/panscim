@@ -87,9 +87,9 @@ const PublicProfile = () => {
         <div className="bg-white rounded-[20px] p-8 shadow-lg border border-matte-gold mb-8">
           <div className="flex items-center space-x-6 mb-6">
             {/* Avatar */}
-            {user_info.avatar_url ? (
+            {user_info.avatar ? (
               <img
-                src={`data:image/jpeg;base64,${user_info.avatar_url}`}
+                src={`data:image/jpeg;base64,${user_info.avatar}`}
                 alt="Avatar"
                 className="w-24 h-24 rounded-full border-4 border-matte-gold object-cover shadow-lg"
               />
