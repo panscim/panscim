@@ -169,6 +169,15 @@ class EmailRequest(BaseModel):
     subject: str
     body: str
 
+class MissionRequest(BaseModel):
+    title: str
+    description: str
+    points: int
+    frequency: str = "one-time"  # daily, weekly, one-time
+    daily_limit: int = 0
+    weekly_limit: int = 0
+    is_active: bool = True
+
 class EmailLog(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     sender: str = "desideridipuglia@gmail.com"
