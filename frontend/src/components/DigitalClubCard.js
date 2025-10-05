@@ -104,9 +104,10 @@ const DigitalClubCard = () => {
     <div className="space-y-6">
       {/* Card Preview Message */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-blue-800 text-sm" dangerouslySetInnerHTML={{ 
-          __html: `🎟️ <strong>${t('club_card_ready')}</strong><br />📲 ${t('scan_qr')}` 
-        }} />
+        <p className="text-blue-800 text-sm">
+          🎟️ <strong>La tua Card Desideri di Puglia è pronta.</strong><br />
+          📲 Scansiona il tuo QR per condividere il tuo profilo o mostrare la tua appartenenza al Club.
+        </p>
       </div>
 
       {/* Premium Digital Club Card - Hidden on Mobile */}
