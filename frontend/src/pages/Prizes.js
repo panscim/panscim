@@ -67,7 +67,7 @@ const Prizes = () => {
             Premi Live Puglia
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            {t('top_3_monthly_description')} 
+            I primi 3 di ogni mese vincono esperienze autentiche in Puglia. 
             Vivi, condividi e vinci momenti indimenticabili.
           </p>
         </div>
