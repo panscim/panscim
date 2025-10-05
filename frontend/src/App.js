@@ -13,6 +13,7 @@ import Leaderboard from '@/pages/Leaderboard';
 import Prizes from '@/pages/Prizes';
 import Profile from '@/pages/Profile';
 import AdminPanel from '@/pages/AdminPanel';
+import PublicProfile from '@/pages/PublicProfile';
 
 // Context
 import { AuthProvider, useAuth } from '@/context/AuthContext';
