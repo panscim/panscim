@@ -225,66 +225,148 @@ class MissionVerificationTester:
                 f"Request failed: {str(e)}"
             )
     
-    def test_create_daily_mission(self):
-        """Test creating a daily mission with limits"""
-        print("\n📅 Testing Daily Mission Creation...")
+    def test_mission_submission_system(self):
+        """Test mission submission with FormData (description, photo, link)"""
+        print("\n📝 Testing Mission Submission System...")
         
-        if not self.admin_token:
-            self.log_result("Create Daily Mission", False, "No admin token available")
+        if not self.regular_user_token or not self.created_mission_ids:
+            self.log_result("Mission Submission System", False, "No regular user token or created missions available")
             return
         
-        headers = {"Authorization": f"Bearer {self.admin_token}"}
-        mission_data = {
-            "title": "Condividi Storia Instagram",
-            "description": "Condividi una storia su Instagram taggando @desideridipuglia e usando #DesideridiPugliaClub",
-            "points": 15,
-            "frequency": "daily",
-            "daily_limit": 3,
-            "weekly_limit": 0,
-            "is_active": True
+        headers = {"Authorization": f"Bearer {self.regular_user_token}"}
+        mission_id = self.created_mission_ids[0]  # Use first created mission
+        
+        # Create a simple test image (1x1 pixel PNG)
+        test_image_data = base64.b64decode(
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA4GgKxQAAAABJRU5ErkJggg=="
+        )
+        
+        # Prepare FormData
+        files = {
+            'photo': ('test_photo.png', BytesIO(test_image_data), 'image/png')
+        }
+        
+        data = {
+            'description': 'Ho visitato il Castello di Lecce e ho scattato questa bellissima foto durante il tramonto. L\'architettura medievale è davvero impressionante!',
+            'submission_url': 'https://www.instagram.com/p/example123/'
         }
         
         try:
             response = requests.post(
-                f"{API_BASE}/admin/missions",
-                json=mission_data,
+                f"{API_BASE}/missions/{mission_id}/submit",
+                files=files,
+                data=data,
                 headers=headers
             )
             
             if response.status_code == 200:
-                data = response.json()
-                mission_id = data.get("mission_id")
-                if mission_id:
-                    self.created_mission_ids.append(mission_id)
+                response_data = response.json()
+                requires_approval = response_data.get("requires_approval", False)
+                points_earned = response_data.get("points_earned", 0)
+                
+                if requires_approval:
                     self.log_result(
-                        "Create Daily Mission", 
+                        "Mission Submission System", 
                         True, 
-                        f"Daily mission created successfully with limit 3/day: {data.get('message', 'Mission created')}"
+                        f"Mission submitted successfully for approval. Will earn {points_earned} points after approval."
+                    )
+                    
+                    # Check if MissionSubmission record was created
+                    self.verify_mission_submission_created(mission_id)
+                else:
+                    self.log_result(
+                        "Mission Submission System", 
+                        True, 
+                        f"Mission auto-approved and completed. Earned {points_earned} points immediately."
+                    )
+            elif response.status_code == 400:
+                error_msg = response.json().get("detail", response.text)
+                if "already submitted" in error_msg.lower():
+                    self.log_result(
+                        "Mission Submission System", 
+                        True, 
+                        f"Mission submission properly rejected (already submitted): {error_msg}"
                     )
                 else:
                     self.log_result(
-                        "Create Daily Mission", 
+                        "Mission Submission System", 
                         False, 
-                        "Mission created but no mission_id returned",
-                        f"Response: {data}"
+                        f"Mission submission failed with validation error: {error_msg}",
+                        f"Response: {response.text}"
                     )
-            elif response.status_code == 403:
+            elif response.status_code == 404:
                 self.log_result(
-                    "Create Daily Mission", 
+                    "Mission Submission System", 
                     False, 
-                    "Access denied - user may not have admin privileges",
+                    "Mission not found or inactive",
                     f"Response: {response.text}"
                 )
             else:
                 self.log_result(
-                    "Create Daily Mission", 
+                    "Mission Submission System", 
                     False, 
                     f"Unexpected response status: {response.status_code}",
                     f"Response: {response.text}"
                 )
         except Exception as e:
             self.log_result(
-                "Create Daily Mission", 
+                "Mission Submission System", 
+                False, 
+                f"Request failed: {str(e)}"
+            )
+    
+    def verify_mission_submission_created(self, mission_id: str):
+        """Verify that MissionSubmission record was created with pending status"""
+        print("\n🔍 Verifying Mission Submission Record...")
+        
+        if not self.admin_token:
+            self.log_result("Verify Submission Record", False, "No admin token available")
+            return
+        
+        headers = {"Authorization": f"Bearer {self.admin_token}"}
+        
+        try:
+            response = requests.get(f"{API_BASE}/admin/missions/submissions/pending", headers=headers)
+            
+            if response.status_code == 200:
+                submissions = response.json()
+                
+                # Find submission for our mission
+                mission_submission = next(
+                    (s for s in submissions if s["mission_id"] == mission_id and s["user_id"] == self.test_user_id), 
+                    None
+                )
+                
+                if mission_submission:
+                    if mission_submission["verification_status"] == "pending":
+                        self.created_submission_ids.append(mission_submission["id"])
+                        self.log_result(
+                            "Verify Submission Record", 
+                            True, 
+                            f"MissionSubmission record created with pending status for mission: {mission_submission['mission_title']}"
+                        )
+                    else:
+                        self.log_result(
+                            "Verify Submission Record", 
+                            False, 
+                            f"Submission found but status is {mission_submission['verification_status']}, expected 'pending'"
+                        )
+                else:
+                    self.log_result(
+                        "Verify Submission Record", 
+                        False, 
+                        "No pending submission found for the submitted mission"
+                    )
+            else:
+                self.log_result(
+                    "Verify Submission Record", 
+                    False, 
+                    f"Failed to get pending submissions: {response.status_code}",
+                    f"Response: {response.text}"
+                )
+        except Exception as e:
+            self.log_result(
+                "Verify Submission Record", 
                 False, 
                 f"Request failed: {str(e)}"
             )
